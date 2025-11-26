@@ -1,91 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Gabon Official Colors */
-    --gabon-green: 154 100% 31%; /* #009E60 */
-    --gabon-yellow: 45 98% 54%; /* #FCD116 */
-    --gabon-blue: 211 54% 50%; /* #3A75C4 */
+    /* Design System - Couleurs officielles du Gabon */
+    --gabon-green: 146 76% 31%; /* #009E60 */
+    --gabon-yellow: 45 98% 55%; /* #FCD116 */
+    --gabon-blue: 214 52% 50%; /* #3A75C4 */
     
-    /* Role Colors */
-    --admin-red: 0 84% 40%;
-    --manager-blue: 217 91% 60%;
-    --agent-green: 154 100% 31%;
-    --citizen-gray: 215 16% 47%;
-
+    /* Base colors */
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-
-    --primary: 154 100% 31%; /* Gabon Green */
+    
+    /* Primary - Vert Gabon */
+    --primary: 146 76% 31%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 211 54% 50%; /* Gabon Blue */
-    --secondary-foreground: 0 0% 100%;
-
-    --accent: 45 98% 54%; /* Gabon Yellow */
-    --accent-foreground: 222 47% 11%;
-
+    
+    /* Secondary - Jaune Gabon */
+    --secondary: 45 98% 55%;
+    --secondary-foreground: 222 47% 11%;
+    
+    /* Accent - Bleu Gabon */
+    --accent: 214 52% 50%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Muted */
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
+    
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    /* Border */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 154 100% 31%;
-
-    --radius: 0.75rem;
-
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--gabon-green)), hsl(var(--gabon-blue)));
-    --gradient-official: linear-gradient(180deg, hsl(var(--gabon-green) / 0.1), transparent);
+    --ring: 146 76% 31%;
     
-    /* Shadows */
-    --shadow-elevation: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-glow: 0 0 30px hsl(var(--gabon-green) / 0.2);
+    /* Radius */
+    --radius: 0.5rem;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Chart colors */
+    --chart-1: 146 76% 31%;
+    --chart-2: 45 98% 55%;
+    --chart-3: 214 52% 50%;
+    --chart-4: 173 58% 39%;
+    --chart-5: 27 87% 67%;
+    
+    /* Role colors */
+    --role-admin: 0 84% 60%; /* Rouge */
+    --role-manager: 214 52% 50%; /* Bleu */
+    --role-agent: 146 76% 31%; /* Vert */
+    --role-citizen: 215 16% 47%; /* Gris */
   }
 
   .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-
-    --card: 222 47% 13%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 13%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 154 100% 35%; /* Lighter green for dark mode */
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 211 54% 55%; /* Lighter blue for dark mode */
-    --secondary-foreground: 0 0% 100%;
-
-    --accent: 45 98% 58%; /* Lighter yellow for dark mode */
-    --accent-foreground: 222 47% 11%;
-
-    --muted: 217 33% 18%;
+    
+    --primary: 146 76% 40%;
+    --primary-foreground: 222 47% 11%;
+    
+    --secondary: 45 98% 65%;
+    --secondary-foreground: 222 47% 11%;
+    
+    --accent: 214 52% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-
-    --destructive: 0 63% 31%;
+    
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 146 76% 40%;
+    
+    --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 154 100% 35%;
+    
+    --chart-1: 146 76% 40%;
+    --chart-2: 45 98% 65%;
+    --chart-3: 214 52% 60%;
+    --chart-4: 173 58% 50%;
+    --chart-5: 27 87% 77%;
   }
 }
 
@@ -93,8 +106,64 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* Gradients officiels */
+  .bg-gradient-official {
+    background: linear-gradient(135deg, 
+      hsl(var(--gabon-green) / 0.1) 0%, 
+      hsl(var(--gabon-blue) / 0.1) 100%
+    );
+  }
+  
+  .bg-gradient-hero {
+    background: linear-gradient(180deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--muted)) 100%
+    );
+  }
+  
+  /* Text gradients */
+  .text-gradient-official {
+    background: linear-gradient(90deg, 
+      hsl(var(--gabon-green)), 
+      hsl(var(--gabon-blue))
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Hover scale effect */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
 }
