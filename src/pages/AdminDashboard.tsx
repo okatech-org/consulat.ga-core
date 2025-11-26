@@ -5,9 +5,11 @@ import { Footer } from "@/components/Footer";
 import { SimulationBanner } from "@/components/SimulationBanner";
 import { EntityWizard } from "@/components/admin/EntityWizard";
 import { EntityCard } from "@/components/admin/EntityCard";
+import { EntityDetailModal } from "@/components/admin/EntityDetailModal";
 import { WorldMapDashboard } from "@/components/admin/WorldMapDashboard";
 import { useDemo } from "@/contexts/DemoContext";
 import { MOCK_ENTITIES } from "@/data/mock-entities";
+import { Entity } from "@/types/entity";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -18,6 +20,7 @@ export default function AdminDashboard() {
   const { currentUser } = useDemo();
   const navigate = useNavigate();
   const [showWizard, setShowWizard] = useState(false);
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
 
   // Protection : seuls les admins système peuvent accéder
   if (currentUser?.role !== "ADMIN") {
@@ -58,6 +61,14 @@ export default function AdminDashboard() {
 
   const handleDeleteEntity = (entity: any) => {
     toast.error(`Suppression de ${entity.name} (fonctionnalité à venir)`);
+  };
+
+  const handleViewEntityDetails = (entity: Entity) => {
+    setSelectedEntity(entity);
+  };
+
+  const handleCloseEntityDetails = () => {
+    setSelectedEntity(null);
   };
 
   return (
@@ -149,6 +160,7 @@ export default function AdminDashboard() {
                       entity={entity}
                       onEdit={handleEditEntity}
                       onDelete={handleDeleteEntity}
+                      onViewDetails={handleViewEntityDetails}
                     />
                   </div>
                 ))}
@@ -159,6 +171,12 @@ export default function AdminDashboard() {
       </main>
 
       <Footer />
+      
+      <EntityDetailModal 
+        entity={selectedEntity} 
+        isOpen={!!selectedEntity} 
+        onClose={handleCloseEntityDetails} 
+      />
     </div>
   );
 }
