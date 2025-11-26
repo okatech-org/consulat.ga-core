@@ -9,6 +9,7 @@ import Actualites from "./pages/Actualites";
 import Login from "./pages/Login";
 import DemoPortal from "./pages/DemoPortal";
 import EntityPortal from "./pages/EntityPortal";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/demo-portal" element={<DemoPortal />} />
             <Route path="/entity/:entityId" element={<EntityPortal />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -42,6 +42,14 @@ export const Header = () => {
           <Link to="/demo-portal" className="text-sm font-medium hover:text-primary transition-colors">
             Portail Démo
           </Link>
+          {isSimulating && currentUser?.role === "ADMIN" && (
+            <Link to="/admin" className="text-sm font-medium hover:text-primary transition-colors">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Shield className="h-4 w-4" />
+                Admin
+              </Button>
+            </Link>
+          )}
           {isSimulating && currentUser && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm">
               <span>{currentUser.badge}</span>
@@ -99,6 +107,16 @@ export const Header = () => {
             >
               Portail Démo
             </Link>
+            {isSimulating && currentUser?.role === "ADMIN" && (
+              <Link
+                to="/admin"
+                className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Shield className="h-4 w-4" />
+                Dashboard Admin
+              </Link>
+            )}
             <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" className="w-full">
                 Se Connecter
