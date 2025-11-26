@@ -12,14 +12,44 @@ export interface Entity {
 }
 
 export const COUNTRY_FLAGS: Record<string, string> = {
-  US: '🇺🇸',
+  // Europe
   FR: '🇫🇷',
-  CN: '🇨🇳',
-  SN: '🇸🇳',
   GB: '🇬🇧',
   DE: '🇩🇪',
-  ES: '🇪🇸',
+  TR: '🇹🇷',
+  CH: '🇨🇭',
   IT: '🇮🇹',
-  BR: '🇧🇷',
+  // Afrique Australe
+  ZA: '🇿🇦',
+  AO: '🇦🇴',
+  // Afrique Centrale
+  CM: '🇨🇲',
+  CG: '🇨🇬',
+  CD: '🇨🇩',
+  GQ: '🇬🇶',
+  ST: '🇸🇹',
+  // Afrique de l'Ouest
+  SN: '🇸🇳',
+  CI: '🇨🇮',
+  TG: '🇹🇬',
+  BJ: '🇧🇯',
+  NG: '🇳🇬',
+  ML: '🇲🇱',
+  // Afrique du Nord
   MA: '🇲🇦',
+  DZ: '🇩🇿',
+  TN: '🇹🇳',
+  EG: '🇪🇬',
+  ET: '🇪🇹',
+  // Amériques
+  US: '🇺🇸',
+  CA: '🇨🇦',
+  CU: '🇨🇺',
+  // Asie & Moyen-Orient
+  CN: '🇨🇳',
+  JP: '🇯🇵',
+  KR: '🇰🇷',
+  IN: '🇮🇳',
+  SA: '🇸🇦',
+  LB: '🇱🇧',
 };

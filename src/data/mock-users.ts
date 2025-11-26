@@ -30,13 +30,13 @@ export const MOCK_USERS: DemoUser[] = [
       'Configuration des workflows',
     ],
     badge: '🔵',
-    description: 'Consul responsable du Consulat de Paris (Passeport désactivé)',
+    description: 'Consul Général responsable du Consulat de Paris (Passeport désactivé pour démo)',
   },
   {
     id: 'manager-usa',
     role: 'MANAGER',
     name: 'Manager - Ambassade USA',
-    entityId: 'usa-embassy-washington',
+    entityId: 'us-embassy-washington',
     permissions: [
       'Supervision de l\'équipe USA',
       'Validation finale des dossiers',
@@ -46,6 +46,20 @@ export const MOCK_USERS: DemoUser[] = [
     ],
     badge: '🔵',
     description: 'Ambassadeur avec accès complet aux services (Tous services)',
+  },
+  {
+    id: 'manager-china',
+    role: 'MANAGER',
+    name: 'Manager - Ambassade Chine',
+    entityId: 'cn-embassy-beijing',
+    permissions: [
+      'Supervision de l\'équipe Chine',
+      'Validation finale des dossiers',
+      'Gestion des visas d\'affaires',
+      'Coopération commerciale',
+    ],
+    badge: '🔵',
+    description: 'Ambassadeur à Pékin - Hub commercial stratégique',
   },
   {
     id: 'agent-france',
