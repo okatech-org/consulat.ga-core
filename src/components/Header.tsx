@@ -47,18 +47,6 @@ export const Header = () => {
           <Link to="/demo-portal" className="text-sm font-medium hover:text-primary transition-colors">
             {t('header.demoPortal')}
           </Link>
-          <Link to="/iboite" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
-            <MessageSquare className="h-4 w-4" />
-            {t('header.messaging')}
-          </Link>
-          {isSimulating && currentUser?.role === "ADMIN" && (
-            <Link to="/iboite">
-              <Button variant="ghost" size="icon" className="relative">
-                <MessageSquare className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full animate-pulse" />
-              </Button>
-            </Link>
-          )}
           {isSimulating && currentUser && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm">
               <span>{currentUser.badge}</span>
