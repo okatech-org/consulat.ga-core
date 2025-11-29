@@ -1,37 +1,24 @@
-import { EntityType } from './entity';
+import { OrganizationType } from './organization';
+
+export enum ConsularRole {
+    CONSUL_GENERAL = 'CONSUL_GENERAL',
+    CONSUL = 'CONSUL',
+    VICE_CONSUL = 'VICE_CONSUL',
+    CHARGE_AFFAIRES_CONSULAIRES = 'CHARGE_AFFAIRES_CONSULAIRES',
+    AGENT_CONSULAIRE = 'AGENT_CONSULAIRE',
+    STAGIAIRE = 'STAGIAIRE'
+}
 
 export enum EmploymentStatus {
     FONCTIONNAIRE = 'FONCTIONNAIRE',
     CONTRACTUEL = 'CONTRACTUEL',
-    CITOYEN = 'CITOYEN'
-}
-
-export enum ConsularRole {
-    // CONSULAT_GENERAL uniquement
-    CONSUL_GENERAL = 'CONSUL_GENERAL',
-
-    // CONSULAT_GENERAL, CONSULAT, AMBASSADE
-    CONSUL = 'CONSUL',
-
-    // CONSULAT_GENERAL, CONSULAT uniquement (PAS AMBASSADE)
-    VICE_CONSUL = 'VICE_CONSUL',
-
-    // CONSULAT_GENERAL, CONSULAT, AMBASSADE
-    CHARGE_AFFAIRES_CONSULAIRES = 'CHARGE_AFFAIRES_CONSULAIRES',
-
-    // CONSULAT_GENERAL, CONSULAT, AMBASSADE
-    AGENT_CONSULAIRE = 'AGENT_CONSULAIRE',
-
-    // CONSULAT_GENERAL, CONSULAT, AMBASSADE
-    STAGIAIRE = 'STAGIAIRE',
-
-    // Utilisateur standard
-    CITIZEN = 'CITIZEN'
+    VACATAIRE = 'VACATAIRE',
+    STAGIAIRE_INTERNE = 'STAGIAIRE_INTERNE'
 }
 
 export interface RoleEntityMapping {
     role: ConsularRole;
-    allowedEntityTypes: EntityType[];
+    allowedEntityTypes: OrganizationType[];
     employmentStatus: EmploymentStatus;
     hierarchyLevel: number;
     canManageRoles: ConsularRole[];
@@ -42,7 +29,7 @@ export interface RoleEntityMapping {
 export const ROLE_ENTITY_MAPPING: Record<ConsularRole, RoleEntityMapping> = {
     [ConsularRole.CONSUL_GENERAL]: {
         role: ConsularRole.CONSUL_GENERAL,
-        allowedEntityTypes: ['CONSULAT_GENERAL'],
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL],
         employmentStatus: EmploymentStatus.FONCTIONNAIRE,
         hierarchyLevel: 1,
         canManageRoles: [
@@ -58,7 +45,7 @@ export const ROLE_ENTITY_MAPPING: Record<ConsularRole, RoleEntityMapping> = {
 
     [ConsularRole.CONSUL]: {
         role: ConsularRole.CONSUL,
-        allowedEntityTypes: ['CONSULAT_GENERAL', 'CONSULAT', 'AMBASSADE'],
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
         employmentStatus: EmploymentStatus.FONCTIONNAIRE,
         hierarchyLevel: 2,
         canManageRoles: [
@@ -73,7 +60,7 @@ export const ROLE_ENTITY_MAPPING: Record<ConsularRole, RoleEntityMapping> = {
 
     [ConsularRole.VICE_CONSUL]: {
         role: ConsularRole.VICE_CONSUL,
-        allowedEntityTypes: ['CONSULAT_GENERAL', 'CONSULAT'],
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT],
         employmentStatus: EmploymentStatus.FONCTIONNAIRE,
         hierarchyLevel: 3,
         canManageRoles: [
@@ -82,73 +69,105 @@ export const ROLE_ENTITY_MAPPING: Record<ConsularRole, RoleEntityMapping> = {
             ConsularRole.STAGIAIRE
         ],
         label: 'Vice-Consul',
-        description: 'Appui au Consul, supervision des opérations locales',
+        description: 'Gestion des opérations consulaires, légalisations, supervision des agents',
     },
 
     [ConsularRole.CHARGE_AFFAIRES_CONSULAIRES]: {
         role: ConsularRole.CHARGE_AFFAIRES_CONSULAIRES,
-        allowedEntityTypes: ['CONSULAT_GENERAL', 'CONSULAT', 'AMBASSADE'],
-        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+        employmentStatus: EmploymentStatus.CONTRACTUEL,
         hierarchyLevel: 4,
         canManageRoles: [
             ConsularRole.AGENT_CONSULAIRE,
             ConsularRole.STAGIAIRE
         ],
         label: 'Chargé d\'Affaires Consulaires',
-        description: 'Responsable de la gestion locale des demandes consulaires',
+        description: 'Traitement des dossiers spécialisés (visas, passeports, état civil)',
     },
 
     [ConsularRole.AGENT_CONSULAIRE]: {
         role: ConsularRole.AGENT_CONSULAIRE,
-        allowedEntityTypes: ['CONSULAT_GENERAL', 'CONSULAT', 'AMBASSADE'],
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
         employmentStatus: EmploymentStatus.CONTRACTUEL,
         hierarchyLevel: 5,
-        canManageRoles: [ConsularRole.STAGIAIRE],
+        canManageRoles: [],
         label: 'Agent Consulaire',
-        description: 'Traitement quotidien des dossiers et assistance aux citoyens',
+        description: 'Accueil, saisie, traitement administratif standard',
     },
 
     [ConsularRole.STAGIAIRE]: {
         role: ConsularRole.STAGIAIRE,
-        allowedEntityTypes: ['CONSULAT_GENERAL', 'CONSULAT', 'AMBASSADE'],
-        employmentStatus: EmploymentStatus.CONTRACTUEL,
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+        employmentStatus: EmploymentStatus.STAGIAIRE_INTERNE,
         hierarchyLevel: 6,
         canManageRoles: [],
         label: 'Stagiaire',
-        description: 'Support opérationnel, apprentissage',
-    },
-
-    [ConsularRole.CITIZEN]: {
-        role: ConsularRole.CITIZEN,
-        allowedEntityTypes: ['CONSULAT_GENERAL', 'CONSULAT', 'AMBASSADE'],
-        employmentStatus: EmploymentStatus.CITOYEN,
-        hierarchyLevel: 0,
-        canManageRoles: [],
-        label: 'Citoyen',
-        description: 'Utilisateur standard',
+        description: 'Formation, assistance, tâches non sensibles',
     }
 };
 
-export function validateRoleForEntity(role: ConsularRole, entityType: EntityType): boolean {
-    const mapping = ROLE_ENTITY_MAPPING[role];
-    return mapping.allowedEntityTypes.includes(entityType);
+// Helper functions
+export function canManageRole(managerRole: ConsularRole, targetRole: ConsularRole): boolean {
+    return ROLE_ENTITY_MAPPING[managerRole]?.canManageRoles.includes(targetRole) || false;
 }
 
-export function canAssignRole(
-    currentUserRole: ConsularRole,
-    targetRole: ConsularRole,
-    entityType: EntityType
-): boolean {
-    // Valider que le rôle cible est valide pour ce type d'entité
-    if (!validateRoleForEntity(targetRole, entityType)) {
-        // throw new Error(`Le rôle ${targetRole} n'est pas autorisé pour une ${entityType}`);
-        return false;
+export function isAuthorizedForEntityType(role: ConsularRole, entityType: OrganizationType): boolean {
+    return ROLE_ENTITY_MAPPING[role]?.allowedEntityTypes.includes(entityType) || false;
+}
+
+export function getRoleLabel(role: ConsularRole): string {
+    return ROLE_ENTITY_MAPPING[role]?.label || role;
+}
+
+export function getRoleDescription(role: ConsularRole): string {
+    return ROLE_ENTITY_MAPPING[role]?.description || '';
+}
+
+export function getHierarchyLevel(role: ConsularRole): number {
+    return ROLE_ENTITY_MAPPING[role]?.hierarchyLevel || 999;
+}
+
+export function getAllowedRolesForEntityType(entityType: OrganizationType): ConsularRole[] {
+    return Object.values(ConsularRole).filter(role =>
+        isAuthorizedForEntityType(role, entityType)
+    );
+}
+
+// ============== Validation Rules ==============
+
+export interface HierarchyValidation {
+    isValid: boolean;
+    message?: string;
+}
+
+/**
+ * Validates if a user with a given role can be assigned to a specific entity
+ */
+export function validateRoleEntityAssignment(
+    role: ConsularRole,
+    entityType: OrganizationType
+): HierarchyValidation {
+    if (!isAuthorizedForEntityType(role, entityType)) {
+        return {
+            isValid: false,
+            message: `Le rôle "${getRoleLabel(role)}" n'est pas autorisé pour ce type d'entité.`
+        };
     }
-
-    // Vérifier que l'utilisateur actuel peut gérer ce rôle
-    const currentUserMapping = ROLE_ENTITY_MAPPING[currentUserRole];
-    return currentUserMapping.canManageRoles.includes(targetRole);
+    return { isValid: true };
 }
 
-// Re-export for compatibility if needed, but prefer using ROLE_ENTITY_MAPPING
-export const HIERARCHY_DEFINITIONS = ROLE_ENTITY_MAPPING;
+/**
+ * Validates if a manager can assign/manage a subordinate role
+ */
+export function validateHierarchyManagement(
+    managerRole: ConsularRole,
+    targetRole: ConsularRole
+): HierarchyValidation {
+    if (!canManageRole(managerRole, targetRole)) {
+        return {
+            isValid: false,
+            message: `Le rôle "${getRoleLabel(managerRole)}" ne peut pas gérer le rôle "${getRoleLabel(targetRole)}".`
+        };
+    }
+    return { isValid: true };
+}

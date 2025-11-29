@@ -1,5 +1,5 @@
 import { Entity } from "@/types/entity";
-import { DemoUser } from "@/types/roles";
+import { DemoUser, UserRole } from "@/types/roles";
 
 export const getDemoAccountsForEntity = (entity: Entity): DemoUser[] => {
   const baseId = `demo-${entity.id}`;
@@ -8,7 +8,7 @@ export const getDemoAccountsForEntity = (entity: Entity): DemoUser[] => {
     // 1. Ressortissant (Résident)
     {
       id: `${baseId}-resident`,
-      role: 'CITIZEN',
+      role: 'citizen' as UserRole,
       name: 'Ressortissant (Résident)',
       entityId: entity.id,
       permissions: ['Mes demandes', 'Mon profil', 'Rendez-vous', 'Documents'],
@@ -18,7 +18,7 @@ export const getDemoAccountsForEntity = (entity: Entity): DemoUser[] => {
     // 2. Ressortissant (Pays Lié)
     {
       id: `${baseId}-linked`,
-      role: 'CITIZEN',
+      role: 'citizen' as UserRole,
       name: 'Ressortissant (Pays Lié)',
       entityId: entity.id,
       permissions: ['Mes demandes', 'Mon profil', 'Rendez-vous', 'Documents'],
@@ -28,7 +28,7 @@ export const getDemoAccountsForEntity = (entity: Entity): DemoUser[] => {
     // 3. Ressortissant (Autre/Touriste/Etudiant)
     {
       id: `${baseId}-other`,
-      role: 'CITIZEN',
+      role: 'citizen' as UserRole,
       name: 'Ressortissant (De Passage)',
       entityId: entity.id,
       permissions: ['Assistance', 'Urgences', 'Signalement'],
@@ -38,7 +38,7 @@ export const getDemoAccountsForEntity = (entity: Entity): DemoUser[] => {
     // 4. Demandeur Visa (Type A - Tourisme)
     {
       id: `${baseId}-visa-a`,
-      role: 'CITIZEN', // Using CITIZEN role but conceptually a foreigner
+      role: 'citizen' as UserRole, // Using citizen role but conceptually a foreigner
       name: 'Demandeur Visa (Tourisme)',
       entityId: entity.id,
       permissions: ['Demande Visa', 'Suivi Dossier'],
@@ -48,7 +48,7 @@ export const getDemoAccountsForEntity = (entity: Entity): DemoUser[] => {
     // 5. Demandeur Visa (Type B - Affaires)
     {
       id: `${baseId}-visa-b`,
-      role: 'CITIZEN',
+      role: 'citizen' as UserRole,
       name: 'Demandeur Visa (Affaires)',
       entityId: entity.id,
       permissions: ['Demande Visa', 'Suivi Dossier', 'Fast Track'],
