@@ -3,8 +3,8 @@
 // Pour obtenir votre token: https://account.mapbox.com/
 
 export const MAPBOX_CONFIG = {
-  // Remplacez cette valeur par votre token public Mapbox
-  accessToken: 'VOTRE_TOKEN_MAPBOX_PUBLIC_ICI',
+  // Token public Mapbox configuré
+  accessToken: 'pk.eyJ1Ijoib2thdGVjaCIsImEiOiJjbWhzM3dnOWowYnBjMm1zaGJsbmJrMGR3In0.yYvhLCZKtUKd4RNPfYQvIw',
   
   // Style de carte par défaut
   mapStyle: 'mapbox://styles/mapbox/light-v11',
