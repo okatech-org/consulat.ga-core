@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, BookKey, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-consulat.jpg";
 import { useTranslation } from "react-i18next";
+import { InteractiveWorldMap } from "@/components/InteractiveWorldMap";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -36,26 +36,18 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32">
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Consulat du Gabon"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/60" />
-        </div>
-        <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground drop-shadow-lg">
+      <section className="py-12 md:py-16 bg-gradient-to-b from-background to-muted/20">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center mb-12 animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
               {t('home.hero.title')}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-foreground/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl mb-8 text-muted-foreground">
               {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/login">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto">
+                <Button size="lg" variant="default" className="w-full sm:w-auto">
                   {t('common.login')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -66,6 +58,11 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
+          </div>
+
+          {/* Carte Interactive */}
+          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <InteractiveWorldMap />
           </div>
         </div>
       </section>
