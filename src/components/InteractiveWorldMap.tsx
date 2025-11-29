@@ -4,9 +4,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { MOCK_ORGANIZATIONS } from '@/data/mock-organizations';
 import { MOCK_COMPANIES } from '@/data/mock-companies';
 import { MOCK_ASSOCIATIONS } from '@/data/mock-associations';
-import { Building2, Globe, Users, Filter } from 'lucide-react';
+import { Building2, Globe, Users, Filter, AlertCircle } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Coordonnées approximatives des villes
 const CITY_COORDINATES: Record<string, [number, number]> = {
@@ -85,6 +86,7 @@ export function InteractiveWorldMap() {
   const map = useRef<mapboxgl.Map | null>(null);
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const [mapError, setMapError] = useState<string | null>(null);
   
   // États des filtres
   const [filters, setFilters] = useState({
@@ -155,25 +157,45 @@ export function InteractiveWorldMap() {
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
-    // Initialiser la carte
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
+    // Vérifier le token Mapbox
+    const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
     
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [9.4673, 0.4162], // Centré sur le Gabon
-      zoom: 2,
-      pitch: 0,
-      projection: 'globe' as any
-    });
+    if (!mapboxToken) {
+      setMapError('Token Mapbox non configuré. Veuillez configurer VITE_MAPBOX_TOKEN dans les variables d\'environnement.');
+      console.error('VITE_MAPBOX_TOKEN is not set');
+      return;
+    }
 
-    // Ajouter les contrôles de navigation
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
+    try {
+      // Initialiser la carte
+      mapboxgl.accessToken = mapboxToken;
+      
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [9.4673, 0.4162], // Centré sur le Gabon
+        zoom: 2,
+        pitch: 0,
+        projection: 'globe' as any
+      });
+
+      // Ajouter les contrôles de navigation
+      map.current.addControl(
+        new mapboxgl.NavigationControl({
+          visualizePitch: true,
+        }),
+        'top-right'
+      );
+
+      // Gérer les erreurs de chargement
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+        setMapError('Erreur lors du chargement de la carte. Vérifiez votre connexion internet.');
+      });
+    } catch (error) {
+      console.error('Error initializing Mapbox:', error);
+      setMapError('Erreur lors de l\'initialisation de la carte.');
+    }
 
     // Nettoyer les anciens marqueurs
     markersRef.current.forEach(marker => marker.remove());
@@ -255,10 +277,20 @@ export function InteractiveWorldMap() {
 
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg">
-      <div ref={mapContainer} className="absolute inset-0" />
+      {mapError ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 p-8">
+          <Alert variant="destructive" className="max-w-md">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Erreur de chargement</AlertTitle>
+            <AlertDescription>{mapError}</AlertDescription>
+          </Alert>
+        </div>
+      ) : (
+        <div ref={mapContainer} className="absolute inset-0" />
+      )}
       
       {/* Filtres interactifs */}
-      <div className="absolute top-4 right-4 bg-card/95 backdrop-blur p-4 rounded-lg shadow-lg border border-border z-10">
+      <div className="absolute top-4 right-4 bg-card backdrop-blur-sm p-4 rounded-lg shadow-lg border border-border z-10">
         <div className="flex items-center gap-2 mb-3">
           <Filter className="w-4 h-4 text-foreground" />
           <h4 className="text-sm font-semibold text-foreground">Filtres</h4>
@@ -307,7 +339,7 @@ export function InteractiveWorldMap() {
       </div>
 
       {/* Statistiques */}
-      <div className="absolute top-4 left-4 bg-card/95 backdrop-blur p-4 rounded-lg shadow-lg border border-border z-10">
+      <div className="absolute top-4 left-4 bg-card backdrop-blur-sm p-4 rounded-lg shadow-lg border border-border z-10">
         <h4 className="text-sm font-semibold mb-3 text-foreground">Réseau mondial</h4>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
