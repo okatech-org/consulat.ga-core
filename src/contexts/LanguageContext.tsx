@@ -48,46 +48,27 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const detectLocation = async () => {
+        const detectPreferredLanguage = () => {
             try {
-                // Try to get country from IP
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                const countryCode = data.country_code;
+                // Use browser language only to avoid external IP-based services (CORS / rate limits)
+                const browserLang = navigator.language.split('-')[0] as LanguageCode;
 
-                // Determine local language
-                const localLangCode = COUNTRY_LANGUAGE_MAP[countryCode];
+                let newAvailableLanguages: Language[] = [LANGUAGES.fr, LANGUAGES.en];
 
-                let newAvailableLanguages = [LANGUAGES.fr, LANGUAGES.en];
-
-                if (localLangCode && localLangCode !== 'fr' && localLangCode !== 'en') {
-                    // Add local language if supported and not already present
-                    if (LANGUAGES[localLangCode]) {
-                        newAvailableLanguages.push(LANGUAGES[localLangCode]);
-                    }
+                if (LANGUAGES[browserLang] && browserLang !== 'fr' && browserLang !== 'en') {
+                    newAvailableLanguages.push(LANGUAGES[browserLang]);
                 }
 
                 setAvailableLanguages(newAvailableLanguages);
-
-                // Optional: Set current language to local if preferred, otherwise default to FR
-                // For now, we keep FR as default unless user changes it, or maybe match browser?
-                // Let's stick to FR default as per implicit "Consulat Gabonais" context, but allow switch.
-
             } catch (error) {
-                console.error("Failed to detect location:", error);
-                // Fallback: Check navigator language
-                const browserLang = navigator.language.split('-')[0] as LanguageCode;
-                if (LANGUAGES[browserLang] && browserLang !== 'fr' && browserLang !== 'en') {
-                    setAvailableLanguages([LANGUAGES.fr, LANGUAGES.en, LANGUAGES[browserLang]]);
-                }
+                console.error('Failed to detect browser language:', error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        detectLocation();
+        detectPreferredLanguage();
     }, []);
-
     const setLanguage = (code: LanguageCode) => {
         if (LANGUAGES[code]) {
             setCurrentLanguage(LANGUAGES[code]);
