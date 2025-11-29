@@ -8,6 +8,7 @@ import { Building2, Globe, Users, Filter, AlertCircle } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { MAPBOX_CONFIG } from '@/config/mapbox';
 
 // Coordonnées approximatives des villes
 const CITY_COORDINATES: Record<string, [number, number]> = {
@@ -158,11 +159,11 @@ export function InteractiveWorldMap() {
     if (!mapContainer.current || map.current) return;
 
     // Vérifier le token Mapbox
-    const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+    const mapboxToken = MAPBOX_CONFIG.accessToken;
     
-    if (!mapboxToken) {
-      setMapError('Token Mapbox non configuré. Veuillez configurer VITE_MAPBOX_TOKEN dans les variables d\'environnement.');
-      console.error('VITE_MAPBOX_TOKEN is not set');
+    if (!mapboxToken || mapboxToken === 'VOTRE_TOKEN_MAPBOX_PUBLIC_ICI') {
+      setMapError('Token Mapbox non configuré. Veuillez ajouter votre token public Mapbox dans src/config/mapbox.ts');
+      console.error('Mapbox token not configured in src/config/mapbox.ts');
       return;
     }
 
@@ -172,9 +173,9 @@ export function InteractiveWorldMap() {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [9.4673, 0.4162], // Centré sur le Gabon
-        zoom: 2,
+        style: MAPBOX_CONFIG.mapStyle,
+        center: MAPBOX_CONFIG.defaultCenter,
+        zoom: MAPBOX_CONFIG.defaultZoom,
         pitch: 0,
         projection: 'globe' as any
       });
@@ -190,7 +191,7 @@ export function InteractiveWorldMap() {
       // Gérer les erreurs de chargement
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
-        setMapError('Erreur lors du chargement de la carte. Vérifiez votre connexion internet.');
+        setMapError('Erreur lors du chargement de la carte. Vérifiez votre token Mapbox et votre connexion internet.');
       });
     } catch (error) {
       console.error('Error initializing Mapbox:', error);
