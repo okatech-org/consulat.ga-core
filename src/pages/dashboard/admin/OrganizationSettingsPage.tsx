@@ -393,8 +393,8 @@ export default function OrganizationSettingsPage() {
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center justify-between mt-3 pl-11">
-                                                        <Badge variant="outline" className="text-[10px]">{service.type}</Badge>
-                                                        <span className="text-xs text-muted-foreground">Délai: {service.defaultDelay}j</span>
+                                                        <Badge variant="outline" className="text-[10px]">Service</Badge>
+                                                        <span className="text-xs text-muted-foreground">Actif</span>
                                                     </div>
                                                 </div>
                                             ))}

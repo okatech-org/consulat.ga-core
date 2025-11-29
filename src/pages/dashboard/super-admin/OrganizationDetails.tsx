@@ -5,8 +5,9 @@ import {
     Save, Users, CreditCard, FileText, Settings, Activity, Calendar
 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { MOCK_ENTITIES } from "@/data/mock-entities";
-import { COUNTRY_FLAGS, Entity } from "@/types/entity";
+import { COUNTRY_FLAGS } from "@/types/organization";
+import { Organization } from "@/types/organization";
+import { organizationService } from "@/services/organizationService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,78 +23,57 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-
-interface EnrichedEntity extends Entity {
-    address?: string;
-    coordinates?: { lat: number; lng: number };
-    contact?: {
-        phone: string;
-        email: string;
-        website?: string;
-    };
-    bankDetails?: {
-        bankName: string;
-        accountNumber: string;
-        iban: string;
-        swift: string;
-        currency: string;
-    };
-    openingHours?: Record<string, { start: string; end: string; isClosed: boolean }>;
-    enabledServices: string[];
-    isActive?: boolean;
-}
-
 export default function OrganizationDetails() {
     const { entityId } = useParams();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get("tab") || "general";
     const { toast } = useToast();
-    const [entity, setEntity] = useState<EnrichedEntity | null>(null);
+    const [organization, setOrganization] = useState<Organization | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate API fetch
-        const found = MOCK_ENTITIES.find(e => e.id === entityId);
-        if (found) {
-            // Enrich with mock details if missing
-            const enriched: EnrichedEntity = {
-                ...found,
-                enabledServices: ['PASSPORT', 'VISA'],
-                isActive: found.status === 'ACTIVE',
-                contact: found.metadata?.contact || {
-                    address: "123 Avenue Diplomatique",
-                    phone: "+33 1 23 45 67 89",
-                    email: `contact@${found.id.toLowerCase()}.ga`,
-                    website: `www.ambassade-gabon-${(found.metadata?.countryCode || 'ga').toLowerCase()}.ga`
-                },
-                metadata: {
-                    ...found.metadata,
-                    hours: found.metadata?.hours || {
-                        'Lundi': { open: "09:00", close: "17:00", isOpen: true },
-                        'Mardi': { open: "09:00", close: "17:00", isOpen: true },
-                        'Mercredi': { open: "09:00", close: "17:00", isOpen: true },
-                        'Jeudi': { open: "09:00", close: "17:00", isOpen: true },
-                        'Vendredi': { open: "09:00", close: "16:00", isOpen: true },
-                        'Samedi': { open: "00:00", close: "00:00", isOpen: false },
-                        'Dimanche': { open: "00:00", close: "00:00", isOpen: false },
-                    }
-                }
-            };
-            setEntity(enriched);
-        }
-        setLoading(false);
-    }, [entityId]);
+        const loadOrganization = async () => {
+            if (!entityId) return;
+            try {
+                const data = await organizationService.getById(entityId);
+                setOrganization(data);
+            } catch (error) {
+                console.error("Failed to load organization", error);
+                toast({
+                    title: "Erreur",
+                    description: "Impossible de charger l'organisation.",
+                    variant: "destructive"
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadOrganization();
+    }, [entityId, toast]);
 
-    const handleSave = () => {
-        toast({
-            title: "Modifications enregistrées",
-            description: "Les informations de l'organisation ont été mises à jour.",
-        });
+    const handleSave = async () => {
+        if (!organization) return;
+        try {
+            await organizationService.update(organization.id, organization);
+            toast({
+                title: "Modifications enregistrées",
+                description: "Les informations de l'organisation ont été mises à jour.",
+            });
+        } catch (error) {
+            console.error("Failed to update organization", error);
+            toast({
+                title: "Erreur",
+                description: "Impossible de sauvegarder les modifications.",
+                variant: "destructive"
+            });
+        }
     };
 
-    if (loading) return <DashboardLayout><div>Chargement...</div></DashboardLayout>;
-    if (!entity) return <DashboardLayout><div>Organisation introuvable</div></DashboardLayout>;
+    if (loading) return <DashboardLayout><div className="flex items-center justify-center h-96">Chargement...</div></DashboardLayout>;
+    if (!organization) return <DashboardLayout><div className="flex items-center justify-center h-96">Organisation introuvable</div></DashboardLayout>;
+
+    const firstJurisdictionFlag = organization.jurisdiction?.[0] ? COUNTRY_FLAGS[organization.jurisdiction[0]] : '🌐';
 
     return (
         <DashboardLayout>
@@ -105,15 +85,14 @@ export default function OrganizationDetails() {
                     </Button>
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl">{COUNTRY_FLAGS[entity.metadata?.countryCode || '']}</span>
-                            <h1 className="text-2xl font-bold text-foreground">{entity.name}</h1>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${entity.isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700'
-                                }`}>
-                                {entity.isActive ? 'Actif' : 'Inactif'}
+                            <span className="text-3xl">{firstJurisdictionFlag}</span>
+                            <h1 className="text-2xl font-bold text-foreground">{organization.name}</h1>
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                Actif
                             </span>
                         </div>
                         <p className="text-muted-foreground flex items-center gap-2 mt-1">
-                            <MapPin className="w-4 h-4" /> {entity.metadata?.city}, {entity.metadata?.country}
+                            <MapPin className="w-4 h-4" /> {organization.city || 'N/A'}, {organization.country || 'N/A'}
                         </p>
                     </div>
                     <Button onClick={handleSave} className="gap-2">
@@ -154,101 +133,64 @@ export default function OrganizationDetails() {
                                 <div className="space-y-4">
                                     <div className="space-y-2">
                                         <Label>Nom de l'entité</Label>
-                                        <Input defaultValue={entity.name} />
+                                        <Input 
+                                            value={organization.name}
+                                            onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
+                                        />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label>Type</Label>
-                                            <Input defaultValue={entity.type} disabled />
+                                            <Input value={organization.type.replace(/_/g, ' ')} disabled />
                                         </div>
                                         <div className="space-y-2">
                                             <Label>Code Pays</Label>
-                                            <Input defaultValue={entity.metadata?.countryCode} disabled />
+                                            <Input value={organization.country_code || 'N/A'} disabled />
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Contact Card */}
-                            <div className="neu-raised p-6 rounded-xl space-y-4">
-                                <h3 className="font-bold text-lg flex items-center gap-2">
-                                    <Phone className="w-5 h-5 text-primary" />
-                                    Contact
-                                </h3>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label>Téléphone</Label>
-                                        <Input defaultValue={entity.contact?.phone} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Email Officiel</Label>
-                                        <Input defaultValue={entity.contact?.email} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Site Web</Label>
-                                        <Input defaultValue={entity.contact?.website} />
                                     </div>
                                 </div>
                             </div>
 
                             {/* Location Card */}
-                            <div className="neu-raised p-6 rounded-xl space-y-4 md:col-span-2">
+                            <div className="neu-raised p-6 rounded-xl space-y-4">
                                 <h3 className="font-bold text-lg flex items-center gap-2">
                                     <MapPin className="w-5 h-5 text-primary" />
                                     Localisation
                                 </h3>
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Adresse Physique</Label>
-                                            <Input defaultValue={entity.address} />
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <Label>Ville</Label>
-                                                <Input defaultValue={entity.metadata?.city} />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label>Pays</Label>
-                                                <Input defaultValue={entity.metadata?.country} />
-                                            </div>
-                                        </div>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Ville</Label>
+                                        <Input 
+                                            value={organization.city || ''}
+                                            onChange={(e) => setOrganization({ ...organization, city: e.target.value })}
+                                        />
                                     </div>
-                                    {/* Mock Map Placeholder */}
-                                    <div className="bg-muted/30 rounded-lg border-2 border-dashed border-muted flex items-center justify-center min-h-[150px]">
-                                        <div className="text-center text-muted-foreground">
-                                            <Globe className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                                            <p className="text-sm">Carte Interactive</p>
-                                            <p className="text-xs">Lat: {entity.coordinates?.lat}, Lng: {entity.coordinates?.lng}</p>
-                                        </div>
+                                    <div className="space-y-2">
+                                        <Label>Pays</Label>
+                                        <Input 
+                                            value={organization.country || ''}
+                                            onChange={(e) => setOrganization({ ...organization, country: e.target.value })}
+                                        />
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Opening Hours Card */}
+                            {/* Jurisdiction */}
                             <div className="neu-raised p-6 rounded-xl space-y-4 md:col-span-2">
                                 <h3 className="font-bold text-lg flex items-center gap-2">
-                                    <Activity className="w-5 h-5 text-primary" />
-                                    Horaires d'Ouverture
+                                    <Globe className="w-5 h-5 text-primary" />
+                                    Juridiction
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((day, index) => {
-                                        const dayKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'][index];
-                                        const schedule = entity.openingHours?.[dayKey] || { start: "09:00", end: "17:00", isClosed: index > 4 };
-
-                                        return (
-                                            <div key={day} className="p-3 rounded-lg border border-border bg-card/50 flex flex-col gap-2">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="font-medium text-sm">{day}</span>
-                                                    <Switch defaultChecked={!schedule.isClosed} />
-                                                </div>
-                                                <div className={`grid grid-cols-2 gap-2 ${schedule.isClosed ? 'opacity-50 pointer-events-none' : ''}`}>
-                                                    <Input type="time" defaultValue={schedule.start} className="h-8 text-xs" />
-                                                    <Input type="time" defaultValue={schedule.end} className="h-8 text-xs" />
-                                                </div>
+                                <div className="flex flex-wrap gap-3">
+                                    {organization.jurisdiction.map(code => (
+                                        <div key={code} className="neu-inset px-4 py-2 rounded-lg flex items-center gap-3">
+                                            <span className="text-2xl">{COUNTRY_FLAGS[code] || '🌐'}</span>
+                                            <div>
+                                                <div className="font-semibold text-sm">{code}</div>
+                                                <div className="text-xs text-muted-foreground">Actif</div>
                                             </div>
-                                        );
-                                    })}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -270,7 +212,16 @@ export default function OrganizationDetails() {
                                                 <p className="text-xs text-muted-foreground">Service consulaire standard</p>
                                             </div>
                                         </div>
-                                        <Switch defaultChecked={entity.enabledServices.includes(service)} />
+                                        <Switch 
+                                            checked={organization.enabled_services?.includes(service) || false}
+                                            onCheckedChange={(checked) => {
+                                                const services = organization.enabled_services || [];
+                                                const newServices = checked 
+                                                    ? [...services, service]
+                                                    : services.filter(s => s !== service);
+                                                setOrganization({ ...organization, enabled_services: newServices });
+                                            }}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -299,8 +250,6 @@ export default function OrganizationDetails() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Actif</span>
-
-                                            {/* Planning Dialog */}
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button variant="outline" size="sm" className="gap-2">
@@ -311,37 +260,20 @@ export default function OrganizationDetails() {
                                                 <DialogContent className="max-w-3xl">
                                                     <DialogHeader>
                                                         <DialogTitle>Planning Hebdomadaire - {['Jean Dupont', 'Alice Bernard', 'Charles Martin'][i - 1]}</DialogTitle>
-                                                        <DialogDescription>Gérez les horaires de travail et les congés de cet agent.</DialogDescription>
+                                                        <DialogDescription>Horaires de travail et disponibilité</DialogDescription>
                                                     </DialogHeader>
-
-                                                    <div className="grid grid-cols-7 gap-2 mt-4">
-                                                        {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, dIndex) => (
-                                                            <div key={day} className={`p-2 rounded-lg border text-center ${dIndex > 4 ? 'bg-muted/50' : 'bg-card'}`}>
-                                                                <p className="font-bold text-sm mb-2">{day}</p>
-                                                                <div className="space-y-2">
-                                                                    {dIndex > 4 ? (
-                                                                        <span className="text-xs text-muted-foreground italic">Repos</span>
-                                                                    ) : (
-                                                                        <>
-                                                                            <div className="bg-primary/10 text-primary text-xs p-1 rounded">
-                                                                                09:00 - 12:00
-                                                                            </div>
-                                                                            <div className="bg-primary/10 text-primary text-xs p-1 rounded">
-                                                                                14:00 - 17:00
-                                                                            </div>
-                                                                        </>
-                                                                    )}
-                                                                </div>
+                                                    <div className="space-y-4 py-4">
+                                                        {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'].map((day) => (
+                                                            <div key={day} className="grid grid-cols-4 gap-4 items-center p-3 rounded-lg bg-muted/50">
+                                                                <Label className="font-medium">{day}</Label>
+                                                                <Input type="time" defaultValue="09:00" className="h-9" />
+                                                                <Input type="time" defaultValue="17:00" className="h-9" />
+                                                                <Switch defaultChecked />
                                                             </div>
                                                         ))}
                                                     </div>
-                                                    <div className="flex justify-end mt-4">
-                                                        <Button>Sauvegarder le Planning</Button>
-                                                    </div>
                                                 </DialogContent>
                                             </Dialog>
-
-                                            <Button variant="ghost" size="sm">Éditer</Button>
                                         </div>
                                     </div>
                                 ))}
@@ -351,27 +283,27 @@ export default function OrganizationDetails() {
 
                     {/* FINANCE TAB */}
                     <TabsContent value="finance">
-                        <div className="neu-raised p-6 rounded-xl space-y-6">
-                            <h3 className="font-bold text-lg flex items-center gap-2">
+                        <div className="neu-raised p-6 rounded-xl">
+                            <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
                                 <CreditCard className="w-5 h-5 text-primary" />
                                 Informations Bancaires
                             </h3>
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <Label>Nom de la Banque</Label>
-                                    <Input defaultValue={entity.bankDetails?.bankName} />
+                                    <Input placeholder="Banque Centrale..." />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Devise</Label>
-                                    <Input defaultValue={entity.bankDetails?.currency} />
+                                    <Label>Numéro de Compte</Label>
+                                    <Input placeholder="1234567890" />
                                 </div>
-                                <div className="space-y-2 md:col-span-2">
+                                <div className="space-y-2">
                                     <Label>IBAN</Label>
-                                    <Input defaultValue={entity.bankDetails?.iban} className="font-mono" />
+                                    <Input placeholder="GA00 0000 0000 0000 0000" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>BIC/SWIFT</Label>
-                                    <Input defaultValue={entity.bankDetails?.swift} className="font-mono" />
+                                    <Label>Code SWIFT/BIC</Label>
+                                    <Input placeholder="ABCDGAXX" />
                                 </div>
                             </div>
                         </div>
@@ -380,21 +312,9 @@ export default function OrganizationDetails() {
                     {/* ACTIVITY TAB */}
                     <TabsContent value="activity">
                         <div className="neu-raised p-6 rounded-xl">
-                            <h3 className="font-bold text-lg mb-4">Journal d'Activité</h3>
-                            <div className="space-y-6">
-                                {[
-                                    { action: "Mise à jour des horaires", user: "Jean Dupont", time: "Il y a 2h" },
-                                    { action: "Activation service Visa", user: "Admin Système", time: "Il y a 1j" },
-                                    { action: "Modification adresse", user: "Alice Bernard", time: "Il y a 3j" },
-                                ].map((log, i) => (
-                                    <div key={i} className="flex gap-4 relative pl-6 border-l border-border pb-6 last:pb-0">
-                                        <div className="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-primary" />
-                                        <div>
-                                            <p className="font-medium text-sm">{log.action}</p>
-                                            <p className="text-xs text-muted-foreground">{log.user} • {log.time}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                            <h3 className="font-bold text-lg mb-6">Activité Récente</h3>
+                            <div className="space-y-4">
+                                <p className="text-muted-foreground text-center py-8">Aucune activité récente à afficher.</p>
                             </div>
                         </div>
                     </TabsContent>
