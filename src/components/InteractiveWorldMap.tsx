@@ -4,7 +4,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { MOCK_ORGANIZATIONS } from '@/data/mock-organizations';
 import { MOCK_COMPANIES } from '@/data/mock-companies';
 import { MOCK_ASSOCIATIONS } from '@/data/mock-associations';
-import { Building2, Globe, Users } from 'lucide-react';
+import { Building2, Globe, Users, Filter } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 // Coordonnées approximatives des villes
 const CITY_COORDINATES: Record<string, [number, number]> = {
@@ -82,6 +84,18 @@ export function InteractiveWorldMap() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [markers, setMarkers] = useState<MapMarker[]>([]);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  
+  // États des filtres
+  const [filters, setFilters] = useState({
+    organizations: true,
+    companies: true,
+    associations: true
+  });
+
+  const toggleFilter = (type: 'organizations' | 'companies' | 'associations') => {
+    setFilters(prev => ({ ...prev, [type]: !prev[type] }));
+  };
 
   useEffect(() => {
     // Préparer les markers
@@ -161,9 +175,21 @@ export function InteractiveWorldMap() {
       'top-right'
     );
 
-    // Ajouter les marqueurs
+    // Nettoyer les anciens marqueurs
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Ajouter les marqueurs filtrés
     markers.forEach(marker => {
       if (!map.current) return;
+
+      // Vérifier si le type de marqueur est activé dans les filtres
+      const shouldShow = 
+        (marker.type === 'organization' && filters.organizations) ||
+        (marker.type === 'company' && filters.companies) ||
+        (marker.type === 'association' && filters.associations);
+
+      if (!shouldShow) return;
 
       // Créer un élément HTML pour le marqueur
       const el = document.createElement('div');
@@ -212,67 +238,94 @@ export function InteractiveWorldMap() {
       `);
 
       // Ajouter le marqueur à la carte
-      new mapboxgl.Marker(el)
+      const mapboxMarker = new mapboxgl.Marker(el)
         .setLngLat(marker.coordinates)
         .setPopup(popup)
         .addTo(map.current);
+
+      markersRef.current.push(mapboxMarker);
     });
 
     // Cleanup
     return () => {
+      markersRef.current.forEach(marker => marker.remove());
       map.current?.remove();
     };
-  }, [markers]);
+  }, [markers, filters]);
 
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg">
       <div ref={mapContainer} className="absolute inset-0" />
       
-      {/* Légende */}
-      <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur p-4 rounded-lg shadow-lg border border-border">
-        <h4 className="text-sm font-semibold mb-3 text-foreground">Légende</h4>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: 'hsl(var(--primary))' }}>
-              🏛️
-            </div>
-            <span className="text-xs text-foreground">Organisations diplomatiques</span>
+      {/* Filtres interactifs */}
+      <div className="absolute top-4 right-4 bg-card/95 backdrop-blur p-4 rounded-lg shadow-lg border border-border z-10">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="w-4 h-4 text-foreground" />
+          <h4 className="text-sm font-semibold text-foreground">Filtres</h4>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="filter-orgs" className="flex items-center gap-2 cursor-pointer text-xs">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: 'hsl(var(--primary))' }}>
+                🏛️
+              </div>
+              <span className="text-foreground">Organisations</span>
+            </Label>
+            <Switch
+              id="filter-orgs"
+              checked={filters.organizations}
+              onCheckedChange={() => toggleFilter('organizations')}
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: 'hsl(var(--secondary))' }}>
-              🏢
-            </div>
-            <span className="text-xs text-foreground">Entreprises</span>
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="filter-companies" className="flex items-center gap-2 cursor-pointer text-xs">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: 'hsl(var(--secondary))' }}>
+                🏢
+              </div>
+              <span className="text-foreground">Entreprises</span>
+            </Label>
+            <Switch
+              id="filter-companies"
+              checked={filters.companies}
+              onCheckedChange={() => toggleFilter('companies')}
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: 'hsl(var(--accent))' }}>
-              👥
-            </div>
-            <span className="text-xs text-foreground">Associations</span>
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="filter-associations" className="flex items-center gap-2 cursor-pointer text-xs">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: 'hsl(var(--accent))' }}>
+                👥
+              </div>
+              <span className="text-foreground">Associations</span>
+            </Label>
+            <Switch
+              id="filter-associations"
+              checked={filters.associations}
+              onCheckedChange={() => toggleFilter('associations')}
+            />
           </div>
         </div>
       </div>
 
       {/* Statistiques */}
-      <div className="absolute top-4 left-4 bg-card/95 backdrop-blur p-4 rounded-lg shadow-lg border border-border">
+      <div className="absolute top-4 left-4 bg-card/95 backdrop-blur p-4 rounded-lg shadow-lg border border-border z-10">
         <h4 className="text-sm font-semibold mb-3 text-foreground">Réseau mondial</h4>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-primary" />
             <span className="text-xs text-foreground">
-              <strong>{markers.filter(m => m.type === 'organization').length}</strong> missions
+              <strong>{markers.filter(m => m.type === 'organization' && filters.organizations).length}</strong> missions
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-secondary" />
             <span className="text-xs text-foreground">
-              <strong>{markers.filter(m => m.type === 'company').length}</strong> entreprises
+              <strong>{markers.filter(m => m.type === 'company' && filters.companies).length}</strong> entreprises
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-accent" />
             <span className="text-xs text-foreground">
-              <strong>{markers.filter(m => m.type === 'association').length}</strong> associations
+              <strong>{markers.filter(m => m.type === 'association' && filters.associations).length}</strong> associations
             </span>
           </div>
         </div>
