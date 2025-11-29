@@ -245,6 +245,83 @@ export const useRealtimeVoiceWebRTC = (onToolCall?: (name: string, args: any) =>
                         name: 'stop_conversation',
                         description: 'Arrêter la conversation vocale',
                         parameters: { type: 'object', properties: {} }
+                    },
+                    {
+                        type: 'function',
+                        name: 'request_consular_service',
+                        description: 'Initier une demande de service consulaire (passeport, visa, attestation, etc.)',
+                        parameters: {
+                            type: 'object',
+                            properties: {
+                                service_type: {
+                                    type: 'string',
+                                    enum: ['passport', 'visa', 'residence_certificate', 'nationality_certificate', 'consular_card', 'document_legalization', 'birth_certificate', 'marriage_certificate'],
+                                    description: 'Type de service consulaire demandé'
+                                },
+                                urgency: {
+                                    type: 'string',
+                                    enum: ['normal', 'urgent'],
+                                    description: 'Niveau d\'urgence de la demande'
+                                },
+                                notes: {
+                                    type: 'string',
+                                    description: 'Notes ou informations complémentaires'
+                                }
+                            },
+                            required: ['service_type']
+                        }
+                    },
+                    {
+                        type: 'function',
+                        name: 'schedule_appointment',
+                        description: 'Prendre un rendez-vous au consulat',
+                        parameters: {
+                            type: 'object',
+                            properties: {
+                                service_type: {
+                                    type: 'string',
+                                    description: 'Type de service pour le rendez-vous'
+                                },
+                                preferred_date: {
+                                    type: 'string',
+                                    description: 'Date souhaitée au format YYYY-MM-DD'
+                                },
+                                notes: {
+                                    type: 'string',
+                                    description: 'Notes complémentaires'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        type: 'function',
+                        name: 'view_requests',
+                        description: 'Consulter l\'état des demandes en cours',
+                        parameters: {
+                            type: 'object',
+                            properties: {
+                                filter: {
+                                    type: 'string',
+                                    enum: ['pending', 'in_progress', 'completed', 'all'],
+                                    description: 'Filtre pour le statut des demandes'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        type: 'function',
+                        name: 'get_service_info',
+                        description: 'Obtenir des informations détaillées sur un service consulaire',
+                        parameters: {
+                            type: 'object',
+                            properties: {
+                                service_type: {
+                                    type: 'string',
+                                    description: 'Type de service consulaire'
+                                }
+                            },
+                            required: ['service_type']
+                        }
                     }
                 ]
             }
