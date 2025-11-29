@@ -254,10 +254,90 @@ export default function IAstedInterface({ userRole = 'user', defaultOpen = false
             }
         }
 
+        if (toolName === 'request_consular_service') {
+            console.log('📋 [IAstedInterface] Demande de service consulaire:', args);
+            const serviceNames: Record<string, string> = {
+                passport: 'passeport',
+                visa: 'visa',
+                residence_certificate: 'attestation de résidence',
+                nationality_certificate: 'certificat de nationalité',
+                consular_card: 'carte consulaire',
+                document_legalization: 'légalisation de documents',
+                birth_certificate: 'acte de naissance',
+                marriage_certificate: 'acte de mariage'
+            };
+            
+            const serviceName = serviceNames[args.service_type] || args.service_type;
+            const urgencyText = args.urgency === 'urgent' ? ' urgente' : '';
+            
+            toast.success(`Initiation de la demande de ${serviceName}${urgencyText}`);
+            
+            // Navigate to the appropriate service request page
+            setTimeout(() => {
+                navigate('/dashboard/citizen/requests', {
+                    state: {
+                        prefilledService: args.service_type,
+                        urgency: args.urgency,
+                        notes: args.notes
+                    }
+                });
+            }, 1000);
+            
+            return { success: true, message: `Demande de ${serviceName} initiée` };
+        }
+
+        if (toolName === 'schedule_appointment') {
+            console.log('📅 [IAstedInterface] Prise de rendez-vous:', args);
+            toast.success('Ouverture du calendrier de rendez-vous');
+            
+            setTimeout(() => {
+                navigate('/dashboard/citizen/requests', {
+                    state: {
+                        openAppointmentModal: true,
+                        serviceType: args.service_type,
+                        preferredDate: args.preferred_date,
+                        notes: args.notes
+                    }
+                });
+            }, 1000);
+            
+            return { success: true, message: 'Calendrier de rendez-vous ouvert' };
+        }
+
+        if (toolName === 'view_requests') {
+            console.log('📋 [IAstedInterface] Consultation des demandes:', args);
+            const filterText = args.filter === 'pending' ? 'en attente' :
+                              args.filter === 'in_progress' ? 'en cours' :
+                              args.filter === 'completed' ? 'terminées' : '';
+            
+            toast.success(`Affichage des demandes ${filterText || 'toutes'}`);
+            
+            navigate('/dashboard/citizen/requests', {
+                state: { filter: args.filter }
+            });
+            
+            return { success: true, message: 'Navigation vers vos demandes' };
+        }
+
+        if (toolName === 'get_service_info') {
+            console.log('ℹ️ [IAstedInterface] Informations sur le service:', args);
+            
+            // This would typically fetch from a service catalog
+            // For now, we'll just acknowledge and could open a modal with info
+            toast.info(`Recherche d'informations sur le service ${args.service_type}...`);
+            
+            // Could navigate to a service info page or open a modal
+            setTimeout(() => {
+                // You could implement a service info modal here
+                console.log('Service info for:', args.service_type);
+            }, 500);
+            
+            return { success: true, message: `Informations sur ${args.service_type}` };
+        }
+
         if (toolName === 'security_override') {
             console.log('🔓 [IAstedInterface] Override Sécurité:', args);
             if (args.action === 'unlock_admin_access') {
-                // This might set a global state or localStorage
                 localStorage.setItem('security_override', 'true');
                 toast.warning("🔓 SÉCURITÉ DÉSACTIVÉE - ACCÈS ADMIN AUTORISÉ");
                 window.dispatchEvent(new CustomEvent('security-override-activated'));
