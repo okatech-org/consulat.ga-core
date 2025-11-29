@@ -15,8 +15,8 @@ export const Header = () => {
   const { currentUser, currentEntity, isSimulating } = useDemo();
 
   return (
-    <header className={`sticky z-50 w-full border-b border-border bg-background ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
-      <div className="container flex h-16 items-center justify-between">
+    <header className={`sticky z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
+      <div className="container mx-auto flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-hero">
             <Shield className="h-6 w-6 text-primary-foreground" />
@@ -86,8 +86,8 @@ export const Header = () => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border/40 bg-background">
-          <nav className="container py-4 flex flex-col gap-4">
+        <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur-sm">
+          <nav className="container mx-auto py-4 flex flex-col gap-4">
             {isSimulating && currentUser && (
               <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg text-sm">
                 <span>{currentUser.badge}</span>

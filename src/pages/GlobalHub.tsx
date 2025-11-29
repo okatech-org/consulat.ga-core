@@ -30,19 +30,19 @@ export default function GlobalHub() {
   return (
     <>
       {/* Hero Section - Hub Global */}
-      <section className="relative py-12 bg-gradient-to-b from-background to-muted/20">
-        <div className="container">
-          <div className="max-w-4xl mx-auto text-center space-y-6 mb-8 animate-fade-in">
-            <div className="flex justify-center mb-4">
-              <Globe className="h-16 w-16 text-primary animate-pulse" />
+      <section className="relative py-16 md:py-20 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto">
+          <div className="max-w-4xl mx-auto text-center space-y-8 mb-16 animate-fade-in">
+            <div className="flex justify-center mb-6">
+              <Globe className="h-20 w-20 text-primary animate-pulse" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
               CONSULAT.GA
             </h1>
             <p className="text-2xl md:text-3xl text-muted-foreground">
               Le portail des Gabonais de l'étranger
             </p>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               Accédez aux services de votre consulat où que vous soyez dans le monde.
               Une plateforme unique, des services adaptés à votre localisation.
             </p>
@@ -51,14 +51,14 @@ export default function GlobalHub() {
               <JurisdictionSelector />
             </div>
 
-            <div className="flex gap-4 justify-center pt-4">
-              <Button asChild size="lg" variant="outline">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+              <Button asChild size="lg" variant="outline" className="min-w-[200px]">
                 <Link to="/actualites">
                   <Newspaper className="mr-2 h-5 w-5" />
                   Actualités Diaspora
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="outline" className="min-w-[200px]">
                 <Link to="/demo-portal">
                   <Shield className="mr-2 h-5 w-5" />
                   Portail Démo
@@ -68,23 +68,23 @@ export default function GlobalHub() {
           </div>
 
           {/* Carte Interactive */}
-          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="max-w-7xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <InteractiveWorldMap />
           </div>
         </div>
       </section>
 
       {/* Section Actualités */}
-      <section className="py-16 bg-background">
-        <div className="container">
-          <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-3xl font-bold mb-4">L'actualité de la communauté</h2>
-            <p className="text-muted-foreground">
+      <section className="py-20 md:py-24 bg-background">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center mb-16 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">L'actualité de la communauté</h2>
+            <p className="text-muted-foreground text-lg">
               Restez informés des dernières nouvelles consulaires et événements
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6 lg:gap-8">
             {articles.map((article, index) => (
               <Card
                 key={index}
@@ -112,8 +112,8 @@ export default function GlobalHub() {
             ))}
           </div>
 
-          <div className="text-center mt-8">
-            <Button asChild variant="outline" size="lg">
+          <div className="max-w-2xl mx-auto text-center mt-12">
+            <Button asChild variant="outline" size="lg" className="min-w-[250px]">
               <Link to="/actualites">Voir toutes les actualités</Link>
             </Button>
           </div>
@@ -121,15 +121,15 @@ export default function GlobalHub() {
       </section>
 
       {/* Section Réseau Mondial */}
-      <section className="py-16 bg-muted/30">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in">
-            <h2 className="text-3xl font-bold mb-4">Un réseau mondial à votre service</h2>
-            <p className="text-muted-foreground text-lg mb-8">
+      <section className="py-20 md:py-24 bg-muted/30">
+        <div className="container mx-auto">
+          <div className="max-w-4xl mx-auto text-center animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Un réseau mondial à votre service</h2>
+            <p className="text-muted-foreground text-lg md:text-xl mb-12 max-w-3xl mx-auto">
               Ambassades et consulats du Gabon présents sur tous les continents,
               pour accompagner la diaspora gabonaise dans toutes ses démarches administratives.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 max-w-4xl mx-auto">
               {['🇺🇸 USA', '🇫🇷 France', '🇨🇳 Chine', '🇸🇳 Sénégal'].map((country, i) => (
                 <div
                   key={i}
