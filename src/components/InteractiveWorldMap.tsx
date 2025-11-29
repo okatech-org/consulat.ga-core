@@ -10,42 +10,42 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MAPBOX_CONFIG } from '@/config/mapbox';
 
-// Coordonnées approximatives des villes
+// Coordonnées précises des villes (format: [longitude, latitude])
 const CITY_COORDINATES: Record<string, [number, number]> = {
   // Europe
   'Paris': [2.3522, 48.8566],
   'Berlin': [13.4050, 52.5200],
   'Bruxelles': [4.3517, 50.8503],
-  'Madrid': [3.7038, 40.4168],
-  'Lisbonne': [9.1393, 38.7223],
+  'Madrid': [-3.7038, 40.4168],
+  'Lisbonne': [-9.1393, 38.7223],
   'Rome': [12.4964, 41.9028],
-  'Londres': [0.1278, 51.5074],
+  'Londres': [-0.1278, 51.5074],
   'Genève': [6.1432, 46.2044],
   'Monaco': [7.4246, 43.7384],
   'Moscou': [37.6173, 55.7558],
   
   // Afrique
   'Libreville': [9.4673, 0.4162],
-  'Pretoria': [28.2293, 25.7479],
+  'Pretoria': [28.2293, -25.7479],
   'Alger': [3.0588, 36.7538],
-  'Luanda': [13.2343, 8.8383],
+  'Luanda': [13.2343, -8.8383],
   'Cotonou': [2.3158, 6.3703],
   'Yaoundé': [11.5174, 3.8480],
-  'Brazzaville': [15.2832, 4.2634],
-  'Abidjan': [4.0083, 5.3599],
+  'Brazzaville': [15.2832, -4.2634],
+  'Abidjan': [-4.0083, 5.3599],
   'Le Caire': [31.2357, 30.0444],
   'Addis-Abeba': [38.7469, 9.0320],
-  'Accra': [0.1870, 5.6037],
+  'Accra': [-0.1870, 5.6037],
   'Malabo': [8.7832, 3.7504],
   'Bata': [9.7670, 1.8637],
-  'Bamako': [8.0000, 12.6392],
-  'Rabat': [6.8498, 34.0209],
-  'Laâyoune': [13.2023, 27.1251],
+  'Bamako': [-8.0000, 12.6392],
+  'Rabat': [-6.8498, 34.0209],
+  'Laâyoune': [-13.2023, 27.1251],
   'Abuja': [7.5248, 9.0765],
-  'Kinshasa': [15.3222, 4.4419],
-  'Kigali': [30.0619, 1.9403],
+  'Kinshasa': [15.3222, -4.4419],
+  'Kigali': [30.0619, -1.9403],
   'São Tomé': [6.7273, 0.3365],
-  'Dakar': [17.4677, 14.7167],
+  'Dakar': [-17.4677, 14.7167],
   'Lomé': [1.2123, 6.1256],
   'Tunis': [10.1815, 36.8065],
   
@@ -183,11 +183,13 @@ export function InteractiveWorldMap() {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: MAPBOX_CONFIG.mapStyle,
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: MAPBOX_CONFIG.defaultCenter,
         zoom: MAPBOX_CONFIG.defaultZoom,
-        pitch: 0,
-        projection: 'globe' as any
+        pitch: 60,
+        bearing: 0,
+        projection: 'globe' as any,
+        antialias: true
       });
 
       console.log('Mapbox map created successfully');
@@ -203,6 +205,50 @@ export function InteractiveWorldMap() {
       // Événement de chargement réussi
       map.current.on('load', () => {
         console.log('Mapbox map loaded successfully');
+        
+        // Ajouter les bâtiments 3D
+        const layers = map.current?.getStyle().layers;
+        if (layers) {
+          const labelLayerId = layers.find(
+            (layer) => layer.type === 'symbol' && layer.layout && 'text-field' in layer.layout
+          )?.id;
+
+          if (labelLayerId && map.current) {
+            map.current.addLayer(
+              {
+                'id': '3d-buildings',
+                'source': 'composite',
+                'source-layer': 'building',
+                'filter': ['==', 'extrude', 'true'],
+                'type': 'fill-extrusion',
+                'minzoom': 15,
+                'paint': {
+                  'fill-extrusion-color': '#aaa',
+                  'fill-extrusion-height': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    15,
+                    0,
+                    15.05,
+                    ['get', 'height']
+                  ],
+                  'fill-extrusion-base': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    15,
+                    0,
+                    15.05,
+                    ['get', 'min_height']
+                  ],
+                  'fill-extrusion-opacity': 0.6
+                }
+              },
+              labelLayerId
+            );
+          }
+        }
       });
 
       // Gérer les erreurs de chargement
