@@ -3,6 +3,7 @@ import { AddressData, EntityStatus } from './company';
 
 export enum AssociationRole {
     PRESIDENT = 'PRESIDENT',
+    MEMBER = 'MEMBER',
     VICE_PRESIDENT = 'VICE_PRESIDENT',
     SECRETARY = 'SECRETARY',
     TREASURER = 'TREASURER'

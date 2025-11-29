@@ -3,6 +3,11 @@ import { CV } from '@/types/cv';
 export const MOCK_CV: CV = {
     id: 'cv-1',
     userId: 'user-current',
+    firstName: 'Jean',
+    lastName: 'Dupont',
+    email: 'jean.dupont@example.com',
+    phone: '+241 01 00 00 00',
+    address: 'Libreville, Gabon',
     summary: "Développeur Full Stack passionné avec 5 ans d'expérience dans la création d'applications web modernes. Spécialisé en React, Node.js et TypeScript.",
     experiences: [
         {

@@ -1,4 +1,4 @@
-import { Association, AssociationType } from '@/types/association';
+import { Association, AssociationType, AssociationRole } from '@/types/association';
 
 export const MOCK_ASSOCIATIONS: Association[] = [
     {
@@ -23,7 +23,7 @@ export const MOCK_ASSOCIATIONS: Association[] = [
             country: 'France'
         },
         ownerId: 'user-3',
-        ownerRole: 'PRESIDENT',
+        ownerRole: AssociationRole.PRESIDENT,
         createdAt: '2023-09-01T10:00:00Z',
         updatedAt: '2023-09-01T10:00:00Z',
         validatedAt: '2023-09-05T11:00:00Z',
@@ -45,7 +45,7 @@ export const MOCK_ASSOCIATIONS: Association[] = [
             country: 'France'
         },
         ownerId: 'user-4',
-        ownerRole: 'PRESIDENT',
+        ownerRole: AssociationRole.PRESIDENT,
         createdAt: '2024-04-10T14:20:00Z',
         updatedAt: '2024-04-10T14:20:00Z'
     }
