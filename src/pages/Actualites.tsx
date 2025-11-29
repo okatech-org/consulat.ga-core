@@ -61,16 +61,16 @@ export default function Actualites() {
   ];
 
   return (
-    <div className="flex-1 py-12 bg-gradient-official">
-      <div className="container">
-        <div className="mb-12 animate-fade-in">
-          <h1 className="text-4xl font-bold mb-4">Actualités & Sensibilisation</h1>
-          <p className="text-muted-foreground text-lg">
+    <div className="flex-1 py-16 md:py-20 bg-gradient-official">
+      <div className="container mx-auto">
+        <div className="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Actualités & Sensibilisation</h1>
+          <p className="text-muted-foreground text-lg md:text-xl">
             Restez informé des dernières nouvelles et annonces consulaires
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {articles.map((article, index) => (
             <Card
               key={article.id}
