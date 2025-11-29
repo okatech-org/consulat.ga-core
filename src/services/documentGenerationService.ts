@@ -216,7 +216,7 @@ export class DocumentGenerationService {
         });
 
         // Footer with page numbers
-        const pageCount = doc.getNumberOfPages();
+        const pageCount = (doc as any).internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
             doc.setFontSize(9);

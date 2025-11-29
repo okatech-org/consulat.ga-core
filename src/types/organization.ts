@@ -12,6 +12,19 @@ export enum OrganizationStatus {
     SUSPENDED = 'SUSPENDED'
 }
 
+export interface CountrySettings {
+    contact: {
+        address: string;
+        phone: string;
+        email: string;
+        website?: string;
+    };
+    hours: {
+        [day: string]: { open: string; close: string; isOpen: boolean };
+    };
+    resources?: Record<string, any>;
+}
+
 export interface OrganizationMetadata {
     jurisdiction?: string[]; // Array of Country Codes
     contact?: {

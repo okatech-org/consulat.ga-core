@@ -59,9 +59,20 @@ export function AssociationForm() {
             const mockOwnerId = 'user-current';
 
             await associationService.create({
-                ...data,
+                name: data.name,
+                legalName: data.legalName,
+                associationType: data.associationType,
+                registrationNumber: data.registrationNumber,
+                email: data.email,
+                phone: data.phone,
+                website: data.website,
+                description: data.description,
+                shortDescription: data.shortDescription,
+                objectives: data.objectives,
+                memberCount: data.memberCount,
+                foundingYear: data.foundingYear,
                 ownerId: mockOwnerId,
-                ownerRole: data.ownerRole as AssociationRole,
+                ownerRole: data.ownerRole,
                 address: data.address
             });
 

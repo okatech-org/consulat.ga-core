@@ -59,9 +59,18 @@ export function CompanyForm() {
             const mockOwnerId = 'user-current';
 
             await companyService.create({
-                ...data,
+                name: data.name,
+                legalName: data.legalName,
+                companyType: data.companyType,
+                activitySector: data.activitySector,
+                siret: data.siret,
+                email: data.email,
+                phone: data.phone,
+                website: data.website,
+                description: data.description,
+                shortDescription: data.shortDescription,
                 ownerId: mockOwnerId,
-                ownerRole: data.ownerRole as CompanyRole,
+                ownerRole: data.ownerRole,
                 address: data.address
             });
 
