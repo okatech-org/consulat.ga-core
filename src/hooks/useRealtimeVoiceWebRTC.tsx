@@ -73,14 +73,26 @@ export const useRealtimeVoiceWebRTC = (onToolCall?: (name: string, args: any) =>
 
             setVoiceState('connecting');
 
-            // 1. Get Ephemeral Token from edge function
+            // 1. Get Ephemeral Token from edge function (direct HTTP call to avoid mocked client)
             console.log('🔑 Requesting ephemeral token...');
-            const { data, error } = await supabase.functions.invoke('get-realtime-token');
+            const FUNCTION_URL =
+                'https://csmegxwehniyfvbbjqbz.functions.supabase.co/functions/v1/get-realtime-token';
 
-            if (error) {
-                console.error('❌ Token Error:', error);
-                throw new Error('Erreur lors de la récupération du token: ' + error.message);
+            const tokenResponse = await fetch(FUNCTION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({}),
+            });
+
+            if (!tokenResponse.ok) {
+                const errorText = await tokenResponse.text();
+                console.error('❌ Token HTTP error:', tokenResponse.status, errorText);
+                throw new Error('Erreur lors de la récupération du token: ' + tokenResponse.status);
             }
+
+            const data = await tokenResponse.json();
 
             if (!data?.client_secret?.value) {
                 console.error('❌ Invalid token response:', data);
