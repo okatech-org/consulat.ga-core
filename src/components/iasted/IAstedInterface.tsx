@@ -48,21 +48,21 @@ export default function IAstedInterface({ userRole = 'user', defaultOpen = false
         return hour >= 5 && hour < 18 ? "Bonjour" : "Bonsoir";
     }, []);
 
-    // Map user role to appropriate title
+    // Map user role to appropriate title (consulaire context)
     const userTitle = useMemo(() => {
         switch (userRole) {
-            case 'president':
-                return 'Excellence Monsieur le Président';
-            case 'minister':
-                return 'Excellence Monsieur le Ministre';
-            case 'director':
-                return 'Monsieur le Directeur';
-            case 'dgss':
-                return 'Directeur Général';
-            case 'courrier':
-                return 'Monsieur le Responsable Courrier';
-            case 'reception':
-                return 'Monsieur le Responsable Réception';
+            case 'super_admin':
+                return 'Monsieur l\'Administrateur';
+            case 'admin':
+                return 'Monsieur le Consul';
+            case 'agent':
+                return 'Monsieur l\'Agent';
+            case 'citizen':
+                return 'Cher ressortissant';
+            case 'foreigner':
+                return 'Cher visiteur';
+            case 'diplomat':
+                return 'Excellence';
             default:
                 return 'Monsieur';
         }
