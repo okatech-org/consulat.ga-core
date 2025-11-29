@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useDemo } from "@/contexts/DemoContext";
 import { DemoUser } from "@/types/roles";
+import { ConsularRole } from "@/types/consular-roles";
 import { getEntityById } from "@/data/mock-entities";
 import { SERVICE_CATALOG, ServiceType } from "@/types/services";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X } from "lucide-react";
+import { Check, X, Briefcase, Award } from "lucide-react";
 
 interface DemoUserCardProps {
   user: DemoUser;
@@ -20,15 +21,35 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
 
   const handleSimulate = () => {
     simulateUser(user.id);
-    navigate("/");
+
+    switch (user.role) {
+      case 'ADMIN':
+        navigate("/dashboard/super-admin");
+        break;
+      case ConsularRole.CITIZEN:
+        navigate("/dashboard/citizen");
+        break;
+      case ConsularRole.FOREIGNER:
+        navigate("/dashboard/foreigner");
+        break;
+      default:
+        // For all consular roles (Agent, Consul, etc.)
+        navigate("/dashboard/agent");
+        break;
+    }
   };
 
   const getRoleColor = () => {
     switch (user.role) {
       case 'ADMIN': return 'bg-red-600';
-      case 'MANAGER': return 'bg-blue-600';
-      case 'AGENT': return 'bg-green-600';
-      case 'CITIZEN': return 'bg-gray-500';
+      case ConsularRole.CONSUL_GENERAL: return 'bg-yellow-600'; // Gold
+      case ConsularRole.CONSUL: return 'bg-slate-500'; // Silver
+      case ConsularRole.VICE_CONSUL: return 'bg-orange-600'; // Bronze
+      case ConsularRole.CHARGE_AFFAIRES_CONSULAIRES: return 'bg-blue-600';
+      case ConsularRole.AGENT_CONSULAIRE: return 'bg-green-600';
+      case ConsularRole.STAGIAIRE: return 'bg-purple-500';
+      case ConsularRole.CITIZEN: return 'bg-gray-400';
+      case ConsularRole.FOREIGNER: return 'bg-teal-500';
       default: return 'bg-gray-500';
     }
   };
@@ -40,10 +61,17 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
     <Card className="hover-scale transition-all duration-300 border-l-4" style={{ borderLeftColor: getRoleColor().replace('bg-', '') }}>
       <CardHeader>
         <div className="flex items-center justify-between mb-2">
-          <Badge className={getRoleColor()}>
-            <span className="mr-1">{user.badge}</span>
-            {user.role}
-          </Badge>
+          <div className="flex gap-2">
+            <Badge className={getRoleColor()}>
+              <span className="mr-1">{user.badge}</span>
+              {user.role === 'CITIZEN' ? 'CITOYEN' : user.role.replace(/_/g, ' ')}
+            </Badge>
+            {user.hierarchyLevel && (
+              <Badge variant="outline" className="text-xs border-primary/50 text-primary">
+                Niveau {user.hierarchyLevel}
+              </Badge>
+            )}
+          </div>
           {entity && (
             <span className="text-2xl">
               {COUNTRY_FLAGS[entity.countryCode] || '🌍'}
@@ -52,6 +80,14 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
         </div>
         <CardTitle className="text-xl">{user.name}</CardTitle>
         <CardDescription>{user.description}</CardDescription>
+
+        {user.employmentStatus && (
+          <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+            <Briefcase className="h-3 w-3" />
+            <span className="font-medium">{user.employmentStatus}</span>
+          </div>
+        )}
+
         {entity && (
           <p className="text-xs text-muted-foreground mt-1">
             📍 {entity.city}, {entity.country}
@@ -82,9 +118,8 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
                 return (
                   <div
                     key={serviceType}
-                    className={`flex items-center gap-1 text-xs p-1.5 rounded ${
-                      isEnabled ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500 line-through'
-                    }`}
+                    className={`flex items-center gap-1 text-xs p-1.5 rounded ${isEnabled ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-500 line-through'
+                      }`}
                   >
                     {isEnabled ? (
                       <Check className="h-3 w-3" />
@@ -101,8 +136,8 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Button 
-          onClick={handleSimulate} 
+        <Button
+          onClick={handleSimulate}
           className="w-full"
           variant="default"
         >

@@ -1,11 +1,11 @@
 import { LucideIcon, FileText, BookKey, Stamp, CreditCard, FileCheck, ScrollText } from 'lucide-react';
 
-export type ServiceType = 
-  | 'VISA' 
-  | 'PASSEPORT' 
-  | 'LEGALISATION' 
-  | 'CARTE_CONSULAIRE' 
-  | 'TRANSCRIPTION_NAISSANCE' 
+export type ServiceType =
+  | 'VISA'
+  | 'PASSEPORT'
+  | 'LEGALISATION'
+  | 'CARTE_CONSULAIRE'
+  | 'TRANSCRIPTION_NAISSANCE'
   | 'ACTE_CIVIL';
 
 export interface ServiceInfo {
@@ -14,6 +14,7 @@ export interface ServiceInfo {
   description: string;
   icon: LucideIcon;
   color: string;
+  requiredDocuments: string[];
 }
 
 export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
@@ -23,6 +24,7 @@ export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
     description: 'Demande et renouvellement de visa',
     icon: FileText,
     color: 'text-blue-600',
+    requiredDocuments: ['Passeport', 'Photo', 'Formulaire', 'Justificatif de domicile'],
   },
   PASSEPORT: {
     id: 'PASSEPORT',
@@ -30,6 +32,7 @@ export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
     description: 'Demande et renouvellement de passeport',
     icon: BookKey,
     color: 'text-green-600',
+    requiredDocuments: ['Ancien passeport', 'Acte de naissance', 'Photo', 'Justificatif de domicile'],
   },
   LEGALISATION: {
     id: 'LEGALISATION',
@@ -37,6 +40,7 @@ export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
     description: 'Légalisation de documents officiels',
     icon: Stamp,
     color: 'text-purple-600',
+    requiredDocuments: ['Document original', 'Copie pièce identité'],
   },
   CARTE_CONSULAIRE: {
     id: 'CARTE_CONSULAIRE',
@@ -44,6 +48,7 @@ export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
     description: 'Inscription consulaire et carte',
     icon: CreditCard,
     color: 'text-yellow-600',
+    requiredDocuments: ['Passeport', 'Justificatif de domicile', 'Photo'],
   },
   TRANSCRIPTION_NAISSANCE: {
     id: 'TRANSCRIPTION_NAISSANCE',
@@ -51,6 +56,7 @@ export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
     description: 'Transcription acte de naissance',
     icon: FileCheck,
     color: 'text-indigo-600',
+    requiredDocuments: ['Acte de naissance local', 'Pièce identité parents', 'Livret de famille'],
   },
   ACTE_CIVIL: {
     id: 'ACTE_CIVIL',
@@ -58,5 +64,6 @@ export const SERVICE_CATALOG: Record<ServiceType, ServiceInfo> = {
     description: 'Actes d\'état civil divers',
     icon: ScrollText,
     color: 'text-red-600',
+    requiredDocuments: ['Demande manuscrite', 'Pièce identité'],
   },
 };

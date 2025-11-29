@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Tag } from "lucide-react";
@@ -63,51 +61,45 @@ export default function Actualites() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 py-12 bg-gradient-official">
-        <div className="container">
-          <div className="mb-12 animate-fade-in">
-            <h1 className="text-4xl font-bold mb-4">Actualités & Sensibilisation</h1>
-            <p className="text-muted-foreground text-lg">
-              Restez informé des dernières nouvelles et annonces consulaires
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article, index) => (
-              <Card
-                key={article.id}
-                className="group hover:shadow-elevation transition-all duration-300 hover:-translate-y-1 animate-scale-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant={article.badgeVariant}>{article.badge}</Badge>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Tag className="h-3 w-3" />
-                      <span>{article.category}</span>
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                    {article.title}
-                  </CardTitle>
-                  <CardDescription>{article.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>{article.date}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+    <div className="flex-1 py-12 bg-gradient-official">
+      <div className="container">
+        <div className="mb-12 animate-fade-in">
+          <h1 className="text-4xl font-bold mb-4">Actualités & Sensibilisation</h1>
+          <p className="text-muted-foreground text-lg">
+            Restez informé des dernières nouvelles et annonces consulaires
+          </p>
         </div>
-      </main>
 
-      <Footer />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.map((article, index) => (
+            <Card
+              key={article.id}
+              className="group hover:shadow-elevation transition-all duration-300 hover:-translate-y-1 animate-scale-in"
+              style={{ animationDelay: `${index * 0.05}s` }}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between mb-2">
+                  <Badge variant={article.badgeVariant}>{article.badge}</Badge>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Tag className="h-3 w-3" />
+                    <span>{article.category}</span>
+                  </div>
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  {article.title}
+                </CardTitle>
+                <CardDescription>{article.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>{article.date}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

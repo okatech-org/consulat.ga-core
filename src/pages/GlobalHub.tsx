@@ -1,8 +1,5 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { JurisdictionSelector } from "@/components/JurisdictionSelector";
 import { WorldMapVisual } from "@/components/WorldMapVisual";
-import { SimulationBanner } from "@/components/SimulationBanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -32,10 +29,7 @@ export default function GlobalHub() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <SimulationBanner />
-      <Header />
-
+    <>
       {/* Hero Section - Hub Global */}
       <section className="relative py-24 bg-gradient-official overflow-hidden">
         <WorldMapVisual />
@@ -150,8 +144,6 @@ export default function GlobalHub() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </>
   );
 }

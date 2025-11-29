@@ -1,16 +1,17 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X, Globe } from "lucide-react";
+import { Shield, Menu, X, Globe, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useDemo } from "@/contexts/DemoContext";
 import { COUNTRY_FLAGS } from "@/types/entity";
+import { GlobalSettings } from "@/components/GlobalSettings";
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, currentEntity, isSimulating } = useDemo();
 
   return (
-    <header className={`sticky z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
+    <header className={`sticky z - 50 w - full border - b border - border / 40 bg - background / 95 backdrop - blur supports - [backdrop - filter]: bg - background / 60 ${isSimulating ? 'top-[60px]' : 'top-0'} `}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-hero">
@@ -42,11 +43,15 @@ export const Header = () => {
           <Link to="/demo-portal" className="text-sm font-medium hover:text-primary transition-colors">
             Portail Démo
           </Link>
+          <Link to="/iboite" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+            <MessageSquare className="h-4 w-4" />
+            Messagerie
+          </Link>
           {isSimulating && currentUser?.role === "ADMIN" && (
-            <Link to="/admin" className="text-sm font-medium hover:text-primary transition-colors">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Shield className="h-4 w-4" />
-                Admin
+            <Link to="/iboite">
+              <Button variant="ghost" size="icon" className="relative">
+                <MessageSquare className="h-5 w-5" />
+                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full animate-pulse" />
               </Button>
             </Link>
           )}
@@ -59,6 +64,7 @@ export const Header = () => {
           <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
             <Button variant="outline">Se Connecter</Button>
           </Link>
+          <GlobalSettings />
         </nav>
 
         {/* Mobile Menu Button */}
@@ -122,6 +128,9 @@ export const Header = () => {
                 Se Connecter
               </Button>
             </Link>
+            <div className="flex justify-center pt-4 border-t border-border/40">
+              <GlobalSettings />
+            </div>
           </nav>
         </div>
       )}

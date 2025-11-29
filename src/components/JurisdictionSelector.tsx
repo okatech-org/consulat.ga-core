@@ -24,7 +24,7 @@ export function JurisdictionSelector() {
 
   const handleSelect = (entityId: string) => {
     setOpen(false);
-    navigate(`/entity/${entityId}`);
+    navigate(`/portal/${entityId}`);
   };
 
   return (
