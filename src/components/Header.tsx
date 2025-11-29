@@ -44,9 +44,6 @@ export const Header = () => {
           <Link to="/actualites" className="text-sm font-medium hover:text-primary transition-colors">
             {t('header.news')}
           </Link>
-          <Link to="/demo-portal" className="text-sm font-medium hover:text-primary transition-colors">
-            {t('header.demoPortal')}
-          </Link>
           {isSimulating && currentUser && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm">
               <span>{currentUser.badge}</span>
