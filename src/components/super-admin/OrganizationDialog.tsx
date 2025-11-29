@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,9 +75,10 @@ export function OrganizationDialog({ open, onOpenChange, initialData, onSave }: 
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl max-h-[90vh]">
                 <DialogHeader>
-                    <DialogTitle>
-                        {initialData ? 'Modifier' : 'Nouvelle'} Organisation
-                    </DialogTitle>
+                    <DialogTitle>{initialData ? "Modifier l'Organisation" : "Nouvelle Organisation"}</DialogTitle>
+                    <DialogDescription>
+                        Remplissez les informations ci-dessous pour {initialData ? "modifier" : "créer"} une entité diplomatique.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <ScrollArea className="max-h-[60vh] pr-4">

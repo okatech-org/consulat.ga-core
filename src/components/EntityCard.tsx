@@ -26,16 +26,16 @@ export function EntityCard({ entity }: EntityCardProps) {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <span className="text-4xl shadow-sm rounded-full bg-white p-1">
-                            {COUNTRY_FLAGS[entity.countryCode] || '🌍'}
+                            {COUNTRY_FLAGS[entity.metadata?.countryCode || ''] || '🌍'}
                         </span>
                         <div>
                             <CardTitle className="text-xl text-primary">{entity.name}</CardTitle>
-                            <CardDescription className="flex items-center gap-2 mt-1">
-                                <span>📍 {entity.city}, {entity.country}</span>
+                            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                                <span>📍 {entity.metadata?.city}, {entity.metadata?.country}</span>
                                 <Badge variant="outline" className="text-xs">
                                     {entity.type}
                                 </Badge>
-                            </CardDescription>
+                            </div>
                         </div>
                     </div>
                     <Button variant="ghost" size="icon">

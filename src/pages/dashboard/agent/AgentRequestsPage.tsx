@@ -32,7 +32,7 @@ export default function AgentRequestsPage() {
     const loadRequests = async () => {
         try {
             const data = await requestService.getAll();
-            setRequests(data);
+            setRequests(data || []);
         } catch (error) {
             console.error("Failed to load requests", error);
         } finally {

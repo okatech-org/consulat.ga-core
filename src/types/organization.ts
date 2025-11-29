@@ -3,7 +3,9 @@ export enum OrganizationType {
     CONSULAT = 'CONSULAT',
     AMBASSADE = 'AMBASSADE',
     HAUT_COMMISSARIAT = 'HAUT_COMMISSARIAT',
-    MISSION_PERMANENTE = 'MISSION_PERMANENTE'
+    MISSION_PERMANENTE = 'MISSION_PERMANENTE',
+    CONSULAT_HONORAIRE = 'CONSULAT_HONORAIRE',
+    AUTRE = 'AUTRE'
 }
 
 export enum OrganizationStatus {
@@ -45,18 +47,19 @@ export interface Organization {
     id: string;
     name: string;
     type: OrganizationType;
-    city: string | null;
-    country: string | null;
-    country_code: string | null;
-    jurisdiction: string[];
-    enabled_services: string[] | null;
-    settings: any | null;
+    city?: string | null;
+    country?: string | null;
+    country_code?: string | null;
+    jurisdiction?: string[];
+    enabled_services?: string[] | null;
+    settings?: any | null;
     created_at: string;
     updated_at: string;
     // Legacy compatibility
     isActive?: boolean;
     countryCode?: string;
     enabledServices?: string[];
+    metadata?: OrganizationMetadata;
 }
 
 export const COUNTRY_FLAGS: Record<string, string> = {

@@ -33,11 +33,11 @@ const ADMIN_USER: DemoUser = {
 const generateStaffForEntity = (entity: Entity): DemoUser[] => {
   const staff: DemoUser[] = [];
   const entityType = entity.type;
-  const city = entity.city;
+  const city = entity.metadata?.city || 'Unknown';
   const idPrefix = entity.id.split('-').slice(0, 2).join('-'); // e.g., fr-consulat
 
-  // 1. CONSUL GENERAL (Only for CONSULAT_GENERAL)
-  if (entityType === EntityType.CONSULAT_GENERAL) {
+  // 1. CONSUL GENERAL (Only for GENERAL_CONSULATE)
+  if (entityType === EntityType.GENERAL_CONSULATE) {
     staff.push({
       id: `${idPrefix}-cg`,
       role: ConsularRole.CONSUL_GENERAL,
@@ -45,7 +45,7 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
       entityId: entity.id,
       hierarchyLevel: 1,
       employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-      allowedEntityTypes: [EntityType.CONSULAT_GENERAL],
+      allowedEntityTypes: [EntityType.GENERAL_CONSULATE],
       permissions: ['Supervision globale', 'Direction stratégique', 'Administration générale'],
       badge: '🥇',
       description: 'Consul Général - Chef de Poste',
@@ -62,16 +62,16 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
     entityId: entity.id,
     hierarchyLevel: 2,
     employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-    allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT, EntityType.AMBASSADE],
-    permissions: entityType === EntityType.CONSULAT_GENERAL
+    allowedEntityTypes: [EntityType.GENERAL_CONSULATE, EntityType.CONSULATE, EntityType.EMBASSY],
+    permissions: entityType === EntityType.GENERAL_CONSULATE
       ? ['Direction adjointe', 'Gestion entité']
       : ['Direction section consulaire', 'Responsable principal'],
     badge: '🥈',
-    description: entityType === EntityType.CONSULAT_GENERAL ? 'Consul - Adjoint au Chef de Poste' : 'Consul - Chef de Section Consulaire',
+    description: entityType === EntityType.GENERAL_CONSULATE ? 'Consul - Adjoint au Chef de Poste' : 'Consul - Chef de Section Consulaire',
   });
 
-  // 3. VICE-CONSUL (Only for CONSULAT and CONSULAT_GENERAL)
-  if (entityType === EntityType.CONSULAT || entityType === EntityType.CONSULAT_GENERAL) {
+  // 3. VICE-CONSUL (Only for CONSULATE and GENERAL_CONSULATE)
+  if (entityType === EntityType.CONSULATE || entityType === EntityType.GENERAL_CONSULATE) {
     staff.push({
       id: `${idPrefix}-vc`,
       role: ConsularRole.VICE_CONSUL,
@@ -79,7 +79,7 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
       entityId: entity.id,
       hierarchyLevel: 3,
       employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-      allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT],
+      allowedEntityTypes: [EntityType.GENERAL_CONSULATE, EntityType.CONSULATE],
       permissions: ['Supervision opérations', 'Validation'],
       badge: '🥉',
       description: 'Vice-Consul - Supervision Opérationnelle',
@@ -94,7 +94,7 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
     entityId: entity.id,
     hierarchyLevel: 4,
     employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-    allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT, EntityType.AMBASSADE],
+    allowedEntityTypes: [EntityType.GENERAL_CONSULATE, EntityType.CONSULATE, EntityType.EMBASSY],
     permissions: ['Gestion demandes', 'Validation dossiers'],
     badge: '🎖️',
     description: 'Chargé d\'Affaires Consulaires',
@@ -108,7 +108,7 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
     entityId: entity.id,
     hierarchyLevel: 5,
     employmentStatus: EmploymentStatus.CONTRACTUEL,
-    allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT, EntityType.AMBASSADE],
+    allowedEntityTypes: [EntityType.GENERAL_CONSULATE, EntityType.CONSULATE, EntityType.EMBASSY],
     permissions: ['Traitement dossiers', 'Guichet virtuel'],
     badge: '🟢',
     description: 'Agent de traitement - Guichet',
@@ -121,7 +121,7 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
     entityId: entity.id,
     hierarchyLevel: 5,
     employmentStatus: EmploymentStatus.CONTRACTUEL,
-    allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT, EntityType.AMBASSADE],
+    allowedEntityTypes: [EntityType.GENERAL_CONSULATE, EntityType.CONSULATE, EntityType.EMBASSY],
     permissions: ['Traitement dossiers', 'Biométrie'],
     badge: '🟢',
     description: 'Agent de traitement - Biométrie',
@@ -135,7 +135,7 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
     entityId: entity.id,
     hierarchyLevel: 6,
     employmentStatus: EmploymentStatus.CONTRACTUEL,
-    allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT, EntityType.AMBASSADE],
+    allowedEntityTypes: [EntityType.GENERAL_CONSULATE, EntityType.CONSULATE, EntityType.EMBASSY],
     permissions: ['Support traitement', 'Saisie données'],
     badge: '🎓',
     description: 'Stagiaire - Support Opérationnel',

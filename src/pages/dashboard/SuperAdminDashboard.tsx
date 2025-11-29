@@ -1,8 +1,9 @@
 import { Building2, FileText, Users, Globe, Activity, Plus, ShieldCheck, Settings, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { MOCK_ENTITIES } from "@/data/mock-entities";
-import { MOCK_USERS } from "@/data/mock-users";
+import { Organization, OrganizationType } from "@/types/organization";
+import { organizationService } from "@/services/organizationService";
+import { profileService, Profile } from "@/services/profileService";
 import { ConsularRole } from "@/types/consular-roles";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { useState, useMemo, useEffect, useRef } from "react";
@@ -38,11 +39,32 @@ export default function SuperAdminDashboard() {
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [direction, setDirection] = useState(0);
+    const [entities, setEntities] = useState<Organization[]>([]);
+    const [users, setUsers] = useState<Profile[]>([]);
+    const [loading, setLoading] = useState(true);
 
     // Global Search State
     const [globalSearch, setGlobalSearch] = useState("");
     const [showResults, setShowResults] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [orgsData, usersData] = await Promise.all([
+                    organizationService.getAll(),
+                    profileService.getAll()
+                ]);
+                setEntities(orgsData);
+                setUsers(usersData);
+            } catch (error) {
+                console.error("Failed to fetch dashboard data", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     // Close search results when clicking outside
     useEffect(() => {
@@ -61,29 +83,29 @@ export default function SuperAdminDashboard() {
 
         const lowerTerm = globalSearch.toLowerCase();
 
-        const users = MOCK_USERS.filter(u =>
-            u.name.toLowerCase().includes(lowerTerm) ||
+        const filteredUsers = users.filter(u =>
+            (u.first_name + " " + u.last_name).toLowerCase().includes(lowerTerm) ||
             u.email?.toLowerCase().includes(lowerTerm)
         ).slice(0, 5);
 
-        const entities = MOCK_ENTITIES.filter(e =>
+        const filteredEntities = entities.filter(e =>
             e.name.toLowerCase().includes(lowerTerm) ||
-            e.city.toLowerCase().includes(lowerTerm) ||
-            e.country.toLowerCase().includes(lowerTerm)
+            e.metadata?.city?.toLowerCase().includes(lowerTerm) ||
+            e.metadata?.country?.toLowerCase().includes(lowerTerm)
         ).slice(0, 5);
 
-        return { users, entities };
-    }, [globalSearch]);
+        return { users: filteredUsers, entities: filteredEntities };
+    }, [globalSearch, users, entities]);
 
     // Calculate Real Stats
-    const totalEntities = MOCK_ENTITIES.length;
-    const totalUsers = MOCK_USERS.length;
-    const uniqueCountries = new Set(MOCK_ENTITIES.map(e => e.countryCode)).size;
-    const totalConsuls = MOCK_USERS.filter(u => u.role === ConsularRole.CONSUL_GENERAL || u.role === ConsularRole.CONSUL).length;
+    const totalEntities = entities.length;
+    const totalUsers = users.length;
+    const uniqueCountries = new Set(entities.map(e => e.metadata?.countryCode).filter(Boolean)).size;
+    const totalConsuls = users.filter(u => u.role === ConsularRole.CONSUL_GENERAL || u.role === ConsularRole.CONSUL).length;
 
     const totalPages = Math.ceil(totalEntities / ITEMS_PER_PAGE);
     const startIndex = page * ITEMS_PER_PAGE;
-    const paginatedEntities = MOCK_ENTITIES.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const paginatedEntities = entities.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     const paginate = (newDirection: number) => {
         setPage([page + newDirection, newDirection][0]);
@@ -96,6 +118,16 @@ export default function SuperAdminDashboard() {
         { label: "Utilisateurs Total", value: totalUsers, icon: Users, color: "text-purple-600" },
         { label: "Consuls & Chefs", value: totalConsuls, icon: ShieldCheck, color: "text-green-600" },
     ];
+
+    if (loading) {
+        return (
+            <DashboardLayout>
+                <div className="flex items-center justify-center h-screen">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout>
@@ -163,7 +195,7 @@ export default function SuperAdminDashboard() {
                                                                     </div>
                                                                     <div>
                                                                         <div className="text-sm font-medium">{entity.name}</div>
-                                                                        <div className="text-xs text-muted-foreground">{entity.city}, {entity.country}</div>
+                                                                        <div className="text-xs text-muted-foreground">{entity.metadata?.city}, {entity.metadata?.country}</div>
                                                                     </div>
                                                                 </div>
                                                             ))}
@@ -177,13 +209,13 @@ export default function SuperAdminDashboard() {
                                                                 <div
                                                                     key={user.id}
                                                                     className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg cursor-pointer transition-colors"
-                                                                    onClick={() => navigate(`/dashboard/super-admin/users?search=${user.name}`)}
+                                                                    onClick={() => navigate(`/dashboard/super-admin/users?search=${user.last_name}`)}
                                                                 >
                                                                     <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
                                                                         <Users className="h-4 w-4" />
                                                                     </div>
                                                                     <div>
-                                                                        <div className="text-sm font-medium">{user.name}</div>
+                                                                        <div className="text-sm font-medium">{user.first_name} {user.last_name}</div>
                                                                         <div className="text-xs text-muted-foreground flex items-center gap-1">
                                                                             <Badge variant="outline" className="text-[10px] h-4 px-1">{user.role}</Badge>
                                                                             {user.email}
@@ -264,22 +296,22 @@ export default function SuperAdminDashboard() {
                                                         {entity.name}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${entity.type === 'AMBASSADE' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                                                            entity.type === 'CONSULAT_GENERAL' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
-                                                                entity.type === 'HAUT_COMMISSARIAT' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${entity.type === OrganizationType.EMBASSY ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                            entity.type === OrganizationType.GENERAL_CONSULATE ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
+                                                                entity.type === OrganizationType.CONSULATE ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
                                                                     'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                                                             }`}>
                                                             {entity.type.replace(/_/g, ' ')}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 dark:text-gray-300">
-                                                        <span className="mr-2">{COUNTRY_FLAGS[entity.countryCode]}</span>
-                                                        {entity.city}, {entity.country}
+                                                        <span className="mr-2">{COUNTRY_FLAGS[entity.metadata?.countryCode || ''] || '🌐'}</span>
+                                                        {entity.metadata?.city}, {entity.metadata?.country}
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
                                                             <span className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
-                                                            Actif
+                                                            {entity.status}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right">

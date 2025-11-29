@@ -62,7 +62,7 @@ export default function SuperAdminOrganizations() {
                 });
             } else {
                 // For creation, we need to ensure type is set
-                if (!data.type) data.type = OrganizationType.EMBASSY;
+                if (!data.type) data.type = OrganizationType.AMBASSADE;
                 await organizationService.create(data as Omit<Organization, 'id' | 'created_at' | 'updated_at'>);
                 toast({
                     title: "Organisation créée",
@@ -128,7 +128,7 @@ export default function SuperAdminOrganizations() {
                                             ? COUNTRY_FLAGS[entity.metadata.jurisdiction[0]]
                                             : <Globe className="w-6 h-6 text-primary" />}
                                     </div>
-                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${entity.type === OrganizationType.EMBASSY ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${entity.type === OrganizationType.AMBASSADE ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
                                         }`}>
                                         {entity.type.replace(/_/g, ' ')}
                                     </span>
@@ -160,14 +160,14 @@ export default function SuperAdminOrganizations() {
 
                                 <div className="mt-6 grid grid-cols-2 gap-3">
                                     <button
-                                        onClick={() => navigate(`/dashboard/super-admin/organizations/${entity.id}`)}
+                                        onClick={() => navigate(`/dashboard/super-admin/organizations/${entity.id}?tab=activity`)}
                                         className="neu-raised py-2 rounded-lg text-sm font-medium hover:text-primary transition-colors flex items-center justify-center gap-2"
                                     >
                                         <LayoutDashboard className="w-4 h-4" />
                                         Gérer
                                     </button>
                                     <button
-                                        onClick={() => handleEdit(entity)}
+                                        onClick={() => navigate(`/dashboard/super-admin/organizations/${entity.id}?tab=general`)}
                                         className="neu-raised py-2 rounded-lg text-sm font-medium hover:text-primary transition-colors flex items-center justify-center gap-2"
                                     >
                                         <Settings className="w-4 h-4" />

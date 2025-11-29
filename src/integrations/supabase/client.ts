@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { MOCK_ORGANIZATIONS } from '@/data/mock-organizations';
+import { MOCK_PROFILES } from '@/data/mock-profiles';
+import { MOCK_SERVICES } from '@/data/mock-services';
 
 // Define the Supabase URL and Anon Key from environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -48,12 +51,25 @@ const mockSupabase = {
                 }),
                 maybeSingle: async () => ({ data: null, error: null }),
             }),
-            order: (column: string, options?: any) => ({
-                limit: (count: number) => ({
-                    maybeSingle: async () => ({ data: null, error: null }),
-                    single: async () => ({ data: null, error: null }),
-                })
-            }),
+            order: (column: string, options?: any) => {
+                let data: any[] = [];
+                if (table === 'organizations') data = MOCK_ORGANIZATIONS;
+                else if (table === 'profiles') data = MOCK_PROFILES;
+                else if (table === 'consular_services') data = MOCK_SERVICES;
+
+                const result = {
+                    data,
+                    error: null
+                };
+                return {
+                    ...result,
+                    then: (resolve: (value: any) => void) => resolve(result),
+                    limit: (count: number) => ({
+                        maybeSingle: async () => ({ data: null, error: null }),
+                        single: async () => ({ data: null, error: null }),
+                    })
+                };
+            },
         }),
         insert: (data: any) => ({
             data: { id: 'mock-id' },
@@ -64,6 +80,9 @@ const mockSupabase = {
         }),
         update: (data: any) => ({
             eq: (column: string, value: any) => ({
+                select: () => ({
+                    single: async () => ({ data: { ...data, id: value }, error: null })
+                }),
                 error: null
             })
         }),

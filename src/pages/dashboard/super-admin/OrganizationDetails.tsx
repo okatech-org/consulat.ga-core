@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import {
     Building2, MapPin, Globe, Phone, Mail, ArrowLeft,
-    Save, Users, CreditCard, FileText, Settings, Activity
+    Save, Users, CreditCard, FileText, Settings, Activity, Calendar
 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { MOCK_ENTITIES } from "@/data/mock-entities";
@@ -21,13 +21,35 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Calendar } from "lucide-react";
+
+
+interface EnrichedEntity extends Entity {
+    address?: string;
+    coordinates?: { lat: number; lng: number };
+    contact?: {
+        phone: string;
+        email: string;
+        website?: string;
+    };
+    bankDetails?: {
+        bankName: string;
+        accountNumber: string;
+        iban: string;
+        swift: string;
+        currency: string;
+    };
+    openingHours?: Record<string, { start: string; end: string; isClosed: boolean }>;
+    enabledServices: string[];
+    isActive?: boolean;
+}
 
 export default function OrganizationDetails() {
     const { entityId } = useParams();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get("tab") || "general";
     const { toast } = useToast();
-    const [entity, setEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<EnrichedEntity | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -35,30 +57,27 @@ export default function OrganizationDetails() {
         const found = MOCK_ENTITIES.find(e => e.id === entityId);
         if (found) {
             // Enrich with mock details if missing
-            const enriched: Entity = {
+            const enriched: EnrichedEntity = {
                 ...found,
-                address: found.address || "123 Avenue Diplomatique",
-                coordinates: found.coordinates || { lat: 48.8566, lng: 2.3522 },
-                contact: found.contact || {
+                enabledServices: ['PASSPORT', 'VISA'],
+                isActive: found.status === 'ACTIVE',
+                contact: found.metadata?.contact || {
+                    address: "123 Avenue Diplomatique",
                     phone: "+33 1 23 45 67 89",
                     email: `contact@${found.id.toLowerCase()}.ga`,
-                    website: `www.ambassade-gabon-${found.countryCode.toLowerCase()}.ga`
+                    website: `www.ambassade-gabon-${(found.metadata?.countryCode || 'ga').toLowerCase()}.ga`
                 },
-                bankDetails: found.bankDetails || {
-                    bankName: "Banque Centrale",
-                    accountNumber: "GA76 1234 5678 9012",
-                    iban: "GA76 1234 5678 9012 3456 78",
-                    swift: "GABOGALB",
-                    currency: "XAF"
-                },
-                openingHours: found.openingHours || {
-                    mon: { start: "09:00", end: "17:00", isClosed: false },
-                    tue: { start: "09:00", end: "17:00", isClosed: false },
-                    wed: { start: "09:00", end: "17:00", isClosed: false },
-                    thu: { start: "09:00", end: "17:00", isClosed: false },
-                    fri: { start: "09:00", end: "16:00", isClosed: false },
-                    sat: { start: "00:00", end: "00:00", isClosed: true },
-                    sun: { start: "00:00", end: "00:00", isClosed: true },
+                metadata: {
+                    ...found.metadata,
+                    hours: found.metadata?.hours || {
+                        'Lundi': { open: "09:00", close: "17:00", isOpen: true },
+                        'Mardi': { open: "09:00", close: "17:00", isOpen: true },
+                        'Mercredi': { open: "09:00", close: "17:00", isOpen: true },
+                        'Jeudi': { open: "09:00", close: "17:00", isOpen: true },
+                        'Vendredi': { open: "09:00", close: "16:00", isOpen: true },
+                        'Samedi': { open: "00:00", close: "00:00", isOpen: false },
+                        'Dimanche': { open: "00:00", close: "00:00", isOpen: false },
+                    }
                 }
             };
             setEntity(enriched);
@@ -86,7 +105,7 @@ export default function OrganizationDetails() {
                     </Button>
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl">{COUNTRY_FLAGS[entity.countryCode]}</span>
+                            <span className="text-3xl">{COUNTRY_FLAGS[entity.metadata?.countryCode || '']}</span>
                             <h1 className="text-2xl font-bold text-foreground">{entity.name}</h1>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${entity.isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700'
                                 }`}>
@@ -94,7 +113,7 @@ export default function OrganizationDetails() {
                             </span>
                         </div>
                         <p className="text-muted-foreground flex items-center gap-2 mt-1">
-                            <MapPin className="w-4 h-4" /> {entity.city}, {entity.country}
+                            <MapPin className="w-4 h-4" /> {entity.metadata?.city}, {entity.metadata?.country}
                         </p>
                     </div>
                     <Button onClick={handleSave} className="gap-2">
@@ -104,7 +123,7 @@ export default function OrganizationDetails() {
                 </div>
 
                 {/* Tabs */}
-                <Tabs defaultValue="general" className="w-full">
+                <Tabs value={activeTab} onValueChange={(val) => setSearchParams({ tab: val })} className="w-full">
                     <TabsList className="w-full justify-start h-auto p-1 bg-muted/50 rounded-xl mb-6 overflow-x-auto">
                         <TabsTrigger value="general" className="gap-2 px-4 py-2">
                             <Building2 className="w-4 h-4" /> Général
@@ -144,7 +163,7 @@ export default function OrganizationDetails() {
                                         </div>
                                         <div className="space-y-2">
                                             <Label>Code Pays</Label>
-                                            <Input defaultValue={entity.countryCode} disabled />
+                                            <Input defaultValue={entity.metadata?.countryCode} disabled />
                                         </div>
                                     </div>
                                 </div>
@@ -187,11 +206,11 @@ export default function OrganizationDetails() {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <Label>Ville</Label>
-                                                <Input defaultValue={entity.city} />
+                                                <Input defaultValue={entity.metadata?.city} />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label>Pays</Label>
-                                                <Input defaultValue={entity.country} />
+                                                <Input defaultValue={entity.metadata?.country} />
                                             </div>
                                         </div>
                                     </div>
