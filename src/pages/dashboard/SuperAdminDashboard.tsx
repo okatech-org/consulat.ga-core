@@ -296,9 +296,9 @@ export default function SuperAdminDashboard() {
                                                         {entity.name}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${entity.type === OrganizationType.EMBASSY ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                                                            entity.type === OrganizationType.GENERAL_CONSULATE ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
-                                                                entity.type === OrganizationType.CONSULATE ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${entity.type === OrganizationType.AMBASSADE ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                            entity.type === OrganizationType.CONSULAT_GENERAL ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
+                                                                entity.type === OrganizationType.CONSULAT ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
                                                                     'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                                                             }`}>
                                                             {entity.type.replace(/_/g, ' ')}
@@ -311,7 +311,7 @@ export default function SuperAdminDashboard() {
                                                     <td className="px-6 py-4">
                                                         <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
                                                             <span className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
-                                                            {entity.status}
+                                                            ACTIVE
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
