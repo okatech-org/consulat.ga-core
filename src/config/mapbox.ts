@@ -4,7 +4,7 @@
 
 export const MAPBOX_CONFIG = {
   // Token public Mapbox configuré
-  accessToken: 'pk.eyJ1Ijoib2thdGVjaCIsImEiOiJjbWhzM3dnOWowYnBjMm1zaGJsbmJrMGR3In0.yYvhLCZKtUKd4RNPfYQvIw',
+  accessToken: 'pk.eyJ1Ijoib2thdGVjaCIsImEiOiJjbWhweXp5NG0wYzE1MmtyNHVsdDc0cXdzIn0.Uka_hUGnqJw9no7swQ8xVg',
   
   // Style de carte par défaut
   mapStyle: 'mapbox://styles/mapbox/light-v11',
