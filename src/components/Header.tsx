@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X, Globe, MessageSquare } from "lucide-react";
+import { Shield, Menu, X, Globe } from "lucide-react";
 import { useState } from "react";
 import { useDemo } from "@/contexts/DemoContext";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { GlobalSettings } from "@/components/GlobalSettings";
 import { useTranslation } from "react-i18next";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { LanguageToggle } from "@/components/language/LanguageToggle";
 
 export const Header = () => {
   const { t } = useTranslation();
@@ -53,11 +51,7 @@ export const Header = () => {
           <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
             <Button variant="outline">{t('common.login')}</Button>
           </Link>
-          <div className="flex items-center gap-2">
-            <LanguageToggle />
-            <ThemeToggle />
-            <GlobalSettings />
-          </div>
+          <GlobalSettings />
         </nav>
 
         {/* Mobile Menu Button */}
@@ -122,8 +116,6 @@ export const Header = () => {
               </Button>
             </Link>
             <div className="flex justify-center gap-2 pt-4 border-t border-border/40">
-              <LanguageToggle />
-              <ThemeToggle />
               <GlobalSettings />
             </div>
           </nav>
