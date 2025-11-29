@@ -36,20 +36,21 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero py-20 md:py-32">
-        <div className="absolute inset-0 opacity-20">
+      <section className="relative overflow-hidden py-20 md:py-32">
+        <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Consulat du Gabon"
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/60" />
         </div>
         <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center text-primary-foreground animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground drop-shadow-lg">
               {t('home.hero.title')}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90">
+            <p className="text-xl md:text-2xl mb-8 text-foreground/90 drop-shadow-md">
               {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -60,7 +61,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link to="/actualites">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-background/10 hover:bg-background/20 text-primary-foreground border-primary-foreground/30">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto">
                   {t('header.news')}
                 </Button>
               </Link>
