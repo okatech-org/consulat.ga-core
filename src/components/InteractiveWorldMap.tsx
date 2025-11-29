@@ -50,12 +50,12 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
   'Tunis': [10.1815, 36.8065],
   
   // Amériques
-  'Washington': [77.0369, 38.9072],
-  'New York': [74.0060, 40.7128],
-  'Ottawa': [75.6972, 45.4215],
-  'Brasília': [47.9292, 15.8267],
-  'Buenos Aires': [58.3816, 34.6037],
-  'Mexico': [99.1332, 19.4326],
+  'Washington': [-77.0369, 38.9072],
+  'New York': [-74.0060, 40.7128],
+  'Ottawa': [-75.6972, 45.4215],
+  'Brasília': [-47.9292, -15.8267],
+  'Buenos Aires': [-58.3816, -34.6037],
+  'Mexico': [-99.1332, 19.4326],
   
   // Asie
   'Pékin': [116.4074, 39.9042],
@@ -69,7 +69,7 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
   
   // Villes françaises
   'Lyon': [4.8357, 45.7640],
-  'Bordeaux': [0.5792, 44.8378],
+  'Bordeaux': [-0.5792, 44.8378],
   'Marseille': [5.3698, 43.2965],
 };
 
@@ -100,8 +100,8 @@ export function InteractiveWorldMap() {
     setFilters(prev => ({ ...prev, [type]: !prev[type] }));
   };
 
+  // Préparer les markers (une seule fois)
   useEffect(() => {
-    // Préparer les markers
     const allMarkers: MapMarker[] = [];
 
     // Organisations diplomatiques
@@ -155,20 +155,30 @@ export function InteractiveWorldMap() {
     setMarkers(allMarkers);
   }, []);
 
+  // Initialisation de la carte (une seule fois)
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current) {
+      console.log('Map container not ready');
+      return;
+    }
+    
+    if (map.current) {
+      console.log('Map already initialized');
+      return;
+    }
 
     // Vérifier le token Mapbox
     const mapboxToken = MAPBOX_CONFIG.accessToken;
+    console.log('Mapbox token check:', mapboxToken ? 'Token present' : 'Token missing');
     
     if (!mapboxToken || mapboxToken === 'VOTRE_TOKEN_MAPBOX_PUBLIC_ICI') {
       setMapError('Token Mapbox non configuré. Veuillez ajouter votre token public Mapbox dans src/config/mapbox.ts');
-      console.error('Mapbox token not configured in src/config/mapbox.ts');
+      console.error('Mapbox token not configured');
       return;
     }
 
     try {
-      // Initialiser la carte
+      console.log('Initializing Mapbox map...');
       mapboxgl.accessToken = mapboxToken;
       
       map.current = new mapboxgl.Map({
@@ -180,6 +190,8 @@ export function InteractiveWorldMap() {
         projection: 'globe' as any
       });
 
+      console.log('Mapbox map created successfully');
+
       // Ajouter les contrôles de navigation
       map.current.addControl(
         new mapboxgl.NavigationControl({
@@ -188,15 +200,38 @@ export function InteractiveWorldMap() {
         'top-right'
       );
 
+      // Événement de chargement réussi
+      map.current.on('load', () => {
+        console.log('Mapbox map loaded successfully');
+      });
+
       // Gérer les erreurs de chargement
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
-        setMapError('Erreur lors du chargement de la carte. Vérifiez votre token Mapbox et votre connexion internet.');
+        setMapError('Erreur lors du chargement de la carte. Vérifiez votre token Mapbox.');
       });
     } catch (error) {
       console.error('Error initializing Mapbox:', error);
-      setMapError('Erreur lors de l\'initialisation de la carte.');
+      setMapError('Erreur lors de l\'initialisation: ' + (error as Error).message);
     }
+
+    // Cleanup
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, []);
+
+  // Gestion des marqueurs (s'exécute quand la carte est prête ou les filtres changent)
+  useEffect(() => {
+    if (!map.current) {
+      console.log('Map not ready for markers');
+      return;
+    }
+
+    console.log('Updating markers, total:', markers.length);
 
     // Nettoyer les anciens marqueurs
     markersRef.current.forEach(marker => marker.remove());
@@ -204,8 +239,6 @@ export function InteractiveWorldMap() {
 
     // Ajouter les marqueurs filtrés
     markers.forEach(marker => {
-      if (!map.current) return;
-
       // Vérifier si le type de marqueur est activé dans les filtres
       const shouldShow = 
         (marker.type === 'organization' && filters.organizations) ||
@@ -264,15 +297,15 @@ export function InteractiveWorldMap() {
       const mapboxMarker = new mapboxgl.Marker(el)
         .setLngLat(marker.coordinates)
         .setPopup(popup)
-        .addTo(map.current);
+        .addTo(map.current as mapboxgl.Map);
 
       markersRef.current.push(mapboxMarker);
     });
 
-    // Cleanup
+    // Cleanup des marqueurs seulement
     return () => {
       markersRef.current.forEach(marker => marker.remove());
-      map.current?.remove();
+      markersRef.current = [];
     };
   }, [markers, filters]);
 
