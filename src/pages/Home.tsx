@@ -5,25 +5,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FileText, BookKey, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-consulat.jpg";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
+  const { t } = useTranslation();
+  
   const services = [
     {
       icon: FileText,
-      title: "Demande de Visa",
-      description: "Soumettez votre demande de visa en ligne de manière simple et sécurisée",
+      title: t('home.services.visa.title'),
+      description: t('home.services.visa.description'),
       color: "text-gabon-green",
     },
     {
       icon: BookKey,
-      title: "Passeport",
-      description: "Demandez ou renouvelez votre passeport gabonais depuis notre plateforme",
+      title: t('home.services.passport.title'),
+      description: t('home.services.passport.description'),
       color: "text-gabon-blue",
     },
     {
       icon: Users,
-      title: "État Civil",
-      description: "Obtenez vos documents d'état civil et attestations officielles",
+      title: t('home.services.civilRegistry.title'),
+      description: t('home.services.civilRegistry.description'),
       color: "text-gabon-yellow",
     },
   ];
@@ -44,21 +47,21 @@ export default function Home() {
         <div className="container relative z-10">
           <div className="max-w-3xl mx-auto text-center text-primary-foreground animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              Bienvenue au Consulat Général
+              {t('home.hero.title')}
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90">
-              Vos services consulaires digitalisés
+              {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/login">
                 <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                  Se Connecter
+                  {t('common.login')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link to="/actualites">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto bg-background/10 hover:bg-background/20 text-primary-foreground border-primary-foreground/30">
-                  Actualités
+                  {t('header.news')}
                 </Button>
               </Link>
             </div>
@@ -70,9 +73,9 @@ export default function Home() {
       <section className="py-20 bg-gradient-official">
         <div className="container">
           <div className="text-center mb-12 animate-slide-up">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Services Rapides</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('home.services.title')}</h2>
             <p className="text-muted-foreground text-lg">
-              Accédez à nos services consulaires en quelques clics
+              {t('home.hero.description')}
             </p>
           </div>
 
@@ -94,7 +97,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <Button variant="ghost" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    En savoir plus
+                    {t('home.features.online.description')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>
@@ -107,12 +110,12 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-20 bg-muted/50">
         <div className="container text-center">
-          <h2 className="text-3xl font-bold mb-4">Besoin d'assistance ?</h2>
+          <h2 className="text-3xl font-bold mb-4">{t('home.features.title')}</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Notre équipe consulaire est à votre disposition pour vous accompagner dans vos démarches administratives
+            {t('home.hero.description')}
           </p>
           <Button size="lg" variant="default">
-            Contactez-nous
+            {t('header.messaging')}
           </Button>
         </div>
       </section>

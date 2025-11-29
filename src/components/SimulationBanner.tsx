@@ -3,8 +3,10 @@ import { COUNTRY_FLAGS } from '@/types/entity';
 import { Button } from '@/components/ui/button';
 import { X, TestTube2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTranslation } from 'react-i18next';
 
 export function SimulationBanner() {
+  const { t } = useTranslation();
   const { currentUser, currentEntity, clearSimulation, isSimulating } = useDemo();
 
   if (!isSimulating) return null;
@@ -14,7 +16,7 @@ export function SimulationBanner() {
       <TestTube2 className="h-5 w-5" />
       <AlertDescription className="flex items-center justify-between w-full">
         <div className="flex items-center gap-3">
-          <span className="font-semibold">Mode Démo Actif:</span>
+          <span className="font-semibold">{t('simulation.active')}</span>
           <span className="text-lg">{currentUser?.badge}</span>
           <span className="font-medium">{currentUser?.name}</span>
           {currentEntity && (
@@ -31,7 +33,7 @@ export function SimulationBanner() {
           className="gap-2"
         >
           <X className="h-4 w-4" />
-          Quitter la simulation
+          {t('simulation.exit')}
         </Button>
       </AlertDescription>
     </Alert>
