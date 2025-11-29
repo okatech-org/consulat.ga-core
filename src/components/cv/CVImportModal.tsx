@@ -67,14 +67,14 @@ export function CVImportModal({ open, onOpenChange, onImportSuccess }: CVImportM
                     }
                 ],
                 skills: [
-                    { id: 'skill-imp-1', name: "Gestion de Projet", level: 5 },
-                    { id: 'skill-imp-2', name: "React.js", level: 4 },
-                    { id: 'skill-imp-3', name: "Node.js", level: 4 },
-                    { id: 'skill-imp-4', name: "Agile/Scrum", level: 5 }
+                    { id: 'skill-imp-1', name: "Gestion de Projet", level: "Expert" },
+                    { id: 'skill-imp-2', name: "React.js", level: "Advanced" },
+                    { id: 'skill-imp-3', name: "Node.js", level: "Advanced" },
+                    { id: 'skill-imp-4', name: "Agile/Scrum", level: "Expert" }
                 ],
                 languages: [
-                    { id: 'lang-imp-1', name: "Français", level: "Natif" },
-                    { id: 'lang-imp-2', name: "Anglais", level: "Courant" }
+                    { id: 'lang-imp-1', name: "Français", level: "Native" },
+                    { id: 'lang-imp-2', name: "Anglais", level: "C1" }
                 ]
             };
 

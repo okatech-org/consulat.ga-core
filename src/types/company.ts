@@ -2,8 +2,10 @@ import { DemoUser } from './roles';
 
 export enum CompanyRole {
     CEO = 'CEO',
+    OWNER = 'OWNER',
     PRESIDENT = 'PRESIDENT',
-    DIRECTOR = 'DIRECTOR'
+    DIRECTOR = 'DIRECTOR',
+    MANAGER = 'MANAGER'
 }
 
 export enum CompanyType {
@@ -35,10 +37,10 @@ export enum ActivitySector {
 export type EntityStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface AddressData {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
 }
 
 export interface Company {

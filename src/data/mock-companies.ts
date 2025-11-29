@@ -1,4 +1,4 @@
-import { Company, CompanyType, ActivitySector } from '@/types/company';
+import { Company, CompanyType, ActivitySector, CompanyRole } from '@/types/company';
 
 export const MOCK_COMPANIES: Company[] = [
     {
@@ -21,7 +21,7 @@ export const MOCK_COMPANIES: Company[] = [
             country: 'France'
         },
         ownerId: 'user-1', // Assuming this ID exists in mock-users
-        ownerRole: 'CEO',
+        ownerRole: CompanyRole.CEO,
         createdAt: '2024-01-15T10:00:00Z',
         updatedAt: '2024-01-15T10:00:00Z',
         validatedAt: '2024-01-16T14:30:00Z',
@@ -44,7 +44,7 @@ export const MOCK_COMPANIES: Company[] = [
             country: 'France'
         },
         ownerId: 'user-2',
-        ownerRole: 'DIRECTOR',
+        ownerRole: CompanyRole.DIRECTOR,
         createdAt: '2024-03-20T09:15:00Z',
         updatedAt: '2024-03-20T09:15:00Z'
     }

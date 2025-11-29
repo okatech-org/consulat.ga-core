@@ -6,6 +6,10 @@ export const MOCK_ORGANIZATIONS: Organization[] = [
         name: 'Consulat Général du Gabon en France',
         type: OrganizationType.CONSULAT_GENERAL,
         jurisdiction: ['FR', 'MC', 'PT'],
+        city: 'Paris',
+        country: 'France',
+        country_code: 'FR',
+        enabled_services: ['passport-ordinary', 'visa-tourist', 'civil-birth', 'legalization', 'consular-card'],
         settings: {
             'FR': {
                 contact: {
@@ -62,17 +66,22 @@ export const MOCK_ORGANIZATIONS: Organization[] = [
                 resources: {}
             }
         },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         // Legacy compatibility
-        city: 'Paris',
-        country: 'France',
         countryCode: 'FR',
-        enabledServices: ['passport-ordinary', 'visa-tourist', 'civil-birth', 'legalization', 'consular-card']
+        enabledServices: ['passport-ordinary', 'visa-tourist', 'civil-birth', 'legalization', 'consular-card'],
+        isActive: true
     },
     {
         id: 'us-ambassade-washington',
         name: 'Ambassade du Gabon aux États-Unis',
         type: OrganizationType.AMBASSADE,
         jurisdiction: ['US', 'CA', 'MX'],
+        city: 'Washington',
+        country: 'États-Unis',
+        country_code: 'US',
+        enabled_services: ['passport-ordinary', 'visa-tourist', 'visa-business', 'legalization'],
         settings: {
             'US': {
                 contact: {
@@ -92,10 +101,11 @@ export const MOCK_ORGANIZATIONS: Organization[] = [
                 resources: {}
             }
         },
-        city: 'Washington',
-        country: 'États-Unis',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         countryCode: 'US',
-        enabledServices: ['passport-ordinary', 'visa-tourist', 'visa-business', 'legalization']
+        enabledServices: ['passport-ordinary', 'visa-tourist', 'visa-business', 'legalization'],
+        isActive: true
     }
 ];
 
