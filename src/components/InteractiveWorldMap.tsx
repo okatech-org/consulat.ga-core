@@ -10,43 +10,42 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MAPBOX_CONFIG } from '@/config/mapbox';
 
-// Coordonnées géographiques précises des villes [longitude, latitude]
-// IMPORTANT: Mapbox utilise le format [longitude, latitude] (pas latitude, longitude)
+// Coordonnées approximatives des villes
 const CITY_COORDINATES: Record<string, [number, number]> = {
   // Europe
   'Paris': [2.3522, 48.8566],
   'Berlin': [13.4050, 52.5200],
   'Bruxelles': [4.3517, 50.8503],
-  'Madrid': [-3.7038, 40.4168],
-  'Lisbonne': [-9.1393, 38.7223],
+  'Madrid': [3.7038, 40.4168],
+  'Lisbonne': [9.1393, 38.7223],
   'Rome': [12.4964, 41.9028],
-  'Londres': [-0.1278, 51.5074],
+  'Londres': [0.1278, 51.5074],
   'Genève': [6.1432, 46.2044],
   'Monaco': [7.4246, 43.7384],
   'Moscou': [37.6173, 55.7558],
   
   // Afrique
   'Libreville': [9.4673, 0.4162],
-  'Pretoria': [28.2293, -25.7479],
+  'Pretoria': [28.2293, 25.7479],
   'Alger': [3.0588, 36.7538],
-  'Luanda': [13.2343, -8.8383],
+  'Luanda': [13.2343, 8.8383],
   'Cotonou': [2.3158, 6.3703],
   'Yaoundé': [11.5174, 3.8480],
-  'Brazzaville': [15.2832, -4.2634],
-  'Abidjan': [-4.0083, 5.3599],
+  'Brazzaville': [15.2832, 4.2634],
+  'Abidjan': [4.0083, 5.3599],
   'Le Caire': [31.2357, 30.0444],
   'Addis-Abeba': [38.7469, 9.0320],
-  'Accra': [-0.1870, 5.6037],
+  'Accra': [0.1870, 5.6037],
   'Malabo': [8.7832, 3.7504],
   'Bata': [9.7670, 1.8637],
-  'Bamako': [-8.0000, 12.6392],
-  'Rabat': [-6.8498, 34.0209],
-  'Laâyoune': [-13.2023, 27.1251],
+  'Bamako': [8.0000, 12.6392],
+  'Rabat': [6.8498, 34.0209],
+  'Laâyoune': [13.2023, 27.1251],
   'Abuja': [7.5248, 9.0765],
-  'Kinshasa': [15.3222, -4.4419],
-  'Kigali': [30.0619, -1.9403],
+  'Kinshasa': [15.3222, 4.4419],
+  'Kigali': [30.0619, 1.9403],
   'São Tomé': [6.7273, 0.3365],
-  'Dakar': [-17.4677, 14.7167],
+  'Dakar': [17.4677, 14.7167],
   'Lomé': [1.2123, 6.1256],
   'Tunis': [10.1815, 36.8065],
   
@@ -73,12 +72,6 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
   'Bordeaux': [-0.5792, 44.8378],
   'Marseille': [5.3698, 43.2965],
 };
-
-// Fonction pour valider les coordonnées
-function isValidCoordinate(coords: [number, number]): boolean {
-  const [lng, lat] = coords;
-  return lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90;
-}
 
 interface MapMarker {
   id: string;
@@ -107,17 +100,15 @@ export function InteractiveWorldMap() {
     setFilters(prev => ({ ...prev, [type]: !prev[type] }));
   };
 
-  // Préparer les markers avec validation (une seule fois)
+  // Préparer les markers (une seule fois)
   useEffect(() => {
     const allMarkers: MapMarker[] = [];
-    let invalidCoordinates = 0;
 
     // Organisations diplomatiques
     MOCK_ORGANIZATIONS.forEach(org => {
       const city = org.metadata?.city || org.city || '';
       const coordinates = CITY_COORDINATES[city];
-      
-      if (coordinates && isValidCoordinate(coordinates)) {
+      if (coordinates) {
         allMarkers.push({
           id: org.id,
           name: org.name,
@@ -126,9 +117,6 @@ export function InteractiveWorldMap() {
           city,
           country: org.metadata?.country || org.country || ''
         });
-      } else if (city) {
-        invalidCoordinates++;
-        console.warn(`Coordonnées invalides ou manquantes pour: ${city} (${org.name})`);
       }
     });
 
@@ -136,8 +124,7 @@ export function InteractiveWorldMap() {
     MOCK_COMPANIES.forEach(company => {
       const city = company.address.city || '';
       const coordinates = CITY_COORDINATES[city];
-      
-      if (coordinates && isValidCoordinate(coordinates)) {
+      if (coordinates) {
         allMarkers.push({
           id: company.id,
           name: company.name,
@@ -146,9 +133,6 @@ export function InteractiveWorldMap() {
           city,
           country: company.address.country || ''
         });
-      } else if (city) {
-        invalidCoordinates++;
-        console.warn(`Coordonnées invalides ou manquantes pour: ${city} (${company.name})`);
       }
     });
 
@@ -156,8 +140,7 @@ export function InteractiveWorldMap() {
     MOCK_ASSOCIATIONS.forEach(association => {
       const city = association.address.city || '';
       const coordinates = CITY_COORDINATES[city];
-      
-      if (coordinates && isValidCoordinate(coordinates)) {
+      if (coordinates) {
         allMarkers.push({
           id: association.id,
           name: association.name,
@@ -166,13 +149,9 @@ export function InteractiveWorldMap() {
           city,
           country: association.address.country || ''
         });
-      } else if (city) {
-        invalidCoordinates++;
-        console.warn(`Coordonnées invalides ou manquantes pour: ${city} (${association.name})`);
       }
     });
 
-    console.log(`Marqueurs valides: ${allMarkers.length}, Coordonnées invalides: ${invalidCoordinates}`);
     setMarkers(allMarkers);
   }, []);
 
@@ -268,13 +247,12 @@ export function InteractiveWorldMap() {
 
       if (!shouldShow) return;
 
-      // Créer un élément HTML pour le marqueur avec animation
+      // Créer un élément HTML pour le marqueur
       const el = document.createElement('div');
       el.className = 'custom-marker';
-      el.style.width = '40px';
-      el.style.height = '40px';
+      el.style.width = '32px';
+      el.style.height = '32px';
       el.style.cursor = 'pointer';
-      el.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
       
       // Couleur selon le type
       let bgColor = '';
@@ -299,58 +277,19 @@ export function InteractiveWorldMap() {
       el.style.display = 'flex';
       el.style.alignItems = 'center';
       el.style.justifyContent = 'center';
-      el.style.fontSize = '20px';
-      el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-      el.style.border = '3px solid white';
+      el.style.fontSize = '18px';
+      el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+      el.style.border = '2px solid white';
       el.textContent = icon;
 
-      // Animation au survol
-      el.addEventListener('mouseenter', () => {
-        el.style.transform = 'scale(1.2) translateY(-5px)';
-        el.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
-        el.style.zIndex = '1000';
-      });
-
-      el.addEventListener('mouseleave', () => {
-        el.style.transform = 'scale(1) translateY(0)';
-        el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-        el.style.zIndex = 'auto';
-      });
-
-      // Animation d'entrée
-      el.style.opacity = '0';
-      el.style.transform = 'scale(0.5)';
-      setTimeout(() => {
-        el.style.opacity = '1';
-        el.style.transform = 'scale(1)';
-      }, Math.random() * 300);
-
-      // Créer le popup amélioré
-      const typeLabel = marker.type === 'organization' ? 'Organisation diplomatique' : 
-                       marker.type === 'company' ? 'Entreprise' : 'Association';
-      
-      const popup = new mapboxgl.Popup({ 
-        offset: 25,
-        closeButton: true,
-        closeOnClick: false,
-        maxWidth: '300px'
-      }).setHTML(`
-        <div style="padding: 12px; font-family: Inter, sans-serif; min-width: 200px;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="font-size: 24px;">${icon}</span>
-            <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: hsl(var(--foreground));">${marker.name}</h3>
-          </div>
-          <div style="padding: 8px; background: hsl(var(--muted)); border-radius: 6px; margin-bottom: 8px;">
-            <p style="margin: 0; font-size: 13px; color: hsl(var(--foreground)); font-weight: 500;">
-              📍 ${marker.city}
-            </p>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: hsl(var(--muted-foreground));">
-              ${marker.country}
-            </p>
-          </div>
-          <div style="display: inline-block; padding: 4px 12px; background: hsl(var(--${marker.type === 'organization' ? 'primary' : marker.type === 'company' ? 'secondary' : 'accent'})); color: white; border-radius: 12px; font-size: 11px; font-weight: 500;">
-            ${typeLabel}
-          </div>
+      // Créer le popup
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+        <div style="padding: 8px; font-family: Inter, sans-serif;">
+          <h3 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: hsl(var(--foreground));">${marker.name}</h3>
+          <p style="margin: 0; font-size: 12px; color: hsl(var(--muted-foreground));">${marker.city}, ${marker.country}</p>
+          <p style="margin: 4px 0 0 0; font-size: 11px; color: hsl(var(--${marker.type === 'organization' ? 'primary' : marker.type === 'company' ? 'secondary' : 'accent'}));">
+            ${marker.type === 'organization' ? '🏛️ Organisation' : marker.type === 'company' ? '🏢 Entreprise' : '👥 Association'}
+          </p>
         </div>
       `);
 
