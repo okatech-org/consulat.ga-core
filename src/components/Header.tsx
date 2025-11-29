@@ -5,8 +5,10 @@ import { useState } from "react";
 import { useDemo } from "@/contexts/DemoContext";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { GlobalSettings } from "@/components/GlobalSettings";
+import { useTranslation } from "react-i18next";
 
 export const Header = () => {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, currentEntity, isSimulating } = useDemo();
 
@@ -18,14 +20,14 @@ export const Header = () => {
             <Shield className="h-6 w-6 text-primary-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-lg leading-tight">Consulat.ga</span>
+            <span className="font-bold text-lg leading-tight">{t('header.title')}</span>
             <span className="text-xs text-muted-foreground">
               {isSimulating && currentEntity ? (
                 <span className="flex items-center gap-1">
                   {COUNTRY_FLAGS[currentEntity.countryCode]} {currentEntity.city}
                 </span>
               ) : (
-                'République Gabonaise'
+                t('header.subtitleNormal')
               )}
             </span>
           </div>
@@ -35,17 +37,17 @@ export const Header = () => {
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
             <Globe className="h-4 w-4" />
-            Réseau Mondial
+            {t('header.worldNetwork')}
           </Link>
           <Link to="/actualites" className="text-sm font-medium hover:text-primary transition-colors">
-            Actualités
+            {t('header.news')}
           </Link>
           <Link to="/demo-portal" className="text-sm font-medium hover:text-primary transition-colors">
-            Portail Démo
+            {t('header.demoPortal')}
           </Link>
           <Link to="/iboite" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
             <MessageSquare className="h-4 w-4" />
-            Messagerie
+            {t('header.messaging')}
           </Link>
           {isSimulating && currentUser?.role === "ADMIN" && (
             <Link to="/iboite">
@@ -62,7 +64,7 @@ export const Header = () => {
             </div>
           )}
           <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
-            <Button variant="outline">Se Connecter</Button>
+            <Button variant="outline">{t('common.login')}</Button>
           </Link>
           <GlobalSettings />
         </nav>
@@ -97,21 +99,21 @@ export const Header = () => {
               onClick={() => setMobileMenuOpen(false)}
             >
               <Globe className="h-4 w-4" />
-              Réseau Mondial
+              {t('header.worldNetwork')}
             </Link>
             <Link
               to="/actualites"
               className="text-sm font-medium hover:text-primary transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Actualités
+              {t('header.news')}
             </Link>
             <Link
               to="/demo-portal"
               className="text-sm font-medium hover:text-primary transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Portail Démo
+              {t('header.demoPortal')}
             </Link>
             {isSimulating && currentUser?.role === "ADMIN" && (
               <Link
@@ -120,12 +122,12 @@ export const Header = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Shield className="h-4 w-4" />
-                Dashboard Admin
+                {t('header.admin')}
               </Link>
             )}
             <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" className="w-full">
-                Se Connecter
+                {t('common.login')}
               </Button>
             </Link>
             <div className="flex justify-center pt-4 border-t border-border/40">

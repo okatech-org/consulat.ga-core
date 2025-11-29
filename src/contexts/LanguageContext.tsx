@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type LanguageCode = 'fr' | 'en' | 'es' | 'de' | 'it' | 'pt' | 'ar' | 'zh' | 'ru';
 
@@ -43,6 +44,7 @@ const COUNTRY_LANGUAGE_MAP: Record<string, LanguageCode> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
+    const { i18n } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState<Language>(LANGUAGES.fr);
     const [availableLanguages, setAvailableLanguages] = useState<Language[]>([LANGUAGES.fr, LANGUAGES.en]);
     const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +74,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const setLanguage = (code: LanguageCode) => {
         if (LANGUAGES[code]) {
             setCurrentLanguage(LANGUAGES[code]);
-            // Here you would typically trigger i18n change
+            i18n.changeLanguage(code);
             document.documentElement.lang = code;
         }
     };

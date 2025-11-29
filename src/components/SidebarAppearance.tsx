@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export function SidebarAppearance() {
+    const { t } = useTranslation();
     const { setTheme, theme } = useTheme();
     const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
 
@@ -55,7 +57,7 @@ export function SidebarAppearance() {
                     onClick={() => setTheme("light")}
                 >
                     <Sun className="h-3.5 w-3.5" />
-                    <span className="sr-only">Clair</span>
+                    <span className="sr-only">{t('settings.light')}</span>
                 </Button>
                 <Button
                     variant="ghost"
@@ -69,7 +71,7 @@ export function SidebarAppearance() {
                     onClick={() => setTheme("dark")}
                 >
                     <Moon className="h-3.5 w-3.5" />
-                    <span className="sr-only">Sombre</span>
+                    <span className="sr-only">{t('settings.dark')}</span>
                 </Button>
             </div>
         </div>
