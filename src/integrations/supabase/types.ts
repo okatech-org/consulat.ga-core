@@ -14,16 +14,357 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          agent_id: string | null
+          appointment_date: string
+          citizen_id: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          notes: string | null
+          organization_id: string
+          request_id: string | null
+          service_id: string | null
+          status: Database["public"]["Enums"]["appointment_status"]
+          updated_at: string
+        }
+        Insert: {
+          agent_id?: string | null
+          appointment_date: string
+          citizen_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          request_id?: string | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["appointment_status"]
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string | null
+          appointment_date?: string
+          citizen_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          request_id?: string | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["appointment_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          city: string | null
+          country: string | null
+          country_code: string | null
+          created_at: string
+          enabled_services: string[] | null
+          id: string
+          jurisdiction: string[]
+          name: string
+          settings: Json | null
+          type: Database["public"]["Enums"]["organization_type"]
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string
+          enabled_services?: string[] | null
+          id?: string
+          jurisdiction: string[]
+          name: string
+          settings?: Json | null
+          type: Database["public"]["Enums"]["organization_type"]
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string
+          enabled_services?: string[] | null
+          id?: string
+          jurisdiction?: string[]
+          name?: string
+          settings?: Json | null
+          type?: Database["public"]["Enums"]["organization_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: Json | null
+          consulate_file: string | null
+          created_at: string
+          date_of_birth: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          nationality: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: Json | null
+          consulate_file?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          nationality?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: Json | null
+          consulate_file?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          nationality?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      requests: {
+        Row: {
+          assigned_to: string | null
+          assigned_to_name: string | null
+          attached_documents: string[] | null
+          citizen_email: string
+          citizen_id: string
+          citizen_name: string
+          citizen_phone: string | null
+          created_at: string
+          description: string | null
+          expected_completion_date: string | null
+          id: string
+          internal_notes: string | null
+          organization_id: string | null
+          priority: Database["public"]["Enums"]["request_priority"]
+          required_documents: string[] | null
+          service_id: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          subject: string
+          type: Database["public"]["Enums"]["request_type"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          assigned_to_name?: string | null
+          attached_documents?: string[] | null
+          citizen_email: string
+          citizen_id: string
+          citizen_name: string
+          citizen_phone?: string | null
+          created_at?: string
+          description?: string | null
+          expected_completion_date?: string | null
+          id?: string
+          internal_notes?: string | null
+          organization_id?: string | null
+          priority?: Database["public"]["Enums"]["request_priority"]
+          required_documents?: string[] | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          subject: string
+          type: Database["public"]["Enums"]["request_type"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          assigned_to_name?: string | null
+          attached_documents?: string[] | null
+          citizen_email?: string
+          citizen_id?: string
+          citizen_name?: string
+          citizen_phone?: string | null
+          created_at?: string
+          description?: string | null
+          expected_completion_date?: string | null
+          id?: string
+          internal_notes?: string | null
+          organization_id?: string | null
+          priority?: Database["public"]["Enums"]["request_priority"]
+          required_documents?: string[] | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          subject?: string
+          type?: Database["public"]["Enums"]["request_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string | null
+          price: number | null
+          processing_time_days: number | null
+          required_documents: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id?: string | null
+          price?: number | null
+          processing_time_days?: number | null
+          required_documents?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string | null
+          price?: number | null
+          processing_time_days?: number | null
+          required_documents?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "admin" | "agent" | "citizen"
+      appointment_status:
+        | "SCHEDULED"
+        | "CONFIRMED"
+        | "COMPLETED"
+        | "CANCELLED"
+        | "NO_SHOW"
+      organization_type:
+        | "CONSULAT_GENERAL"
+        | "CONSULAT"
+        | "AMBASSADE"
+        | "HAUT_COMMISSARIAT"
+        | "MISSION_PERMANENTE"
+      request_priority: "LOW" | "NORMAL" | "HIGH" | "URGENT"
+      request_status:
+        | "PENDING"
+        | "IN_PROGRESS"
+        | "AWAITING_DOCUMENTS"
+        | "VALIDATED"
+        | "REJECTED"
+        | "COMPLETED"
+      request_type:
+        | "PASSPORT"
+        | "VISA"
+        | "CIVIL_REGISTRY"
+        | "LEGALIZATION"
+        | "CONSULAR_CARD"
+        | "ATTESTATION"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +491,39 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "admin", "agent", "citizen"],
+      appointment_status: [
+        "SCHEDULED",
+        "CONFIRMED",
+        "COMPLETED",
+        "CANCELLED",
+        "NO_SHOW",
+      ],
+      organization_type: [
+        "CONSULAT_GENERAL",
+        "CONSULAT",
+        "AMBASSADE",
+        "HAUT_COMMISSARIAT",
+        "MISSION_PERMANENTE",
+      ],
+      request_priority: ["LOW", "NORMAL", "HIGH", "URGENT"],
+      request_status: [
+        "PENDING",
+        "IN_PROGRESS",
+        "AWAITING_DOCUMENTS",
+        "VALIDATED",
+        "REJECTED",
+        "COMPLETED",
+      ],
+      request_type: [
+        "PASSPORT",
+        "VISA",
+        "CIVIL_REGISTRY",
+        "LEGALIZATION",
+        "CONSULAR_CARD",
+        "ATTESTATION",
+      ],
+    },
   },
 } as const
