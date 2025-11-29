@@ -53,6 +53,11 @@ export const Header = () => {
           <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
             <Button variant="outline">{t('common.login')}</Button>
           </Link>
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <ThemeToggle />
+            <GlobalSettings />
+          </div>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -116,6 +121,11 @@ export const Header = () => {
                 {t('common.login')}
               </Button>
             </Link>
+            <div className="flex justify-center gap-2 pt-4 border-t border-border/40">
+              <LanguageToggle />
+              <ThemeToggle />
+              <GlobalSettings />
+            </div>
           </nav>
         </div>
       )}
