@@ -16,6 +16,8 @@ serve(async (req) => {
             throw new Error('OPENAI_API_KEY is not set')
         }
 
+        console.log('Creating ephemeral token for OpenAI Realtime API...')
+
         const response = await fetch('https://api.openai.com/v1/realtime/sessions', {
             method: 'POST',
             headers: {
@@ -24,24 +26,27 @@ serve(async (req) => {
             },
             body: JSON.stringify({
                 model: 'gpt-4o-realtime-preview-2024-12-17',
-                voice: 'verse',
+                voice: 'alloy',
             }),
         })
 
-        const data = await response.json()
-
         if (!response.ok) {
-            console.error('OpenAI API Error:', data)
-            throw new Error(`OpenAI API Error: ${data.error?.message || 'Unknown error'}`)
+            const errorData = await response.json()
+            console.error('OpenAI API Error:', errorData)
+            throw new Error(`OpenAI API Error: ${errorData.error?.message || 'Unknown error'}`)
         }
+
+        const data = await response.json()
+        console.log('Ephemeral token created successfully')
 
         return new Response(JSON.stringify(data), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
     } catch (error) {
+        console.error('Error in get-realtime-token:', error)
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
         return new Response(JSON.stringify({ error: errorMessage }), {
-            status: 400,
+            status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
     }

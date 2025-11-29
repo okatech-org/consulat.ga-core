@@ -50,7 +50,7 @@ import CitizenRequestsPage from './pages/dashboard/citizen/CitizenRequestsPage';
 import CitizenSettingsPage from './pages/dashboard/citizen/CitizenSettingsPage';
 import SettingsPage from './pages/SettingsPage';
 import MessagingPage from "./pages/MessagingPage";
-import IAstedInterface from "@/components/iasted/IAstedInterface";
+import IAstedInterfaceWrapper from "@/components/iasted/IAstedInterfaceWrapper";
 
 const queryClient = new QueryClient();
 
@@ -129,7 +129,7 @@ const App = () => (
                 <Route path="/demo-portal" element={<DemoPortal />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <IAstedInterface />
+              <IAstedInterfaceWrapper />
             </BrowserRouter>
           </DemoProvider>
         </TooltipProvider>

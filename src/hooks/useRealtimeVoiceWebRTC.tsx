@@ -73,15 +73,22 @@ export const useRealtimeVoiceWebRTC = (onToolCall?: (name: string, args: any) =>
 
             setVoiceState('connecting');
 
-            // 1. Get Ephemeral Token
+            // 1. Get Ephemeral Token from edge function
+            console.log('🔑 Requesting ephemeral token...');
             const { data, error } = await supabase.functions.invoke('get-realtime-token');
 
-            if (error || !data?.client_secret?.value) {
-                console.error('Token Error:', error);
-                throw new Error('Impossible de récupérer le token vocal.');
+            if (error) {
+                console.error('❌ Token Error:', error);
+                throw new Error('Erreur lors de la récupération du token: ' + error.message);
+            }
+
+            if (!data?.client_secret?.value) {
+                console.error('❌ Invalid token response:', data);
+                throw new Error('Token invalide reçu du serveur.');
             }
 
             const EPHEMERAL_KEY = data.client_secret.value;
+            console.log('✅ Ephemeral token obtained');
 
             // 2. Setup WebRTC
             const pc = new RTCPeerConnection();
@@ -122,12 +129,16 @@ export const useRealtimeVoiceWebRTC = (onToolCall?: (name: string, args: any) =>
             source.connect(analyser.current);
             analyzeAudio();
 
-            // 4. Offer/Answer
+            // 4. Create and send WebRTC Offer
+            console.log('📡 Creating WebRTC offer...');
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
 
+            // 5. Exchange SDP with OpenAI
             const baseUrl = 'https://api.openai.com/v1/realtime';
             const model = 'gpt-4o-realtime-preview-2024-12-17';
+            console.log(`📡 Connecting to OpenAI Realtime API: ${baseUrl}?model=${model}`);
+            
             const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
                 method: 'POST',
                 body: offer.sdp,
@@ -137,11 +148,21 @@ export const useRealtimeVoiceWebRTC = (onToolCall?: (name: string, args: any) =>
                 },
             });
 
+            if (!sdpResponse.ok) {
+                const errorText = await sdpResponse.text();
+                console.error('❌ SDP Exchange failed:', sdpResponse.status, errorText);
+                throw new Error(`Erreur de connexion WebRTC: ${sdpResponse.status}`);
+            }
+
+            const answerSdp = await sdpResponse.text();
+            console.log('✅ Received SDP answer from OpenAI');
+
             const answer = {
                 type: 'answer' as RTCSdpType,
-                sdp: await sdpResponse.text(),
+                sdp: answerSdp,
             };
             await pc.setRemoteDescription(answer);
+            console.log('✅ WebRTC connection established');
 
         } catch (err: any) {
             console.error('Connection failed:', err);
