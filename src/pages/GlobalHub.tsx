@@ -1,10 +1,9 @@
 import { JurisdictionSelector } from "@/components/JurisdictionSelector";
-import { WorldMapVisual } from "@/components/WorldMapVisual";
+import { InteractiveWorldMap } from "@/components/InteractiveWorldMap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Globe, Newspaper, Shield } from "lucide-react";
-import heroImage from "@/assets/hero-consulat.jpg";
 
 export default function GlobalHub() {
   const articles = [
@@ -31,14 +30,9 @@ export default function GlobalHub() {
   return (
     <>
       {/* Hero Section - Hub Global */}
-      <section className="relative py-24 bg-gradient-official overflow-hidden">
-        <WorldMapVisual />
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        />
-        <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
+      <section className="relative py-12 bg-gradient-to-b from-background to-muted/20">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center space-y-6 mb-8 animate-fade-in">
             <div className="flex justify-center mb-4">
               <Globe className="h-16 w-16 text-primary animate-pulse" />
             </div>
@@ -53,7 +47,7 @@ export default function GlobalHub() {
               Une plateforme unique, des services adaptés à votre localisation.
             </p>
 
-            <div className="pt-8">
+            <div className="pt-6">
               <JurisdictionSelector />
             </div>
 
@@ -71,6 +65,11 @@ export default function GlobalHub() {
                 </Link>
               </Button>
             </div>
+          </div>
+
+          {/* Carte Interactive */}
+          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <InteractiveWorldMap />
           </div>
         </div>
       </section>
