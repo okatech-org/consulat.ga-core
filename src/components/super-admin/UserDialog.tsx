@@ -13,20 +13,22 @@ import { Separator } from "@/components/ui/separator";
 import { ConsularRole } from "@/types/consular-roles";
 import { DemoUser } from "@/types/roles";
 import { UserFunction, BillingFeature } from "@/types/user-management";
-import { MOCK_SERVICES } from "@/data/mock-services";
+import { serviceCatalog } from "@/services/serviceCatalog";
+import { ConsularService } from "@/types/services";
 import { Shield, Briefcase, CreditCard, Settings, User } from "lucide-react";
 
 interface UserDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    initialData?: DemoUser | null;
-    onSave: (data: Partial<DemoUser>) => Promise<void>;
+    initialData?: any | null;
+    onSave: (data: any) => Promise<void>;
 }
 
 export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDialogProps) {
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("general");
-    const [formData, setFormData] = useState<Partial<DemoUser>>({
+    const [services, setServices] = useState<ConsularService[]>([]);
+    const [formData, setFormData] = useState<any>({
         name: "",
         role: ConsularRole.CITIZEN,
         entityId: "",
@@ -37,8 +39,21 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
             maxDailyFiles: 10,
             maxStorageGB: 1,
             canExportData: false
-        }
+        },
+        accessibleServices: []
     });
+
+    useEffect(() => {
+        const loadServices = async () => {
+            try {
+                const data = await serviceCatalog.getAll();
+                setServices(data);
+            } catch (error) {
+                console.error("Failed to load services", error);
+            }
+        };
+        loadServices();
+    }, []);
 
     useEffect(() => {
         if (initialData) {
@@ -50,7 +65,8 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                     maxDailyFiles: 10,
                     maxStorageGB: 1,
                     canExportData: false
-                }
+                },
+                accessibleServices: initialData.accessibleServices || []
             });
         } else {
             setFormData({
@@ -64,7 +80,8 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                     maxDailyFiles: 10,
                     maxStorageGB: 1,
                     canExportData: false
-                }
+                },
+                accessibleServices: []
             });
         }
     }, [initialData, open]);
@@ -83,10 +100,10 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
     };
 
     const toggleFunction = (func: UserFunction) => {
-        setFormData(prev => {
+        setFormData((prev: any) => {
             const current = prev.functions || [];
             if (current.includes(func)) {
-                return { ...prev, functions: current.filter(f => f !== func) };
+                return { ...prev, functions: current.filter((f: any) => f !== func) };
             } else {
                 return { ...prev, functions: [...current, func] };
             }
@@ -94,10 +111,10 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
     };
 
     const toggleBillingFeature = (feat: BillingFeature) => {
-        setFormData(prev => {
+        setFormData((prev: any) => {
             const current = prev.billingFeatures || [];
             if (current.includes(feat)) {
-                return { ...prev, billingFeatures: current.filter(f => f !== feat) };
+                return { ...prev, billingFeatures: current.filter((f: any) => f !== feat) };
             } else {
                 return { ...prev, billingFeatures: [...current, feat] };
             }
@@ -142,7 +159,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                             <Input
                                                 id="name"
                                                 value={formData.name}
-                                                onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                                                onChange={(e) => setFormData((p: any) => ({ ...p, name: e.target.value }))}
                                                 required
                                             />
                                         </div>
@@ -152,7 +169,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                 id="email"
                                                 type="email"
                                                 value={formData.email || ""}
-                                                onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
+                                                onChange={(e) => setFormData((p: any) => ({ ...p, email: e.target.value }))}
                                                 placeholder="exemple@consulat.ga"
                                             />
                                         </div>
@@ -163,7 +180,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                             <Label htmlFor="role">Rôle Principal</Label>
                                             <Select
                                                 value={formData.role}
-                                                onValueChange={(v) => setFormData(p => ({ ...p, role: v as ConsularRole }))}
+                                                onValueChange={(v) => setFormData((p: any) => ({ ...p, role: v as ConsularRole }))}
                                             >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Sélectionner un rôle" />
@@ -184,7 +201,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                             <Input
                                                 id="entityId"
                                                 value={formData.entityId || ""}
-                                                onChange={(e) => setFormData(p => ({ ...p, entityId: e.target.value }))}
+                                                onChange={(e) => setFormData((p: any) => ({ ...p, entityId: e.target.value }))}
                                                 placeholder="ex: consulat-paris"
                                             />
                                         </div>
@@ -272,8 +289,8 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                         </p>
                                     </div>
                                     <div className="space-y-3">
-                                        {MOCK_SERVICES.map(service => {
-                                            const access = formData.accessibleServices?.find(s => s.serviceId === service.id);
+                                        {services.map(service => {
+                                            const access = formData.accessibleServices?.find((s: any) => s.serviceId === service.id);
                                             const hasAccess = !!access;
 
                                             return (
@@ -283,7 +300,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                             <Switch
                                                                 checked={hasAccess}
                                                                 onCheckedChange={(checked) => {
-                                                                    setFormData(prev => {
+                                                                    setFormData((prev: any) => {
                                                                         const current = prev.accessibleServices || [];
                                                                         if (checked) {
                                                                             return {
@@ -298,7 +315,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                                         } else {
                                                                             return {
                                                                                 ...prev,
-                                                                                accessibleServices: current.filter(s => s.serviceId !== service.id)
+                                                                                accessibleServices: current.filter((s: any) => s.serviceId !== service.id)
                                                                             };
                                                                         }
                                                                     });
@@ -309,7 +326,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                                 <div className="text-xs text-muted-foreground">{service.description}</div>
                                                             </div>
                                                         </div>
-                                                        <Badge variant="outline" className="text-[10px]">{service.type}</Badge>
+                                                        {/* <Badge variant="outline" className="text-[10px]">{service.type}</Badge> */}
                                                     </div>
 
                                                     {hasAccess && (
@@ -319,9 +336,9 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                                     id={`view-${service.id}`}
                                                                     checked={access?.canView}
                                                                     onCheckedChange={(c) => {
-                                                                        setFormData(prev => ({
+                                                                        setFormData((prev: any) => ({
                                                                             ...prev,
-                                                                            accessibleServices: prev.accessibleServices?.map(s =>
+                                                                            accessibleServices: prev.accessibleServices?.map((s: any) =>
                                                                                 s.serviceId === service.id ? { ...s, canView: !!c } : s
                                                                             )
                                                                         }));
@@ -334,9 +351,9 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                                     id={`process-${service.id}`}
                                                                     checked={access?.canProcess}
                                                                     onCheckedChange={(c) => {
-                                                                        setFormData(prev => ({
+                                                                        setFormData((prev: any) => ({
                                                                             ...prev,
-                                                                            accessibleServices: prev.accessibleServices?.map(s =>
+                                                                            accessibleServices: prev.accessibleServices?.map((s: any) =>
                                                                                 s.serviceId === service.id ? { ...s, canProcess: !!c } : s
                                                                             )
                                                                         }));
@@ -349,9 +366,9 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                                     id={`validate-${service.id}`}
                                                                     checked={access?.canValidate}
                                                                     onCheckedChange={(c) => {
-                                                                        setFormData(prev => ({
+                                                                        setFormData((prev: any) => ({
                                                                             ...prev,
-                                                                            accessibleServices: prev.accessibleServices?.map(s =>
+                                                                            accessibleServices: prev.accessibleServices?.map((s: any) =>
                                                                                 s.serviceId === service.id ? { ...s, canValidate: !!c } : s
                                                                             )
                                                                         }));
@@ -377,7 +394,7 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                     <Input
                                                         type="number"
                                                         value={formData.quotas?.maxDailyFiles}
-                                                        onChange={(e) => setFormData(p => ({ ...p, quotas: { ...p.quotas, maxDailyFiles: parseInt(e.target.value) } }))}
+                                                        onChange={(e) => setFormData((p: any) => ({ ...p, quotas: { ...p.quotas, maxDailyFiles: parseInt(e.target.value) } }))}
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -385,14 +402,14 @@ export function UserDialog({ open, onOpenChange, initialData, onSave }: UserDial
                                                     <Input
                                                         type="number"
                                                         value={formData.quotas?.maxStorageGB}
-                                                        onChange={(e) => setFormData(p => ({ ...p, quotas: { ...p.quotas, maxStorageGB: parseFloat(e.target.value) } }))}
+                                                        onChange={(e) => setFormData((p: any) => ({ ...p, quotas: { ...p.quotas, maxStorageGB: parseFloat(e.target.value) } }))}
                                                     />
                                                 </div>
                                                 <div className="flex items-center justify-between pt-2">
                                                     <Label>Export de données</Label>
                                                     <Switch
                                                         checked={formData.quotas?.canExportData}
-                                                        onCheckedChange={(c) => setFormData(p => ({ ...p, quotas: { ...p.quotas, canExportData: c } }))}
+                                                        onCheckedChange={(c) => setFormData((p: any) => ({ ...p, quotas: { ...p.quotas, canExportData: c } }))}
                                                     />
                                                 </div>
                                             </div>

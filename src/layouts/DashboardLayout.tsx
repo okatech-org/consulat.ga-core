@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { GlobalSettings } from "@/components/GlobalSettings";
 import { useDemo } from "@/contexts/DemoContext";
 import { SidebarAppearance } from "@/components/SidebarAppearance";
-import { IAstedHub } from "@/components/iasted/IAstedHub";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const navigate = useNavigate();
@@ -158,7 +157,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </div>
                 </main>
             </div>
-            <IAstedHub />
         </div>
     );
 }

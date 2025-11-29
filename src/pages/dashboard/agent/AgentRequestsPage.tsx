@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,16 +12,33 @@ import {
     AlertCircle, Eye, Play, CheckCheck, Filter,
     Calendar, User, Phone, Mail, Paperclip
 } from "lucide-react";
-import { MOCK_REQUESTS } from "@/data/mock-requests";
-import { Request, RequestStatus, RequestType, RequestPriority } from "@/types/request";
+import { requestService } from "@/services/requestService";
+import { ServiceRequest, RequestStatus, RequestType, RequestPriority } from "@/types/request";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 export default function AgentRequestsPage() {
+    const [requests, setRequests] = useState<ServiceRequest[]>([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterType, setFilterType] = useState<string>("all");
     const [filterStatus, setFilterStatus] = useState<string>("all");
     const [activeTab, setActiveTab] = useState<string>("all");
+
+    useEffect(() => {
+        loadRequests();
+    }, []);
+
+    const loadRequests = async () => {
+        try {
+            const data = await requestService.getAll();
+            setRequests(data);
+        } catch (error) {
+            console.error("Failed to load requests", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getStatusBadge = (status: RequestStatus) => {
         const config = {
@@ -33,7 +50,7 @@ export default function AgentRequestsPage() {
             [RequestStatus.COMPLETED]: { variant: "outline" as const, className: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCheck }
         };
 
-        const { className, icon: Icon } = config[status];
+        const { className, icon: Icon } = config[status] || config[RequestStatus.PENDING];
         return (
             <Badge className={`${className} gap-1 font-medium`}>
                 <Icon className="w-3 h-3" />
@@ -42,28 +59,21 @@ export default function AgentRequestsPage() {
         );
     };
 
-    const getPriorityBadge = (priority: RequestPriority) => {
-        const colors = {
-            [RequestPriority.LOW]: "bg-gray-100 text-gray-600",
-            [RequestPriority.NORMAL]: "bg-blue-100 text-blue-600",
-            [RequestPriority.HIGH]: "bg-orange-100 text-orange-600",
-            [RequestPriority.URGENT]: "bg-red-100 text-red-600"
-        };
-        return <Badge variant="secondary" className={colors[priority]}>{priority}</Badge>;
+    const getTypeBadge = (type: string) => {
+        return <Badge variant="outline" className="text-xs">{type}</Badge>;
     };
 
-    const getTypeBadge = (type: RequestType) => {
-        return <Badge variant="outline" className="text-xs">{type.replace(/_/g, ' ')}</Badge>;
-    };
+    const filteredRequests = requests.filter(request => {
+        const citizenName = request.profile ? `${request.profile.first_name} ${request.profile.last_name}` : 'Inconnu';
+        const subject = request.service?.name || 'Demande';
 
-    const filteredRequests = MOCK_REQUESTS.filter(request => {
         // Search filter
-        const matchesSearch = request.citizenName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const matchesSearch = citizenName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             request.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            request.subject.toLowerCase().includes(searchTerm.toLowerCase());
+            subject.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Type filter
-        const matchesType = filterType === "all" || request.type === filterType;
+        // Type filter (using service name as type for now)
+        const matchesType = filterType === "all" || (request.service?.name === filterType);
 
         // Status filter
         const matchesStatus = filterStatus === "all" || request.status === filterStatus;
@@ -78,11 +88,14 @@ export default function AgentRequestsPage() {
     });
 
     const stats = {
-        total: MOCK_REQUESTS.length,
-        pending: MOCK_REQUESTS.filter(r => r.status === RequestStatus.PENDING).length,
-        inProgress: MOCK_REQUESTS.filter(r => r.status === RequestStatus.IN_PROGRESS).length,
-        completed: MOCK_REQUESTS.filter(r => r.status === RequestStatus.COMPLETED || r.status === RequestStatus.VALIDATED).length
+        total: requests.length,
+        pending: requests.filter(r => r.status === RequestStatus.PENDING).length,
+        inProgress: requests.filter(r => r.status === RequestStatus.IN_PROGRESS).length,
+        completed: requests.filter(r => r.status === RequestStatus.COMPLETED || r.status === RequestStatus.VALIDATED).length
     };
+
+    // Extract unique service names for filter
+    const serviceTypes = Array.from(new Set(requests.map(r => r.service?.name).filter(Boolean)));
 
     return (
         <DashboardLayout>
@@ -168,8 +181,8 @@ export default function AgentRequestsPage() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">Tous les types</SelectItem>
-                                        {Object.values(RequestType).map(type => (
-                                            <SelectItem key={type} value={type}>{type.replace(/_/g, ' ')}</SelectItem>
+                                        {serviceTypes.map((type) => (
+                                            <SelectItem key={type as string} value={type as string}>{type as string}</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -211,14 +224,16 @@ export default function AgentRequestsPage() {
                 {/* Tabs and Request List */}
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                     <TabsList className="neu-inset mb-4">
-                        <TabsTrigger value="all">Toutes ({MOCK_REQUESTS.length})</TabsTrigger>
+                        <TabsTrigger value="all">Toutes ({stats.total})</TabsTrigger>
                         <TabsTrigger value="pending">En attente ({stats.pending})</TabsTrigger>
                         <TabsTrigger value="in-progress">En cours ({stats.inProgress})</TabsTrigger>
                         <TabsTrigger value="completed">Terminées ({stats.completed})</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value={activeTab} className="space-y-4">
-                        {filteredRequests.length === 0 ? (
+                        {loading ? (
+                            <div className="text-center py-12">Chargement...</div>
+                        ) : filteredRequests.length === 0 ? (
                             <Card className="neu-raised">
                                 <CardContent className="p-12 text-center">
                                     <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
@@ -239,13 +254,14 @@ export default function AgentRequestsPage() {
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                                            <span className="font-mono text-xs text-muted-foreground">{request.id}</span>
+                                                            <span className="font-mono text-xs text-muted-foreground">{request.id.substring(0, 8)}</span>
                                                             {getStatusBadge(request.status)}
-                                                            {getPriorityBadge(request.priority)}
-                                                            {getTypeBadge(request.type)}
+                                                            {getTypeBadge(request.service?.name || 'Service')}
                                                         </div>
-                                                        <h3 className="font-semibold text-lg">{request.subject}</h3>
-                                                        <p className="text-sm text-muted-foreground line-clamp-2">{request.description}</p>
+                                                        <h3 className="font-semibold text-lg">{request.service?.name || 'Demande'}</h3>
+                                                        <p className="text-sm text-muted-foreground line-clamp-2">
+                                                            {request.data?.description || 'Aucune description'}
+                                                        </p>
                                                     </div>
                                                 </div>
 
@@ -253,31 +269,26 @@ export default function AgentRequestsPage() {
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t">
                                                     <div className="flex items-center gap-2 text-sm">
                                                         <User className="w-4 h-4 text-muted-foreground" />
-                                                        <span className="font-medium">{request.citizenName}</span>
+                                                        <span className="font-medium">
+                                                            {request.profile ? `${request.profile.first_name} ${request.profile.last_name}` : 'Inconnu'}
+                                                        </span>
                                                     </div>
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                         <Mail className="w-4 h-4" />
-                                                        <span className="truncate">{request.citizenEmail}</span>
+                                                        <span className="truncate">
+                                                            {request.profile?.email || 'N/A'}
+                                                        </span>
                                                     </div>
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                         <Calendar className="w-4 h-4" />
-                                                        <span>{formatDistanceToNow(request.createdAt, { addSuffix: true, locale: fr })}</span>
+                                                        <span>{formatDistanceToNow(new Date(request.created_at), { addSuffix: true, locale: fr })}</span>
                                                     </div>
                                                 </div>
 
-                                                {request.assignedToName && (
-                                                    <div className="flex items-center gap-2 text-sm">
-                                                        <Badge variant="secondary" className="gap-1">
-                                                            <User className="w-3 h-3" />
-                                                            Assigné à: {request.assignedToName}
-                                                        </Badge>
-                                                    </div>
-                                                )}
-
-                                                {request.attachedDocuments.length > 0 && (
+                                                {request.documents && Object.keys(request.documents).length > 0 && (
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                         <Paperclip className="w-4 h-4" />
-                                                        <span>{request.attachedDocuments.length} document(s) joint(s)</span>
+                                                        <span>{Object.keys(request.documents).length} document(s) joint(s)</span>
                                                     </div>
                                                 )}
                                             </div>

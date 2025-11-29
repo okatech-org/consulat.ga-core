@@ -1,7 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { MOCK_USERS } from "@/data/mock-users";
-import { MOCK_ENTITIES } from "@/data/mock-entities";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,47 +9,103 @@ import { Search, Filter, Building2, User, Mail, Shield } from "lucide-react";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { UserDialog } from "@/components/super-admin/UserDialog";
 import { useToast } from "@/components/ui/use-toast";
-import { DemoUser } from "@/types/roles";
+import { profileService, Profile } from "@/services/profileService";
 
 export default function SuperAdminUsers() {
     const { toast } = useToast();
     const [searchTerm, setSearchTerm] = useState("");
-    const [expandedCountries, setExpandedCountries] = useState<string[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<DemoUser | null>(null);
+    const [selectedUser, setSelectedUser] = useState<any | null>(null);
+    const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadProfiles();
+    }, []);
+
+    const loadProfiles = async () => {
+        try {
+            const data = await profileService.getAll();
+            setProfiles(data);
+        } catch (error) {
+            console.error("Failed to load profiles", error);
+            toast({
+                title: "Erreur",
+                description: "Impossible de charger les utilisateurs.",
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleAdd = () => {
         setSelectedUser(null);
         setIsDialogOpen(true);
     };
 
-    const handleEdit = (user: DemoUser) => {
+    const handleEdit = (user: any) => {
         setSelectedUser(user);
         setIsDialogOpen(true);
     };
 
-    const handleSave = async (data: Partial<DemoUser>) => {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        toast({
-            title: selectedUser ? "Utilisateur modifié" : "Utilisateur créé",
-            description: `L'utilisateur ${data.name} a été enregistré avec succès.`,
-        });
-        setIsDialogOpen(false);
+    const handleSave = async (data: any) => {
+        try {
+            if (selectedUser) {
+                // Update existing user
+                const [firstName, ...lastNameParts] = data.name.split(' ');
+                const lastName = lastNameParts.join(' ');
+
+                await profileService.update(selectedUser.id, {
+                    first_name: firstName,
+                    last_name: lastName,
+                    role: data.role,
+                    email: data.email
+                    // Note: organization_id update would require looking up the org by name or ID
+                });
+
+                toast({
+                    title: "Utilisateur modifié",
+                    description: `L'utilisateur ${data.name} a été enregistré avec succès.`,
+                });
+            } else {
+                // Create new user - Not fully implemented in this MVP without Auth integration
+                toast({
+                    title: "Non implémenté",
+                    description: "La création d'utilisateur nécessite une intégration Auth complète.",
+                    variant: "destructive"
+                });
+            }
+            loadProfiles();
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error("Failed to save user", error);
+            toast({
+                title: "Erreur",
+                description: "Une erreur est survenue.",
+                variant: "destructive"
+            });
+        }
     };
 
     // 1. Enrich Users with Entity Data
     const enrichedUsers = useMemo(() => {
-        return MOCK_USERS.map(user => {
-            const entity = MOCK_ENTITIES.find(e => e.id === user.entityId);
+        return profiles.map(user => {
             return {
-                ...user,
-                entityName: entity?.name || "Non assigné",
-                country: entity?.country || "Non assigné",
-                countryCode: entity?.countryCode || "XX",
-                city: entity?.city || ""
+                id: user.id,
+                name: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+                role: user.role,
+                entityName: user.organization?.name || "Non assigné",
+                country: user.organization?.metadata?.country || "Non assigné",
+                countryCode: "GA", // Default to Gabon if unknown, or map from country name
+                // Preserve other fields for dialog if needed, though they might be empty
+                functions: [],
+                billingFeatures: [],
+                quotas: {}
             };
         });
-    }, []);
+    }, [profiles]);
 
     // 2. Filter Users (Smart Search)
     const filteredUsers = useMemo(() => {
@@ -120,7 +174,9 @@ export default function SuperAdminUsers() {
 
                 {/* Segmented View */}
                 <div className="space-y-4">
-                    {Object.keys(segmentedData).length === 0 ? (
+                    {loading ? (
+                        <div className="text-center py-12 text-muted-foreground">Chargement...</div>
+                    ) : Object.keys(segmentedData).length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground">
                             Aucun utilisateur trouvé pour cette recherche.
                         </div>

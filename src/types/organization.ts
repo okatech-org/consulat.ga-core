@@ -1,39 +1,42 @@
 export enum OrganizationType {
-    CONSULAT_GENERAL = 'CONSULAT_GENERAL',
-    CONSULAT = 'CONSULAT',
-    AMBASSADE = 'AMBASSADE',
-    HAUT_COMMISSARIAT = 'HAUT_COMMISSARIAT',
-    MISSION_PERMANENTE = 'MISSION_PERMANENTE'
+    EMBASSY = 'EMBASSY',
+    CONSULATE = 'CONSULATE',
+    GENERAL_CONSULATE = 'GENERAL_CONSULATE',
+    HONORARY_CONSULATE = 'HONORARY_CONSULATE',
+    OTHER = 'OTHER'
 }
 
-export interface CountrySettings {
-    contact: {
+export enum OrganizationStatus {
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
+    SUSPENDED = 'SUSPENDED'
+}
+
+export interface OrganizationMetadata {
+    jurisdiction?: string[]; // Array of Country Codes
+    contact?: {
         address: string;
         phone: string;
         email: string;
         website?: string;
     };
-    hours: {
+    hours?: {
         [day: string]: { open: string; close: string; isOpen: boolean };
     };
-    resources: {
-        consularCardTemplateId?: string;
-        visaTemplateId?: string;
-    };
+    city?: string;
+    country?: string;
+    countryCode?: string;
 }
 
 export interface Organization {
     id: string;
     name: string;
+    logo?: string;
     type: OrganizationType;
-    jurisdiction: string[]; // Array of Country Codes (e.g., ['FR', 'MC', 'PT'])
-    settings: Record<string, CountrySettings>; // Keyed by Country Code
-
-    // Legacy support (optional, for transition)
-    city?: string;
-    country?: string;
-    countryCode?: string;
-    enabledServices?: string[]; // Legacy support for service IDs
+    status: OrganizationStatus;
+    metadata?: OrganizationMetadata;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export const COUNTRY_FLAGS: Record<string, string> = {
@@ -53,6 +56,6 @@ export const COUNTRY_FLAGS: Record<string, string> = {
     'MX': '🇲🇽'
 };
 
-// Re-export for compatibility with existing code that expects EntityType
+// Compatibility exports
 export { OrganizationType as EntityType };
 export type { Organization as Entity };

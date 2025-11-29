@@ -1,12 +1,11 @@
 import { Building2, Plus, Search, MapPin, Globe, Settings, LayoutDashboard } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { MOCK_ORGANIZATIONS } from "@/data/mock-organizations";
-import { COUNTRY_FLAGS } from "@/types/entity";
-import { useState } from "react";
+import { COUNTRY_FLAGS, Organization, OrganizationType } from "@/types/organization";
+import { useState, useEffect } from "react";
 import { OrganizationDialog } from "@/components/super-admin/OrganizationDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Organization } from "@/types/organization";
+import { organizationService } from "@/services/organizationService";
 
 export default function SuperAdminOrganizations() {
     const navigate = useNavigate();
@@ -14,11 +13,33 @@ export default function SuperAdminOrganizations() {
     const [searchTerm, setSearchTerm] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedEntity, setSelectedEntity] = useState<Organization | null>(null);
+    const [organizations, setOrganizations] = useState<Organization[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const filteredEntities = MOCK_ORGANIZATIONS.filter(entity =>
+    useEffect(() => {
+        loadOrganizations();
+    }, []);
+
+    const loadOrganizations = async () => {
+        try {
+            const data = await organizationService.getAll();
+            setOrganizations(data);
+        } catch (error) {
+            console.error("Failed to load organizations", error);
+            toast({
+                title: "Erreur",
+                description: "Impossible de charger les organisations.",
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredEntities = organizations.filter(entity =>
         entity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (entity.city && entity.city.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (entity.country && entity.country.toLowerCase().includes(searchTerm.toLowerCase()))
+        (entity.metadata?.city && entity.metadata.city.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (entity.metadata?.country && entity.metadata.country.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const handleAdd = () => {
@@ -32,14 +53,32 @@ export default function SuperAdminOrganizations() {
     };
 
     const handleSave = async (data: Partial<Organization>) => {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        toast({
-            title: selectedEntity ? "Organisation modifiée" : "Organisation créée",
-            description: `L'organisation ${data.name} a été enregistrée avec succès.`,
-        });
-        setIsDialogOpen(false);
+        try {
+            if (selectedEntity) {
+                await organizationService.update(selectedEntity.id, data);
+                toast({
+                    title: "Organisation modifiée",
+                    description: `L'organisation ${data.name} a été mise à jour.`,
+                });
+            } else {
+                // For creation, we need to ensure type is set
+                if (!data.type) data.type = OrganizationType.EMBASSY;
+                await organizationService.create(data as Omit<Organization, 'id' | 'created_at' | 'updated_at'>);
+                toast({
+                    title: "Organisation créée",
+                    description: `L'organisation ${data.name} a été créée avec succès.`,
+                });
+            }
+            loadOrganizations();
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error("Failed to save organization", error);
+            toast({
+                title: "Erreur",
+                description: "Une erreur est survenue lors de l'enregistrement.",
+                variant: "destructive"
+            });
+        }
     };
 
     return (
@@ -76,65 +115,69 @@ export default function SuperAdminOrganizations() {
                 </div>
 
                 {/* Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredEntities.map((entity) => (
-                        <div key={entity.id} className="neu-raised p-6 rounded-xl group hover:scale-[1.01] transition-transform flex flex-col">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="neu-inset w-12 h-12 rounded-full flex items-center justify-center text-2xl">
-                                    {/* Display flag of the first jurisdiction or fallback */}
-                                    {entity.jurisdiction && entity.jurisdiction.length > 0
-                                        ? COUNTRY_FLAGS[entity.jurisdiction[0]]
-                                        : <Globe className="w-6 h-6 text-primary" />}
+                {loading ? (
+                    <div className="text-center py-10 text-muted-foreground">Chargement...</div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredEntities.map((entity) => (
+                            <div key={entity.id} className="neu-raised p-6 rounded-xl group hover:scale-[1.01] transition-transform flex flex-col">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="neu-inset w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+                                        {/* Display flag of the first jurisdiction or fallback */}
+                                        {entity.metadata?.jurisdiction && entity.metadata.jurisdiction.length > 0
+                                            ? COUNTRY_FLAGS[entity.metadata.jurisdiction[0]]
+                                            : <Globe className="w-6 h-6 text-primary" />}
+                                    </div>
+                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${entity.type === OrganizationType.EMBASSY ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                                        }`}>
+                                        {entity.type.replace(/_/g, ' ')}
+                                    </span>
                                 </div>
-                                <span className={`px-2 py-1 rounded-full text-xs font-bold ${entity.type === 'AMBASSADE' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
-                                    }`}>
-                                    {entity.type.replace('_', ' ')}
-                                </span>
-                            </div>
 
-                            <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">{entity.name}</h3>
+                                <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">{entity.name}</h3>
 
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                                <MapPin className="w-4 h-4" />
-                                {entity.city || "Siège"}, {entity.country || "International"}
-                            </div>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                                    <MapPin className="w-4 h-4" />
+                                    {entity.metadata?.city || "Siège"}, {entity.metadata?.country || "International"}
+                                </div>
 
-                            <div className="space-y-2 pt-4 border-t border-gray-100 flex-1">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Juridiction</span>
-                                    <div className="flex -space-x-2">
-                                        {entity.jurisdiction?.map(code => (
-                                            <span key={code} className="w-6 h-6 rounded-full bg-gray-100 border border-white flex items-center justify-center text-xs" title={code}>
-                                                {COUNTRY_FLAGS[code]}
-                                            </span>
-                                        ))}
+                                <div className="space-y-2 pt-4 border-t border-gray-100 flex-1">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Juridiction</span>
+                                        <div className="flex -space-x-2">
+                                            {entity.metadata?.jurisdiction?.map(code => (
+                                                <span key={code} className="w-6 h-6 rounded-full bg-gray-100 border border-white flex items-center justify-center text-xs" title={code}>
+                                                    {COUNTRY_FLAGS[code]}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Personnel</span>
+                                        <span className="font-bold">--</span>
                                     </div>
                                 </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Personnel</span>
-                                    <span className="font-bold">--</span>
+
+                                <div className="mt-6 grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={() => navigate(`/dashboard/super-admin/organizations/${entity.id}`)}
+                                        className="neu-raised py-2 rounded-lg text-sm font-medium hover:text-primary transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <LayoutDashboard className="w-4 h-4" />
+                                        Gérer
+                                    </button>
+                                    <button
+                                        onClick={() => handleEdit(entity)}
+                                        className="neu-raised py-2 rounded-lg text-sm font-medium hover:text-primary transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <Settings className="w-4 h-4" />
+                                        Paramétrer
+                                    </button>
                                 </div>
                             </div>
-
-                            <div className="mt-6 grid grid-cols-2 gap-3">
-                                <button
-                                    onClick={() => navigate(`/dashboard/super-admin/organizations/${entity.id}`)}
-                                    className="neu-raised py-2 rounded-lg text-sm font-medium hover:text-primary transition-colors flex items-center justify-center gap-2"
-                                >
-                                    <LayoutDashboard className="w-4 h-4" />
-                                    Gérer
-                                </button>
-                                <button
-                                    onClick={() => handleEdit(entity)}
-                                    className="neu-raised py-2 rounded-lg text-sm font-medium hover:text-primary transition-colors flex items-center justify-center gap-2"
-                                >
-                                    <Settings className="w-4 h-4" />
-                                    Paramétrer
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
 
                 <OrganizationDialog
                     open={isDialogOpen}

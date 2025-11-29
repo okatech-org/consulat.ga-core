@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Organization, OrganizationType, COUNTRY_FLAGS } from "@/types/organization";
+import { Organization, OrganizationType, OrganizationStatus, COUNTRY_FLAGS } from "@/types/organization";
 
 interface OrganizationDialogProps {
     open: boolean;
@@ -19,9 +19,13 @@ export function OrganizationDialog({ open, onOpenChange, initialData, onSave }: 
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<Organization>>({
         name: "",
-        type: OrganizationType.AMBASSADE,
-        jurisdiction: [],
-        settings: {}
+        type: OrganizationType.EMBASSY,
+        status: OrganizationStatus.ACTIVE,
+        metadata: {
+            jurisdiction: [],
+            contact: { address: '', phone: '', email: '' },
+            hours: {}
+        }
     });
 
     useEffect(() => {
@@ -30,31 +34,31 @@ export function OrganizationDialog({ open, onOpenChange, initialData, onSave }: 
         } else {
             setFormData({
                 name: "",
-                type: OrganizationType.AMBASSADE,
-                jurisdiction: [],
-                settings: {}
+                type: OrganizationType.EMBASSY,
+                status: OrganizationStatus.ACTIVE,
+                metadata: {
+                    jurisdiction: [],
+                    contact: { address: '', phone: '', email: '' },
+                    hours: {}
+                }
             });
         }
     }, [initialData, open]);
 
     const toggleCountry = (code: string) => {
         setFormData(prev => {
-            const current = prev.jurisdiction || [];
+            const current = prev.metadata?.jurisdiction || [];
             const newJurisdiction = current.includes(code)
                 ? current.filter(c => c !== code)
                 : [...current, code];
 
-            // Initialize settings for new country if not exists
-            const newSettings = { ...prev.settings };
-            if (!current.includes(code) && !newSettings[code]) {
-                newSettings[code] = {
-                    contact: { address: '', phone: '', email: '' },
-                    hours: {},
-                    resources: {}
-                };
-            }
-
-            return { ...prev, jurisdiction: newJurisdiction, settings: newSettings };
+            return {
+                ...prev,
+                metadata: {
+                    ...prev.metadata,
+                    jurisdiction: newJurisdiction
+                }
+            };
         });
     };
 
@@ -117,7 +121,7 @@ export function OrganizationDialog({ open, onOpenChange, initialData, onSave }: 
                                         <div key={code} className="flex items-center space-x-2 p-2 rounded hover:bg-muted/50 transition-colors">
                                             <Checkbox
                                                 id={`country-${code}`}
-                                                checked={formData.jurisdiction?.includes(code)}
+                                                checked={formData.metadata?.jurisdiction?.includes(code)}
                                                 onCheckedChange={() => toggleCountry(code)}
                                             />
                                             <Label htmlFor={`country-${code}`} className="flex items-center gap-2 cursor-pointer text-sm font-normal w-full">
@@ -130,7 +134,7 @@ export function OrganizationDialog({ open, onOpenChange, initialData, onSave }: 
                             </ScrollArea>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Sélectionnez les pays sous la responsabilité de cette entité. Une configuration spécifique sera créée pour chaque pays.
+                            Sélectionnez les pays sous la responsabilité de cette entité.
                         </p>
                     </div>
 

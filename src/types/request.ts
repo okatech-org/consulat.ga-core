@@ -23,6 +23,28 @@ export enum RequestPriority {
     URGENT = 'URGENT'
 }
 
+export interface ServiceRequest {
+    id: string;
+    profile_id: string;
+    service_id: string;
+    status: RequestStatus;
+    data: Record<string, any>; // JSONB
+    documents: Record<string, string>; // JSONB: { "docName": "url" }
+    created_at: string;
+    updated_at: string;
+
+    // Joined fields (optional)
+    service?: {
+        name: string;
+        type: string;
+    };
+    profile?: {
+        first_name: string;
+        last_name: string;
+        email: string;
+    };
+}
+
 export interface Request {
     id: string;
     type: RequestType;

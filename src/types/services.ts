@@ -1,5 +1,18 @@
 import { LucideIcon, FileText, BookKey, Stamp, CreditCard, FileCheck, ScrollText } from 'lucide-react';
 
+export interface ConsularService {
+  id: string;
+  name: string;
+  description?: string;
+  organization_id?: string;
+  is_active: boolean;
+  requirements?: string[]; // JSONB in DB, array of strings here
+  price?: number;
+  currency?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export type ServiceType =
   | 'VISA'
   | 'PASSEPORT'
