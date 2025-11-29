@@ -6,6 +6,8 @@ import { useDemo } from "@/contexts/DemoContext";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { GlobalSettings } from "@/components/GlobalSettings";
 import { useTranslation } from "react-i18next";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { LanguageToggle } from "@/components/language/LanguageToggle";
 
 export const Header = () => {
   const { t } = useTranslation();
@@ -66,7 +68,11 @@ export const Header = () => {
           <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
             <Button variant="outline">{t('common.login')}</Button>
           </Link>
-          <GlobalSettings />
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <ThemeToggle />
+            <GlobalSettings />
+          </div>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -130,7 +136,9 @@ export const Header = () => {
                 {t('common.login')}
               </Button>
             </Link>
-            <div className="flex justify-center pt-4 border-t border-border/40">
+            <div className="flex justify-center gap-2 pt-4 border-t border-border/40">
+              <LanguageToggle />
+              <ThemeToggle />
               <GlobalSettings />
             </div>
           </nav>
