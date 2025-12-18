@@ -8,6 +8,10 @@ import { GraduationCap, Home as HomeIcon, Plane, Newspaper, FileText, Globe, Map
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
+import profileStudent from "@/assets/profile-student.jpg";
+import profileResident from "@/assets/profile-resident.jpg";
+import profileVisitor from "@/assets/profile-visitor.jpg";
+
 export default function Home() {
   const navigate = useNavigate();
 
@@ -17,21 +21,24 @@ export default function Home() {
       description: "Bourses, logement, équivalences de diplômes et vie étudiante.",
       icon: GraduationCap,
       color: "blue" as const,
-      path: "/hub/etudiant"
+      path: "/hub/etudiant",
+      image: profileStudent
     },
     {
       title: "Je suis Résident",
       description: "Démarches consulaires, recensement, et vie de la communauté.",
       icon: HomeIcon,
       color: "green" as const,
-      path: "/hub/resident"
+      path: "/hub/resident",
+      image: profileResident
     },
     {
       title: "Je suis Visiteur",
       description: "Visas, tourisme, opportunités d'affaires et guide pratique.",
       icon: Plane,
       color: "orange" as const,
-      path: "/hub/visiteur"
+      path: "/hub/visiteur",
+      image: profileVisitor
     }
   ];
 
@@ -70,6 +77,7 @@ export default function Home() {
                 description={profile.description}
                 icon={profile.icon}
                 color={profile.color}
+                image={profile.image}
                 onClick={() => navigate(profile.path)}
               />
             ))}
