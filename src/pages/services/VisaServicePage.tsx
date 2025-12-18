@@ -303,7 +303,7 @@ export default function VisaServicePage() {
                     </div>
                     <div className="flex gap-4 justify-center">
                       <Button variant="outline" asChild><Link to="/services">Services</Link></Button>
-                      <Button className="bg-blue-600" asChild><Link to="/dashboard/citizen/requests">Suivre</Link></Button>
+                      <Button className="bg-blue-600" asChild><Link to="/mes-demandes">Suivre</Link></Button>
                     </div>
                   </CardContent>
                 </Card>

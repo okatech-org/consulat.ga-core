@@ -62,6 +62,7 @@ import MessagingPage from "./pages/MessagingPage";
 import IAstedInterfaceWrapper from "@/components/iasted/IAstedInterfaceWrapper";
 import ConsularRegistrationPage from "./pages/registration/ConsularRegistrationPage";
 import RequestTimelinePage from "./pages/requests/RequestTimelinePage";
+import RequestTrackingPage from "./pages/requests/RequestTrackingPage";
 import CitizenNotificationsPage from "./pages/dashboard/citizen/CitizenNotificationsPage";
 
 const queryClient = new QueryClient();
@@ -116,6 +117,7 @@ const App = () => (
                 <Route path="/messaging" element={<MessagingPage />} />
                 <Route path="/iboite" element={<MessagingPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/mes-demandes" element={<RequestTrackingPage />} />
 
                 {/* DASHBOARDS (Protected in real app) */}
 

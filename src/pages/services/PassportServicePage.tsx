@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Upload, CheckCircle, Clock, FileText, AlertCircle, LogIn } from "lucide-react";
+import { ArrowLeft, CheckCircle, Clock, FileText, AlertCircle, LogIn } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { serviceRequestService, passportRequestSchema, type PassportRequest } from "@/services/serviceRequestService";
+import { DocumentUploadList } from "@/components/documents/DocumentUpload";
+import { type UploadedDocument } from "@/services/documentUploadService";
 import iconPassport from "@/assets/icons/icon-passport.png";
 
 export default function PassportServicePage() {
@@ -20,6 +22,7 @@ export default function PassportServicePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [referenceNumber, setReferenceNumber] = useState("");
+  const [uploadedDocs, setUploadedDocs] = useState<Record<string, UploadedDocument>>({});
   const [formData, setFormData] = useState<PassportRequest>({
     firstName: "",
     lastName: "",
@@ -316,18 +319,11 @@ export default function PassportServicePage() {
                     <CardDescription>Téléchargez les documents nécessaires à votre demande</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {requiredDocuments.map((doc, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
-                        <div className="flex-1">
-                          <p className="font-medium">{doc}</p>
-                          <p className="text-sm text-muted-foreground">Format: PDF, JPG, PNG (max 5 Mo)</p>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <Upload className="h-4 w-4 mr-2" />
-                          Télécharger
-                        </Button>
-                      </div>
-                    ))}
+                    <DocumentUploadList
+                      documents={requiredDocuments.map(doc => ({ label: doc, required: true }))}
+                      uploadedDocs={uploadedDocs}
+                      onDocsChange={setUploadedDocs}
+                    />
 
                     <div className="space-y-2">
                       <Label htmlFor="comments">Commentaires additionnels</Label>
@@ -372,7 +368,7 @@ export default function PassportServicePage() {
                         <Link to="/services">Retour aux services</Link>
                       </Button>
                       <Button asChild>
-                        <Link to="/dashboard/citizen/requests">Suivre ma demande</Link>
+                        <Link to="/mes-demandes">Suivre ma demande</Link>
                       </Button>
                     </div>
                   </CardContent>
