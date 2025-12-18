@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Shield, Menu, X, Globe } from "lucide-react";
 import { useState } from "react";
@@ -11,6 +11,19 @@ export const Header = () => {
   const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, currentEntity, isSimulating } = useDemo();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const scrollToNetwork = () => {
+    if (location.pathname === '/') {
+      document.getElementById('reseau-mondial')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        document.getElementById('reseau-mondial')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
 
   return (
     <header className={`sticky z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
@@ -35,10 +48,13 @@ export const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+          <button 
+            onClick={scrollToNetwork} 
+            className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
+          >
             <Globe className="h-4 w-4" />
             {t('header.worldNetwork')}
-          </Link>
+          </button>
           <Link to="/actualites" className="text-sm font-medium hover:text-primary transition-colors">
             {t('header.news')}
           </Link>
@@ -87,14 +103,16 @@ export const Header = () => {
                 )}
               </div>
             )}
-            <Link
-              to="/"
+            <button
               className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-2"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                scrollToNetwork();
+              }}
             >
               <Globe className="h-4 w-4" />
               {t('header.worldNetwork')}
-            </Link>
+            </button>
             <Link
               to="/actualites"
               className="text-sm font-medium hover:text-primary transition-colors"
