@@ -11,12 +11,12 @@ import { DiplomaticAgenda } from "@/components/dashboard/admin/DiplomaticAgenda"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { WorldMapDashboard } from "@/components/admin/WorldMapDashboard";
 import { ConsularRole } from "@/types/consular-roles";
+import { AgentPerformanceChart } from "@/components/dashboard/admin/AdminStatsCard";
 import { 
-  QuickStatsGrid, 
-  RequestsByTypeChart, 
-  MonthlyTrendsChart, 
-  AgentPerformanceChart 
-} from "@/components/dashboard/admin/AdminStatsCard";
+  RealTimeQuickStats, 
+  RealTimeRequestsByType, 
+  RealTimeMonthlyTrends 
+} from "@/components/dashboard/admin/RealTimeStats";
 import { AdminDashboardFilters, DashboardFilters } from "@/components/dashboard/admin/AdminDashboardFilters";
 import { exportToPDF, exportToExcel } from "@/utils/dashboardExport";
 import { subMonths } from "date-fns";
@@ -127,9 +127,9 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* Quick Stats Grid */}
+      {/* Quick Stats Grid - Real Time Data */}
       <div className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
-        <QuickStatsGrid />
+        <RealTimeQuickStats />
       </div>
 
       {/* KPI Trends - Strategic Indicators */}
@@ -137,10 +137,10 @@ export default function AdminDashboard() {
         <KPITrendsCard />
       </div>
 
-      {/* Charts Row */}
+      {/* Charts Row - Real Time Data */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up" style={{ animationDelay: "0.15s" }}>
-        <RequestsByTypeChart />
-        <MonthlyTrendsChart />
+        <RealTimeRequestsByType />
+        <RealTimeMonthlyTrends />
       </div>
 
       {/* Two Column Layout: Service Health + Sensitive Cases */}

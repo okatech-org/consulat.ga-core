@@ -21,13 +21,15 @@ import {
   RefreshCw,
   AlertTriangle,
   User,
-  Calendar
+  Calendar,
+  Download
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
+import { generateAndDownloadPDF } from "@/services/pdfGenerationService";
 
 interface Request {
   id: string;
@@ -467,7 +469,24 @@ export default function AdminRequestsPage() {
                 )}
               </div>
             )}
-            <DialogFooter>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              {selectedRequest && ["VALIDATED", "COMPLETED"].includes(selectedRequest.status) && (
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      await generateAndDownloadPDF(selectedRequest.id);
+                      toast.success("PDF généré avec succès");
+                    } catch (error: any) {
+                      toast.error(error.message || "Erreur lors de la génération du PDF");
+                    }
+                  }}
+                  className="sm:mr-auto"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Télécharger PDF
+                </Button>
+              )}
               <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                 Annuler
               </Button>
