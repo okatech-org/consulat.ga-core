@@ -3,6 +3,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { SignatureData, formatSignatureDate, generateDocumentHash } from './signatureService';
 
 let fontsInitialized = false;
 
@@ -70,11 +71,63 @@ const STATUS_LABELS: Record<string, string> = {
   COMPLETED: "Terminée",
 };
 
-export async function generateApprovalPDF(request: RequestData): Promise<Blob> {
+export async function generateApprovalPDF(
+  request: RequestData, 
+  signature?: SignatureData
+): Promise<Blob> {
   initializeFonts();
 
   const currentDate = format(new Date(), "d MMMM yyyy", { locale: fr });
   const referenceNumber = `REF-${request.id.slice(0, 8).toUpperCase()}`;
+  const documentHash = generateDocumentHash(JSON.stringify(request));
+
+  const signatureBlock = signature ? [
+    // Signature Section with Electronic Signature
+    {
+      columns: [
+        { width: '*', text: '' },
+        {
+          width: 'auto',
+          stack: [
+            { text: 'Signature Électronique', style: 'signatureTitle', alignment: 'center' },
+            { text: '\n' },
+            signature.signatureImage ? {
+              image: signature.signatureImage,
+              width: 150,
+              height: 60,
+              alignment: 'center' as const,
+            } : { text: '', margin: [0, 30, 0, 0] },
+            { text: signature.signedBy.name, style: 'signerName', alignment: 'center', margin: [0, 5, 0, 0] },
+            { text: `Signé le ${formatSignatureDate(signature.signedAt)}`, style: 'signatureDate', alignment: 'center', margin: [0, 3, 0, 0] },
+            { 
+              text: `Vérification: ${documentHash}`, 
+              style: 'verificationCode', 
+              alignment: 'center', 
+              margin: [0, 10, 0, 0],
+              color: '#64748b',
+              fontSize: 8
+            }
+          ]
+        }
+      ]
+    }
+  ] : [
+    // Traditional Signature Section
+    {
+      columns: [
+        { width: '*', text: '' },
+        {
+          width: 'auto',
+          stack: [
+            { text: 'Le Chef de Service', style: 'signatureTitle', alignment: 'center' },
+            { text: '\n\n\n' },
+            { text: '________________________', alignment: 'center' },
+            { text: 'Signature et cachet', style: 'signatureLabel', alignment: 'center', margin: [0, 5, 0, 0] }
+          ]
+        }
+      ]
+    }
+  ];
 
   const documentDefinition: any = {
     pageSize: 'A4',
@@ -178,26 +231,14 @@ export async function generateApprovalPDF(request: RequestData): Promise<Blob> {
         margin: [0, 20, 0, 50]
       },
 
-      // Signature Section
-      {
-        columns: [
-          { width: '*', text: '' },
-          {
-            width: 'auto',
-            stack: [
-              { text: 'Le Chef de Service', style: 'signatureTitle', alignment: 'center' },
-              { text: '\n\n\n' },
-              { text: '________________________', alignment: 'center' },
-              { text: 'Signature et cachet', style: 'signatureLabel', alignment: 'center', margin: [0, 5, 0, 0] }
-            ]
-          }
-        ]
-      }
+      ...signatureBlock
     ],
     footer: (currentPage: number, pageCount: number) => ({
       columns: [
         { 
-          text: 'Document généré automatiquement - Consulat.ga', 
+          text: signature 
+            ? `Document signé électroniquement - Hash: ${documentHash} - Consulat.ga`
+            : 'Document généré automatiquement - Consulat.ga', 
           style: 'footer',
           alignment: 'center'
         }
@@ -250,9 +291,21 @@ export async function generateApprovalPDF(request: RequestData): Promise<Blob> {
         fontSize: 12,
         bold: true
       },
+      signerName: {
+        fontSize: 11,
+        bold: true
+      },
+      signatureDate: {
+        fontSize: 10,
+        color: '#64748b'
+      },
       signatureLabel: {
         fontSize: 10,
         color: '#64748b'
+      },
+      verificationCode: {
+        fontSize: 8,
+        color: '#94a3b8'
       },
       footer: {
         fontSize: 8,
@@ -273,7 +326,10 @@ export async function generateApprovalPDF(request: RequestData): Promise<Blob> {
   });
 }
 
-export async function generateAndDownloadPDF(requestId: string): Promise<void> {
+export async function generateAndDownloadPDF(
+  requestId: string,
+  signature?: SignatureData
+): Promise<void> {
   // Fetch request data
   const { data: request, error } = await supabase
     .from("requests")
@@ -294,17 +350,35 @@ export async function generateAndDownloadPDF(requestId: string): Promise<void> {
     throw new Error("La génération PDF n'est disponible que pour les demandes validées");
   }
 
-  const blob = await generateApprovalPDF(request as RequestData);
+  const blob = await generateApprovalPDF(request as RequestData, signature);
   
   // Download the PDF
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `attestation-${request.id.slice(0, 8)}.pdf`;
+  link.download = `attestation-${request.id.slice(0, 8)}${signature ? '-signe' : ''}.pdf`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+export async function generateSignedPDF(
+  requestId: string,
+  signatureDataUrl: string,
+  signerName: string,
+  signerEmail: string
+): Promise<void> {
+  const signature: SignatureData = {
+    signatureImage: signatureDataUrl,
+    signedAt: new Date().toISOString(),
+    signedBy: {
+      name: signerName,
+      email: signerEmail,
+    },
+  };
+
+  return generateAndDownloadPDF(requestId, signature);
 }
 
 export async function generateMultiplePDFs(requestIds: string[]): Promise<void> {
