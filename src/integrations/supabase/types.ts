@@ -81,6 +81,113 @@ export type Database = {
           },
         ]
       }
+      child_profiles: {
+        Row: {
+          created_at: string
+          documents: Json | null
+          family: Json | null
+          id: string
+          parent_profile_id: string
+          personal: Json
+          status: Database["public"]["Enums"]["profile_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          documents?: Json | null
+          family?: Json | null
+          id?: string
+          parent_profile_id: string
+          personal?: Json
+          status?: Database["public"]["Enums"]["profile_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          documents?: Json | null
+          family?: Json | null
+          id?: string
+          parent_profile_id?: string
+          personal?: Json
+          status?: Database["public"]["Enums"]["profile_status"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_profiles_parent_profile_id_fkey"
+            columns: ["parent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          appointment_id: string | null
+          channel: Database["public"]["Enums"]["notification_channel"] | null
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          read_at: string | null
+          request_id: string | null
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"] | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          channel?: Database["public"]["Enums"]["notification_channel"] | null
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          read_at?: string | null
+          request_id?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"] | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          appointment_id?: string | null
+          channel?: Database["public"]["Enums"]["notification_channel"] | null
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          read_at?: string | null
+          request_id?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"] | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           city: string | null
@@ -126,47 +233,85 @@ export type Database = {
       profiles: {
         Row: {
           address: Json | null
+          consular_card: Json | null
           consulate_file: string | null
+          contacts: Json | null
           created_at: string
           date_of_birth: string | null
+          documents: Json | null
           email: string
+          emergency_contacts: Json | null
+          family: Json | null
           first_name: string
           id: string
           last_name: string
           nationality: string | null
+          organization_id: string | null
+          personal: Json | null
           phone: string | null
+          profession_situation: Json | null
+          residence_country: string | null
+          status: Database["public"]["Enums"]["profile_status"] | null
           updated_at: string
           user_id: string
         }
         Insert: {
           address?: Json | null
+          consular_card?: Json | null
           consulate_file?: string | null
+          contacts?: Json | null
           created_at?: string
           date_of_birth?: string | null
+          documents?: Json | null
           email: string
+          emergency_contacts?: Json | null
+          family?: Json | null
           first_name: string
           id?: string
           last_name: string
           nationality?: string | null
+          organization_id?: string | null
+          personal?: Json | null
           phone?: string | null
+          profession_situation?: Json | null
+          residence_country?: string | null
+          status?: Database["public"]["Enums"]["profile_status"] | null
           updated_at?: string
           user_id: string
         }
         Update: {
           address?: Json | null
+          consular_card?: Json | null
           consulate_file?: string | null
+          contacts?: Json | null
           created_at?: string
           date_of_birth?: string | null
+          documents?: Json | null
           email?: string
+          emergency_contacts?: Json | null
+          family?: Json | null
           first_name?: string
           id?: string
           last_name?: string
           nationality?: string | null
+          organization_id?: string | null
+          personal?: Json | null
           phone?: string | null
+          profession_situation?: Json | null
+          residence_country?: string | null
+          status?: Database["public"]["Enums"]["profile_status"] | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       requests: {
         Row: {
@@ -344,12 +489,32 @@ export type Database = {
         | "COMPLETED"
         | "CANCELLED"
         | "NO_SHOW"
+      gender: "male" | "female"
+      notification_channel: "app" | "email" | "sms"
+      notification_status: "pending" | "sent" | "delivered" | "failed" | "read"
+      notification_type:
+        | "updated"
+        | "reminder"
+        | "confirmation"
+        | "cancellation"
+        | "communication"
+        | "important_communication"
+        | "appointment_confirmation"
+        | "appointment_reminder"
+        | "appointment_cancellation"
+        | "consular_registration_submitted"
+        | "consular_registration_validated"
+        | "consular_registration_rejected"
+        | "consular_card_ready"
+        | "consular_registration_completed"
+        | "feedback"
       organization_type:
         | "CONSULAT_GENERAL"
         | "CONSULAT"
         | "AMBASSADE"
         | "HAUT_COMMISSARIAT"
         | "MISSION_PERMANENTE"
+      profile_status: "draft" | "active" | "inactive" | "pending" | "suspended"
       request_priority: "LOW" | "NORMAL" | "HIGH" | "URGENT"
       request_status:
         | "PENDING"
@@ -500,6 +665,26 @@ export const Constants = {
         "CANCELLED",
         "NO_SHOW",
       ],
+      gender: ["male", "female"],
+      notification_channel: ["app", "email", "sms"],
+      notification_status: ["pending", "sent", "delivered", "failed", "read"],
+      notification_type: [
+        "updated",
+        "reminder",
+        "confirmation",
+        "cancellation",
+        "communication",
+        "important_communication",
+        "appointment_confirmation",
+        "appointment_reminder",
+        "appointment_cancellation",
+        "consular_registration_submitted",
+        "consular_registration_validated",
+        "consular_registration_rejected",
+        "consular_card_ready",
+        "consular_registration_completed",
+        "feedback",
+      ],
       organization_type: [
         "CONSULAT_GENERAL",
         "CONSULAT",
@@ -507,6 +692,7 @@ export const Constants = {
         "HAUT_COMMISSARIAT",
         "MISSION_PERMANENTE",
       ],
+      profile_status: ["draft", "active", "inactive", "pending", "suspended"],
       request_priority: ["LOW", "NORMAL", "HIGH", "URGENT"],
       request_status: [
         "PENDING",
