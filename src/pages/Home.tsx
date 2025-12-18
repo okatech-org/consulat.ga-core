@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { HubHero } from "@/components/hub/HubHero";
 import { ProfileCard } from "@/components/hub/ProfileCard";
@@ -11,6 +12,34 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import profileStudent from "@/assets/profile-student.jpg";
 import profileResident from "@/assets/profile-resident.jpg";
 import profileVisitor from "@/assets/profile-visitor.jpg";
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6 }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5 }
+  }
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -61,35 +90,65 @@ export default function Home() {
         />
 
         {/* Profile Selection Section */}
-        <section id="profiles" className="py-20 container mx-auto px-4">
-          <div className="text-center mb-12 animate-fade-in">
+        <motion.section 
+          id="profiles" 
+          className="py-20 container mx-auto px-4"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.div 
+            className="text-center mb-12"
+            variants={itemVariants}
+          >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Quel est votre profil ?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Sélectionnez votre situation pour accéder à des informations et services personnalisés.
             </p>
-          </div>
+          </motion.div>
 
-          <ServiceGrid>
-            {profiles.map((profile, index) => (
-              <ProfileCard
-                key={index}
-                title={profile.title}
-                description={profile.description}
-                icon={profile.icon}
-                color={profile.color}
-                image={profile.image}
-                onClick={() => navigate(profile.path)}
-              />
-            ))}
-          </ServiceGrid>
-        </section>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            <ServiceGrid>
+              {profiles.map((profile, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <ProfileCard
+                    title={profile.title}
+                    description={profile.description}
+                    icon={profile.icon}
+                    color={profile.color}
+                    image={profile.image}
+                    onClick={() => navigate(profile.path)}
+                  />
+                </motion.div>
+              ))}
+            </ServiceGrid>
+          </motion.div>
+        </motion.section>
 
         {/* Quick Access & News */}
-        <section className="py-16 bg-muted/30">
+        <motion.section 
+          className="py-16 bg-muted/30"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               {/* Quick Services */}
-              <div className="lg:col-span-2 space-y-8">
+              <motion.div className="lg:col-span-2 space-y-8" variants={itemVariants}>
 
                 {/* Pour les Gabonais */}
                 <div>
@@ -145,10 +204,10 @@ export default function Home() {
                   </div>
                 </div>
 
-              </div>
+              </motion.div>
 
               {/* Latest News Preview */}
-              <div>
+              <motion.div variants={itemVariants}>
                 <h3 className="text-2xl font-bold mb-6 flex items-center">
                   <Newspaper className="mr-2 text-primary" /> Actualités
                 </h3>
@@ -166,15 +225,25 @@ export default function Home() {
                     </Button>
                   </CardContent>
                 </Card>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Diplomatic Network Map */}
-        <section id="reseau-mondial" className="py-20 bg-gradient-to-b from-background to-muted/20">
+        <motion.section 
+          id="reseau-mondial" 
+          className="py-20 bg-gradient-to-b from-background to-muted/20"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12 animate-fade-in">
+            <motion.div 
+              className="text-center mb-12"
+              variants={itemVariants}
+            >
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
                 <Globe className="w-8 h-8 text-primary" />
               </div>
@@ -183,32 +252,53 @@ export default function Home() {
                 Retrouvez ambassades, consulats, entreprises et associations du Gabon à travers le monde.
                 Utilisez la géolocalisation pour trouver votre juridiction administrative.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="max-w-7xl mx-auto">
+            <motion.div 
+              className="max-w-7xl mx-auto"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               <InteractiveWorldMap />
-            </div>
+            </motion.div>
 
             {/* Map Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
-              <div className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div 
+                className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors"
+                variants={itemVariants}
+              >
                 <MapPin className="w-8 h-8 mx-auto mb-3 text-blue-500" />
                 <h4 className="font-semibold mb-2">Géolocalisation</h4>
                 <p className="text-sm text-muted-foreground">Trouvez automatiquement votre juridiction la plus proche</p>
-              </div>
-              <div className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors"
+                variants={itemVariants}
+              >
                 <Globe className="w-8 h-8 mx-auto mb-3 text-emerald-500" />
                 <h4 className="font-semibold mb-2">Réseau Complet</h4>
                 <p className="text-sm text-muted-foreground">Ambassades, consulats et représentations mondiales</p>
-              </div>
-              <div className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+              </motion.div>
+              <motion.div 
+                className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors"
+                variants={itemVariants}
+              >
                 <FileText className="w-8 h-8 mx-auto mb-3 text-orange-500" />
                 <h4 className="font-semibold mb-2">Informations Pratiques</h4>
                 <p className="text-sm text-muted-foreground">Horaires, adresses et services disponibles</p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
       </main>
     </div>
   );
