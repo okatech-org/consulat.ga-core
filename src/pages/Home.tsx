@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import profileStudent from "@/assets/profile-student.jpg";
 import profileResident from "@/assets/profile-resident.jpg";
 import profileVisitor from "@/assets/profile-visitor.jpg";
+import heroHome from "@/assets/hero-home.jpg";
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -85,6 +86,7 @@ export default function Home() {
         <HubHero
           title="Bienvenue sur le Hub Numérique du Gabon"
           subtitle="Votre passerelle unique pour toutes vos démarches, informations et connexions avec le Gabon, où que vous soyez."
+          backgroundImage={heroHome}
           ctaText="Découvrir les services"
           onCtaClick={() => document.getElementById('profiles')?.scrollIntoView({ behavior: 'smooth' })}
         />
