@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useDemo } from "@/contexts/DemoContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Globe, BarChart3 } from "lucide-react";
+import { AlertTriangle, Globe } from "lucide-react";
 import { KPITrendsCard } from "@/components/dashboard/admin/KPITrendsCard";
 import { ServiceHealthWidget } from "@/components/dashboard/admin/ServiceHealthWidget";
 import { SensitiveCasesSection } from "@/components/dashboard/admin/SensitiveCasesSection";
@@ -16,10 +17,65 @@ import {
   MonthlyTrendsChart, 
   AgentPerformanceChart 
 } from "@/components/dashboard/admin/AdminStatsCard";
+import { AdminDashboardFilters, DashboardFilters } from "@/components/dashboard/admin/AdminDashboardFilters";
+import { exportToPDF, exportToExcel } from "@/utils/dashboardExport";
+import { subMonths } from "date-fns";
+import { toast } from "sonner";
 
 export default function AdminDashboard() {
   const { currentUser } = useDemo();
   const navigate = useNavigate();
+
+  const [filters, setFilters] = useState<DashboardFilters>({
+    dateRange: { from: subMonths(new Date(), 1), to: new Date() },
+    requestType: 'all',
+    status: 'all',
+  });
+
+  // Mock data for export
+  const exportData = {
+    title: 'Rapport Consulaire',
+    dateRange: filters.dateRange,
+    stats: [
+      { label: 'Total Demandes', value: 1234 },
+      { label: 'En Attente', value: 89 },
+      { label: 'Traitées ce mois', value: 456 },
+      { label: 'Temps moyen', value: '3.2j' },
+      { label: 'Satisfaction', value: '4.7/5' },
+      { label: 'RDV planifiés', value: 78 },
+    ],
+    requestsByType: [
+      { name: 'Passeport', value: 145 },
+      { name: 'Visa', value: 89 },
+      { name: 'État Civil', value: 234 },
+      { name: 'Légalisation', value: 167 },
+      { name: 'Carte Consulaire', value: 78 },
+    ],
+    monthlyTrends: [
+      { month: 'Jan', demandes: 120, traitees: 98 },
+      { month: 'Fév', demandes: 145, traitees: 130 },
+      { month: 'Mar', demandes: 189, traitees: 165 },
+      { month: 'Avr', demandes: 156, traitees: 142 },
+      { month: 'Mai', demandes: 201, traitees: 178 },
+      { month: 'Juin', demandes: 234, traitees: 210 },
+    ],
+    agentPerformance: [
+      { agent: 'M. Nzoghe', traites: 45, enCours: 12, satisfaction: 4.8 },
+      { agent: 'Mme Obiang', traites: 38, enCours: 8, satisfaction: 4.9 },
+      { agent: 'M. Ndong', traites: 52, enCours: 15, satisfaction: 4.6 },
+      { agent: 'Mme Essono', traites: 41, enCours: 10, satisfaction: 4.7 },
+    ],
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF(exportData);
+    toast.success("Rapport PDF généré avec succès");
+  };
+
+  const handleExportExcel = () => {
+    exportToExcel(exportData);
+    toast.success("Rapport Excel généré avec succès");
+  };
 
   // Protection: Access for ADMIN (Super Admin) and CONSUL_GENERAL
   const hasAccess = currentUser?.role === "ADMIN" || currentUser?.role === ConsularRole.CONSUL_GENERAL;
@@ -59,6 +115,16 @@ export default function AdminDashboard() {
             Vue Réseau
           </Button>
         </div>
+      </div>
+
+      {/* Filters and Export */}
+      <div className="animate-slide-up">
+        <AdminDashboardFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          onExportPDF={handleExportPDF}
+          onExportExcel={handleExportExcel}
+        />
       </div>
 
       {/* Quick Stats Grid */}
