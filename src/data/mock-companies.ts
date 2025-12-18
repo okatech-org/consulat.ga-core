@@ -3,23 +3,24 @@ import { Company, CompanyType, ActivitySector, CompanyRole } from '@/types/compa
 export const MOCK_COMPANIES: Company[] = [
     {
         id: 'comp-1',
-        name: 'Tech Solutions Gabon',
-        legalName: 'Tech Solutions Gabon SARL',
+        name: 'OKA Tech',
+        legalName: 'OKA Tech SARL',
         companyType: CompanyType.SARL,
         activitySector: ActivitySector.TECHNOLOGY,
         siret: '12345678900012',
         status: 'APPROVED',
-        email: 'contact@techsolutions.ga',
+        email: 'contact@okatech.ga',
         phone: '+33 1 23 45 67 89',
-        website: 'https://techsolutions.ga',
+        website: 'https://okatech.ga',
         description: 'Entreprise spécialisée dans le développement de solutions numériques pour l\'Afrique.',
         shortDescription: 'Solutions numériques innovantes',
         address: {
-            street: '12 Avenue des Champs-Élysées',
+            street: '50 avenue des Champs-Élysées',
             city: 'Paris',
             postalCode: '75008',
             country: 'France'
         },
+        coordinates: [2.3072, 48.8698],
         ownerId: 'user-1', // Assuming this ID exists in mock-users
         ownerRole: CompanyRole.CEO,
         createdAt: '2024-01-15T10:00:00Z',

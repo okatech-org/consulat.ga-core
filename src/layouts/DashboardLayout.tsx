@@ -152,7 +152,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 {/* Contenu Principal */}
                 <main className="flex-1 min-w-0">
-                    <div className="neu-card p-8 min-h-[calc(100vh-3rem)] animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="p-2 md:p-4 min-h-[calc(100vh-3rem)] animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {children}
                     </div>
                 </main>

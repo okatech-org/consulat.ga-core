@@ -34,6 +34,7 @@ export interface OrganizationMetadata {
         phone: string;
         email: string;
         website?: string;
+        fax?: string;
     };
     hours?: {
         [day: string]: { open: string; close: string; isOpen: boolean };
@@ -41,6 +42,8 @@ export interface OrganizationMetadata {
     city?: string;
     country?: string;
     countryCode?: string;
+    notes?: string;
+    coordinates?: [number, number];
 }
 
 export interface Organization {

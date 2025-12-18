@@ -1,7 +1,7 @@
 import { Organization, OrganizationType, OrganizationStatus } from '@/types/organization';
 
 export const DIPLOMATIC_NETWORK: Organization[] = [
-    // AFRIQUE
+    // --- AFRIQUE ---
     {
         id: 'za-ambassade-pretoria',
         name: 'Ambassade du Gabon en Afrique du Sud',
@@ -13,12 +13,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Pretoria',
             country: 'Afrique du Sud',
             countryCode: 'ZA',
-            jurisdiction: ['ZA', 'BW', 'MZ', 'ZW'],
+            jurisdiction: ['Afrique du Sud', 'Botswana', 'Mozambique', 'Zimbabwe'],
             contact: {
                 address: '921 Francis Baard Street, Arcadia, Pretoria',
                 phone: '+27 12 430 2969',
                 email: 'ambagabonsa@gmail.com'
-            }
+            },
+            notes: "Situé au cœur du quartier diplomatique d'Arcadia."
         }
     },
     {
@@ -32,11 +33,12 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Alger',
             country: 'Algérie',
             countryCode: 'DZ',
-            jurisdiction: ['DZ', 'MR'],
+            jurisdiction: ['Algérie', 'Mauritanie'],
             contact: {
                 address: 'Villa N°2, Impasse Ahmed Kara, Alger',
                 phone: '+213 23 38 12 36',
-                email: 'ambaga.algerie@diplomatie.gouv.ga'
+                email: 'ambaga.algerie@diplomatie.gouv.ga',
+                fax: '+213 23 38 12 36'
             }
         }
     },
@@ -51,7 +53,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Luanda',
             country: 'Angola',
             countryCode: 'AO',
-            jurisdiction: ['AO', 'NA', 'ZM'],
+            jurisdiction: ['Angola', 'Namibie', 'Zambie'],
             contact: {
                 address: 'Rua Eng° Armindo de Andrade N°149, Miramar, Luanda',
                 phone: '+244 222 042 943',
@@ -70,12 +72,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Cotonou',
             country: 'Bénin',
             countryCode: 'BJ',
-            jurisdiction: ['BJ'],
+            jurisdiction: ['Bénin'],
             contact: {
                 address: 'Quartier Patte d’Oie Cadjèhoun C-615 A, Cotonou',
                 phone: '+229 64 13 22 88',
                 email: 'consga.benin@diplomatie.gouv.ga'
-            }
+            },
+            notes: "La juridiction politique est couverte par l'Ambassade au Togo."
         }
     },
     {
@@ -89,7 +92,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Yaoundé',
             country: 'Cameroun',
             countryCode: 'CM',
-            jurisdiction: ['CM', 'CF', 'TD'],
+            jurisdiction: ['Cameroun', 'République Centrafricaine (RCA)', 'Tchad'],
             contact: {
                 address: 'Quartier Bastos, Ekoudou, BP 4130, Yaoundé',
                 phone: '+237 222 608 703',
@@ -108,7 +111,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Brazzaville',
             country: 'Congo',
             countryCode: 'CG',
-            jurisdiction: ['CG'],
+            jurisdiction: ['Congo'],
             contact: {
                 address: '40, Avenue du Maréchal Lyautey, Centre-ville',
                 phone: '+242 22 281 56 20',
@@ -127,12 +130,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Abidjan',
             country: 'Côte d\'Ivoire',
             countryCode: 'CI',
-            jurisdiction: ['CI'],
+            jurisdiction: ['Côte d\'Ivoire'],
             contact: {
                 address: 'Immeuble Les Hévéas, Boulevard Carde, Plateau, Abidjan',
                 phone: '+225 27 22 44 51 54',
                 email: 'ambga.cotedivoire@diplomatie.gouv.ga'
-            }
+            },
+            notes: "Situé dans le quartier d'affaires du Plateau."
         }
     },
     {
@@ -146,7 +150,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Le Caire',
             country: 'Égypte',
             countryCode: 'EG',
-            jurisdiction: ['EG'],
+            jurisdiction: ['Égypte'],
             contact: {
                 address: '59, rue Syrie, Mohandessine, Le Caire',
                 phone: '+20 2 304 39 72',
@@ -165,7 +169,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Addis-Abeba',
             country: 'Éthiopie',
             countryCode: 'ET',
-            jurisdiction: ['ET', 'UA', 'CEA', 'PNUE'],
+            jurisdiction: ['Éthiopie', 'Union Africaine (UA)', 'CEA', 'PNUE'],
             contact: {
                 address: 'Bole Sub City, Kebele-18, H. No. 1026, Addis-Abeba',
                 phone: '+251 116 61 10 75',
@@ -184,12 +188,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Accra',
             country: 'Ghana',
             countryCode: 'GH',
-            jurisdiction: ['GH'],
+            jurisdiction: ['Ghana'],
             contact: {
                 address: 'Flat 5 Agostinho Neto Rd, Accra',
                 phone: '+233 302 906 994',
                 email: 'celps_center@yahoo.com'
-            }
+            },
+            notes: "Le Togo couvre diplomatiquement le Ghana. Présence consulaire locale pour les urgences."
         }
     },
     {
@@ -203,7 +208,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Malabo',
             country: 'Guinée Équatoriale',
             countryCode: 'GQ',
-            jurisdiction: ['GQ'],
+            jurisdiction: ['Guinée Équatoriale (politique)'],
             contact: {
                 address: 'Quartier Paraiso, Malabo',
                 phone: '+240 333 093 108',
@@ -222,19 +227,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Bata',
             country: 'Guinée Équatoriale',
             countryCode: 'GQ',
-            jurisdiction: ['GQ'],
+            jurisdiction: ['Guinée Équatoriale'],
             contact: {
                 address: 'Plazza del Ayuntamiento, BP 933, Bata',
                 phone: '+240 222 10 11 70',
                 email: 'samuelnangnang@yahoo.fr'
             },
-            hours: {
-                'Lundi': { open: '08:00', close: '16:00', isOpen: true },
-                'Mardi': { open: '08:00', close: '16:00', isOpen: true },
-                'Mercredi': { open: '08:00', close: '16:00', isOpen: true },
-                'Jeudi': { open: '08:00', close: '16:00', isOpen: true },
-                'Vendredi': { open: '08:00', close: '16:00', isOpen: true }
-            }
+            notes: "Gestion des flux frontaliers terrestres. Horaires : 08h00 - 16h00."
         }
     },
     {
@@ -248,12 +247,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Bamako',
             country: 'Mali',
             countryCode: 'ML',
-            jurisdiction: ['ML'],
+            jurisdiction: ['Mali'],
             contact: {
                 address: 'Bacodjikoroni Golf, rue 727 Lot 4132, Bamako',
                 phone: '+223 20 28 13 99',
                 email: 'consgegabmali@yahoo.com'
-            }
+            },
+            notes: "Service consulaire de plein exercice."
         }
     },
     {
@@ -267,7 +267,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Rabat',
             country: 'Maroc',
             countryCode: 'MA',
-            jurisdiction: ['MA'],
+            jurisdiction: ['Maroc'],
             contact: {
                 address: '72 Av. Mehdi Ben Barka, Souissi, Rabat',
                 phone: '+212 537 75 19 50',
@@ -286,12 +286,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Laâyoune',
             country: 'Maroc',
             countryCode: 'MA',
-            jurisdiction: ['MA'],
+            jurisdiction: ['Maroc'],
             contact: {
                 address: 'Quartier diplomatique, Laâyoune',
-                phone: '+212 537 75 19 50',
+                phone: '+212 537 75 19 50', // Via Rabat
                 email: ''
-            }
+            },
+            notes: "Inauguré en janvier 2020. Soutien à la souveraineté marocaine et services de proximité."
         }
     },
     {
@@ -305,7 +306,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Abuja',
             country: 'Nigeria',
             countryCode: 'NG',
-            jurisdiction: ['NG', 'CEDEAO'],
+            jurisdiction: ['Nigeria', 'CEDEAO'],
             contact: {
                 address: '2B, Orange Close, Off Volta Street, Maitama, Abuja',
                 phone: '+234 98 734 965',
@@ -324,7 +325,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Kinshasa',
             country: 'RDC',
             countryCode: 'CD',
-            jurisdiction: ['CD', 'BI', 'RW'],
+            jurisdiction: ['RDC', 'Burundi', 'Rwanda (partiellement transféré)'],
             contact: {
                 address: '167, avenue Colonel Mondjiba, Zone de Kintambo, Kinshasa',
                 phone: '+243 971 190 647',
@@ -343,12 +344,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Kigali',
             country: 'Rwanda',
             countryCode: 'RW',
-            jurisdiction: ['RW'],
+            jurisdiction: ['Rwanda'],
             contact: {
                 address: 'Kigali',
                 phone: '',
                 email: ''
-            }
+            },
+            notes: "Ouverture récente août 2024. Chef de Mission : S.E.M. Sylver Aboubakar Minko Mi Nseme."
         }
     },
     {
@@ -362,7 +364,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'São Tomé',
             country: 'São Tomé-et-Principe',
             countryCode: 'ST',
-            jurisdiction: ['ST'],
+            jurisdiction: ['São Tomé-et-Principe'],
             contact: {
                 address: 'Rua Damão, C.P. 394, São Tomé',
                 phone: '+239 222 44 34',
@@ -381,7 +383,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Dakar',
             country: 'Sénégal',
             countryCode: 'SN',
-            jurisdiction: ['SN', 'CV', 'GM', 'GW', 'GN'],
+            jurisdiction: ['Sénégal', 'Cap-Vert', 'Gambie', 'Guinée Bissau', 'Guinée'],
             contact: {
                 address: 'Avenue Cheikh Anta Diop, BP 436, Dakar',
                 phone: '+221 33 865 22 34',
@@ -400,7 +402,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Lomé',
             country: 'Togo',
             countryCode: 'TG',
-            jurisdiction: ['TG', 'BJ', 'GH'],
+            jurisdiction: ['Togo', 'Bénin', 'Ghana'],
             contact: {
                 address: 'Boulevard Jean Paul II, BP 9118, Lomé',
                 phone: '+228 22 26 75 63',
@@ -419,7 +421,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Tunis',
             country: 'Tunisie',
             countryCode: 'TN',
-            jurisdiction: ['TN'],
+            jurisdiction: ['Tunisie'],
             contact: {
                 address: '7, Rue de l’Ile de Rhodes, Les Jardins de Lac II, Tunis',
                 phone: '+216 71 197 216',
@@ -428,7 +430,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
         }
     },
 
-    // EUROPE
+    // --- EUROPE ---
     {
         id: 'de-ambassade-berlin',
         name: 'Ambassade du Gabon en Allemagne',
@@ -440,12 +442,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Berlin',
             country: 'Allemagne',
             countryCode: 'DE',
-            jurisdiction: ['DE', 'AT'],
+            jurisdiction: ['Allemagne', 'Autriche'],
             contact: {
                 address: 'Hohensteiner Straße 16, 14197 Berlin',
                 phone: '+49 30 89 73 34 40',
                 email: 'botschaft@botschaft-gabun.de'
-            }
+            },
+            notes: "Horaires : 09h00-16h00 (Lun-Ven)."
         }
     },
     {
@@ -459,7 +462,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Bruxelles',
             country: 'Belgique',
             countryCode: 'BE',
-            jurisdiction: ['BE', 'NL', 'LU', 'UE'],
+            jurisdiction: ['Benelux (Belgique, Pays-Bas, Luxembourg)', 'Union Européenne'],
             contact: {
                 address: '112, Avenue Winston Churchill, 1180 Bruxelles',
                 phone: '+32 2 340 62 10',
@@ -478,11 +481,12 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Madrid',
             country: 'Espagne',
             countryCode: 'ES',
-            jurisdiction: ['ES'],
+            jurisdiction: ['Espagne'],
             contact: {
                 address: 'Calle Orense, 68, 2º Izda, 28020 Madrid',
                 phone: '+34 91 413 82 11',
-                email: 'olgagabon@gmail.com'
+                email: 'olgagabon@gmail.com',
+                fax: '+34 91 413 11 53'
             }
         }
     },
@@ -497,12 +501,22 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Paris',
             country: 'France',
             countryCode: 'FR',
-            jurisdiction: ['FR', 'PT', 'MC', 'AD', 'OIF'],
+            jurisdiction: ['France', 'Portugal', 'Monaco', 'Andorre', 'OIF'],
+            coordinates: [2.2669538, 48.8583866],
             contact: {
                 address: '26 bis, Avenue Raphaël, 75016 Paris',
                 phone: '+33 1 42 99 68 68',
                 email: 'ambassade.gabonfrance@gmail.com',
                 website: 'ambassadedugabonenfrance.com'
+            },
+            hours: {
+                'Lundi': { open: '09:00', close: '16:30', isOpen: true },
+                'Mardi': { open: '09:00', close: '16:30', isOpen: true },
+                'Mercredi': { open: '09:00', close: '16:30', isOpen: true },
+                'Jeudi': { open: '09:00', close: '16:30', isOpen: true },
+                'Vendredi': { open: '09:00', close: '16:00', isOpen: true },
+                'Samedi': { open: '09:00', close: '12:00', isOpen: false },
+                'Dimanche': { open: '09:00', close: '12:00', isOpen: false }
             }
         }
     },
@@ -517,11 +531,79 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Paris',
             country: 'France',
             countryCode: 'FR',
-            jurisdiction: ['FR'],
+            jurisdiction: ['France'],
+            coordinates: [2.2669538, 48.8583866],
             contact: {
                 address: '26 bis, Avenue Raphaël, 75016 Paris',
                 phone: '+33 1 42 99 68 62',
                 email: 'cgeneralgabon@hotmail.fr'
+            },
+            hours: {
+                'Lundi': { open: '09:00', close: '16:30', isOpen: true },
+                'Mardi': { open: '09:00', close: '16:30', isOpen: true },
+                'Mercredi': { open: '09:00', close: '16:30', isOpen: true },
+                'Jeudi': { open: '09:00', close: '16:30', isOpen: true },
+                'Vendredi': { open: '09:00', close: '16:00', isOpen: true },
+                'Samedi': { open: '09:00', close: '12:00', isOpen: false },
+                'Dimanche': { open: '09:00', close: '12:00', isOpen: false }
+            },
+            notes: "Horaires : Lun-Jeu 09h00-16h30, Ven 09h00-16h00. Services : Visas, Passeports (DGDI), État civil."
+        }
+    },
+    {
+        id: 'fr-consulat-bordeaux',
+        name: 'Consulat Honoraire du Gabon à Bordeaux',
+        type: OrganizationType.CONSULAT_HONORAIRE,
+        isActive: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        metadata: {
+            city: 'Bordeaux',
+            country: 'France',
+            countryCode: 'FR',
+            jurisdiction: ['Bordeaux'],
+            contact: {
+                address: '30 cours de Verdun',
+                phone: '05 56 01 19 02',
+                email: ''
+            }
+        }
+    },
+    {
+        id: 'fr-consulat-lyon',
+        name: 'Consulat Honoraire du Gabon à Lyon',
+        type: OrganizationType.CONSULAT_HONORAIRE,
+        isActive: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        metadata: {
+            city: 'Lyon',
+            country: 'France',
+            countryCode: 'FR',
+            jurisdiction: ['Lyon'],
+            contact: {
+                address: '3, rue de Sévigné',
+                phone: '04 72 84 26 52',
+                email: ''
+            }
+        }
+    },
+    {
+        id: 'fr-consulat-perpignan',
+        name: 'Consulat Honoraire du Gabon à Perpignan',
+        type: OrganizationType.CONSULAT_HONORAIRE,
+        isActive: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        metadata: {
+            city: 'Perpignan',
+            country: 'France',
+            countryCode: 'FR',
+            jurisdiction: ['Perpignan'],
+            contact: {
+                address: '6 bd du Foment de la Sardane',
+                phone: '',
+                email: ''
             }
         }
     },
@@ -536,7 +618,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Rome',
             country: 'Italie',
             countryCode: 'IT',
-            jurisdiction: ['IT', 'GR', 'CY', 'FAO'],
+            jurisdiction: ['Italie', 'Grèce', 'Chypre', 'FAO'],
             contact: {
                 address: 'Lungotevere Michelangelo, 9, 00192 Rome',
                 phone: '+39 06 5272 9121',
@@ -555,12 +637,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Londres',
             country: 'Royaume-Uni',
             countryCode: 'GB',
-            jurisdiction: ['GB', 'IE', 'SE', 'DK', 'NO', 'FI'],
+            jurisdiction: ['Royaume-Uni', 'Irlande', 'Suède', 'Danemark', 'Norvège', 'Finlande'],
             contact: {
                 address: '27 Elvaston Place, London SW7 5NL',
                 phone: '+44 20 7823 9986',
                 email: 'gabonembassyuk@gmail.com'
-            }
+            },
+            notes: "Statut : High Commission (Commonwealth)."
         }
     },
     {
@@ -574,7 +657,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Moscou',
             country: 'Russie',
             countryCode: 'RU',
-            jurisdiction: ['RU'],
+            jurisdiction: ['Fédération de Russie', 'Europe de l\'Est'],
             contact: {
                 address: 'Denezhny Per. 16/1, Moscou 119002',
                 phone: '+7 495 241 00 80',
@@ -593,9 +676,9 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Vatican',
             country: 'Saint-Siège',
             countryCode: 'VA',
-            jurisdiction: ['VA', 'Ordre de Malte'],
+            jurisdiction: ['Relations avec le Vatican et l\'Ordre de Malte'],
             contact: {
-                address: 'Piazzale Clodio, 12, 00195 Rome',
+                address: 'Via Ovidio, 7a, 00193 Rome / Piazzale Clodio 12',
                 phone: '+39 06 3974 5043',
                 email: 'ambagabon.vatican@yahoo.com'
             }
@@ -631,7 +714,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Ankara',
             country: 'Turquie',
             countryCode: 'TR',
-            jurisdiction: ['TR'],
+            jurisdiction: ['Turquie'],
             contact: {
                 address: '16/609 Ilkbahar Mahallesi, Oran, Çankaya, Ankara',
                 phone: '+90 312 490 94 94',
@@ -640,7 +723,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
         }
     },
 
-    // AMERIQUES
+    // --- AMERIQUES ---
     {
         id: 'br-ambassade-brasilia',
         name: 'Ambassade du Gabon au Brésil',
@@ -652,12 +735,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Brasilia',
             country: 'Brésil',
             countryCode: 'BR',
-            jurisdiction: ['BR', 'Amérique du Sud'],
+            jurisdiction: ['Brésil', 'Amérique du Sud'],
             contact: {
                 address: 'SHIS QI 09 conjunto 11 casa 09, Lago Sul, Brasilia',
                 phone: '+55 61 3248 3533',
                 email: 'bresil.embgabon@gmail.com'
-            }
+            },
+            notes: "Horaires : 09h00-16h00."
         }
     },
     {
@@ -671,7 +755,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Ottawa',
             country: 'Canada',
             countryCode: 'CA',
-            jurisdiction: ['CA'],
+            jurisdiction: ['Canada'],
             contact: {
                 address: '1285, rue Labelle, Ottawa',
                 phone: '+1 613 232 5301',
@@ -691,7 +775,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'La Havane',
             country: 'Cuba',
             countryCode: 'CU',
-            jurisdiction: ['CU', 'Caraïbes'],
+            jurisdiction: ['Cuba', 'Caraïbes'],
             contact: {
                 address: '5ta. Ave. No. 1808 e/ 18 y 20, Miramar, La Havane',
                 phone: '+53 7 204 0472',
@@ -710,12 +794,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Washington',
             country: 'États-Unis',
             countryCode: 'US',
-            jurisdiction: ['US', 'MX', 'Banque Mondiale', 'FMI'],
+            jurisdiction: ['États-Unis (Fédéral)', 'Mexique', 'Banque Mondiale', 'FMI'],
             contact: {
                 address: '2034 20th Street NW, Suite 200, Washington, DC 20009',
                 phone: '+1 202 797-1000',
                 email: 'info@gabonembassyusa.org'
-            }
+            },
+            notes: "Horaires : 09h00-17h00."
         }
     },
     {
@@ -729,12 +814,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'New York',
             country: 'États-Unis',
             countryCode: 'US',
-            jurisdiction: ['US (Côte Est)'],
+            jurisdiction: ['États-Unis (Côte Est)'],
             contact: {
                 address: '122 East 42nd Street, Suite 519, New York, NY 10168',
                 phone: '+1 212 683-7371',
                 email: 'consulatgabon@aol.com'
-            }
+            },
+            notes: "Services : Visas, Légalisations pour la côte Est."
         }
     },
     {
@@ -748,7 +834,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'New York',
             country: 'États-Unis',
             countryCode: 'US',
-            jurisdiction: ['ONU'],
+            jurisdiction: ['Organisation des Nations Unies (Siège)'],
             contact: {
                 address: '18 East 41st Street, 9th Floor, New York, NY 10017',
                 phone: '+1 212 686-9720',
@@ -757,7 +843,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
         }
     },
 
-    // ASIE & MOYEN-ORIENT
+    // --- ASIE & MOYEN-ORIENT ---
     {
         id: 'sa-ambassade-riyad',
         name: 'Ambassade du Gabon en Arabie Saoudite',
@@ -769,7 +855,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Riyad',
             country: 'Arabie Saoudite',
             countryCode: 'SA',
-            jurisdiction: ['SA', 'KW', 'AE'],
+            jurisdiction: ['Arabie Saoudite', 'Koweït', 'EAU (couverture politique)'],
             contact: {
                 address: 'Al-Morsalat Q. Bin Tofiel Street, P.O. Box 94325, Riyadh',
                 phone: '+966 11 456 7173',
@@ -788,11 +874,12 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Pékin',
             country: 'Chine',
             countryCode: 'CN',
-            jurisdiction: ['CN', 'SG', 'VN'],
+            jurisdiction: ['Chine', 'Singapour', 'Vietnam'],
             contact: {
                 address: '36, Guang Hua Lu, Jian Guo Men Wai, Beijing 100600',
                 phone: '+86 10 6532 2810',
-                email: 'ambagabonchine@yahoo.fr'
+                email: 'ambagabonchine@yahoo.fr',
+                fax: '+86 10 6532 2621'
             }
         }
     },
@@ -807,7 +894,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Séoul',
             country: 'Corée du Sud',
             countryCode: 'KR',
-            jurisdiction: ['KR', 'TH'],
+            jurisdiction: ['Corée du Sud', 'Thaïlande'],
             contact: {
                 address: '4th Floor, Yoosung Building, 239 Itaewon-ro, Yongsan-gu, Séoul',
                 phone: '+82 2 793 9575',
@@ -826,7 +913,7 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'New Delhi',
             country: 'Inde',
             countryCode: 'IN',
-            jurisdiction: ['IN'],
+            jurisdiction: ['Inde'],
             contact: {
                 address: 'E-84, Paschimi Marg, Vasant Vihar, New Delhi - 110057',
                 phone: '+91 11 4101 2513',
@@ -845,12 +932,13 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Tokyo',
             country: 'Japon',
             countryCode: 'JP',
-            jurisdiction: ['JP'],
+            jurisdiction: ['Japon'],
             contact: {
                 address: '1-34-11, Higashigaoka, Meguro-ku, Tokyo 152-0021',
                 phone: '+81 3 5430 9171',
                 email: 'info@gabonembassy-tokyo.org'
-            }
+            },
+            notes: "Horaires : 09h00-12h00 / 13h00-16h00."
         }
     },
     {
@@ -864,12 +952,14 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
             city: 'Beyrouth',
             country: 'Liban',
             countryCode: 'LB',
-            jurisdiction: ['LB'],
+            jurisdiction: ['Liban'],
             contact: {
                 address: '',
                 phone: '+961 5 956 048',
-                email: ''
-            }
+                email: '',
+                fax: '+961 5 924 643'
+            },
+            notes: "Gestion de l'importante communauté libanaise au Gabon et visas d'affaires."
         }
     }
 ];

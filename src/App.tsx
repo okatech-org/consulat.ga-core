@@ -8,6 +8,10 @@ import { DemoProvider } from "@/contexts/DemoContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import GlobalHub from "./pages/GlobalHub";
+import Home from "./pages/Home";
+import Information from "./pages/public/Information";
+import Tutorials from "./pages/public/Tutorials";
+import Community from "./pages/public/Community";
 import Actualites from "./pages/Actualites";
 import Login from "./pages/Login";
 import DemoPortal from "./pages/DemoPortal";
@@ -66,7 +70,16 @@ const App = () => (
               <Routes>
                 {/* PUBLIC PORTAL (Citizens) */}
                 <Route element={<PublicLayout />}>
-                  <Route path="/" element={<GlobalHub />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/old-home" element={<GlobalHub />} />
+
+                  {/* HUB ROUTES */}
+                  <Route path="/hub/information" element={<Information />} />
+                  <Route path="/hub/tutorials" element={<Tutorials />} />
+                  <Route path="/hub/community" element={<Community />} />
+                  <Route path="/hub/etudiant" element={<Information />} />
+                  <Route path="/hub/resident" element={<Information />} />
+                  <Route path="/hub/visiteur" element={<Information />} />
                   <Route path="/actualites" element={<Actualites />} />
                   <Route path="/login" element={<Login />} />
 

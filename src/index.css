@@ -14,47 +14,51 @@
     --gabon-blue: 214 52% 50%;
     /* #3A75C4 */
 
-    /* Base colors - Mode Clair */
-    --background: 0 0% 98%;
-    --foreground: 210 20% 15%;
+    /* Base colors - Mode Clair Premium */
+    --background: 210 20% 96%;
+    /* #F1F5F9 - Slate 100 */
+    --foreground: 215 25% 27%;
+    /* #334155 - Slate 700 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 20% 15%;
+    --card: 210 20% 96%;
+    /* Same as background for Neumorphism */
+    --card-foreground: 215 25% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 15%;
+    --popover-foreground: 215 25% 27%;
 
-    /* Turquoise moderne - Couleur principale #17CCB9 */
-    --primary: 173 78% 45%;
+    /* Apple Blue - Couleur principale */
+    --primary: 211 100% 50%;
+    /* #007AFF */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 173 70% 85%;
+    --primary-light: 211 100% 90%;
 
-    /* Bleu électrique - Couleur secondaire #00A1FE */
-    --secondary: 202 100% 50%;
+    /* Jaune/Orange - Couleur secondaire */
+    --secondary: 35 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96%;
+    --muted: 210 20% 90%;
     --muted-foreground: 215 16% 47%;
 
-    /* Rose vibrant - Couleur accent #E63B7A */
+    /* Rose vibrant - Couleur accent */
     --accent: 338 80% 57%;
     --accent-foreground: 0 0% 100%;
-    
-    /* Jaune doré - Couleur warning/highlight #FDAD00 */
+
+    /* Jaune doré - Couleur warning */
     --warning: 41 100% 50%;
     --warning-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --success: 173 78% 45%;
     --success-foreground: 0 0% 100%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 173 78% 45%;
+    --ring: 211 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Chart colors */
     --chart-1: 173 78% 45%;
@@ -66,61 +70,66 @@
 
   .dark {
     /* Mode Sombre */
-    --background: 210 30% 8%;
+    --background: 215 25% 10%;
     --foreground: 210 40% 98%;
 
-    --card: 210 30% 10%;
+    --card: 215 25% 12%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 210 30% 10%;
+    --popover: 215 25% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 173 78% 50%;
+    /* Apple Blue Dark Mode */
+    --primary: 211 100% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 173 70% 30%;
+    --primary-light: 211 100% 30%;
 
-    --secondary: 202 100% 55%;
+    /* Jaune/Orange Dark Mode */
+    --secondary: 35 100% 60%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 30% 15%;
+    --muted: 215 25% 15%;
     --muted-foreground: 215 20% 65%;
 
     --accent: 338 80% 62%;
     --accent-foreground: 0 0% 100%;
-    
+
     --warning: 41 100% 55%;
     --warning-foreground: 210 30% 8%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --success: 173 78% 50%;
     --success-foreground: 0 0% 100%;
 
-    --border: 210 30% 18%;
-    --input: 210 30% 18%;
+    --border: 215 25% 20%;
+    --input: 215 25% 20%;
     --ring: 173 78% 50%;
   }
 
   /* === THEME NEUMORPHIQUE (Scoped) === */
   .theme-neumorphic {
-    --background: 0 0% 79%;
-    --foreground: 0 0% 5%;
+    /* Light Mode Neumorphism */
+    --background: 210 20% 93%;
+    /* #ECEFF4 */
+    --foreground: 215 25% 27%;
 
-    --card: 0 0% 91%;
-    --card-foreground: 0 0% 5%;
+    --card: 210 20% 93%;
+    /* Match background */
+    --card-foreground: 215 25% 27%;
 
-    --primary: 0 0% 20%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 75%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 210 20% 85%;
+    --secondary-foreground: 215 25% 27%;
 
-    --accent: 0 0% 70%;
-    --accent-foreground: 0 0% 8%;
+    --accent: 210 20% 80%;
+    --accent-foreground: 215 25% 27%;
 
-    --muted: 0 0% 78%;
-    --muted-foreground: 0 0% 25%;
+    --muted: 210 20% 88%;
+    --muted-foreground: 215 20% 50%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -131,61 +140,67 @@
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 0 0% 65%;
-    --input: 0 0% 92%;
-    --ring: 0 0% 25%;
+    --border: 210 20% 85%;
+    --input: 210 20% 93%;
+    --ring: 211 100% 50%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
-    /* === OMBRES NEOMORPHIQUES === */
-    --neo-shadow-sm: 6px 6px 12px rgba(100, 100, 100, 0.5), -6px -6px 12px rgba(255, 255, 255, 1);
-    --neo-shadow-md: 10px 10px 20px rgba(90, 90, 90, 0.55), -10px -10px 20px rgba(255, 255, 255, 1);
-    --neo-shadow-lg: 15px 15px 30px rgba(80, 80, 80, 0.6), -15px -15px 30px rgba(255, 255, 255, 1);
-    --neo-shadow-inset: inset 6px 6px 12px rgba(100, 100, 100, 0.45), inset -6px -6px 12px rgba(255, 255, 255, 0.9);
-    --neo-shadow-inset-lg: inset 10px 10px 20px rgba(90, 90, 90, 0.5), inset -10px -10px 20px rgba(255, 255, 255, 1);
+    /* === OMBRES NEOMORPHIQUES PREMIUM === */
+    /* Light Source: Top Left */
+    --neo-shadow-sm:
+      3px 3px 6px rgba(163, 177, 198, 0.4),
+      -3px -3px 6px rgba(255, 255, 255, 0.8);
 
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --neo-shadow-md:
+      6px 6px 12px rgba(163, 177, 198, 0.5),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+
+    --neo-shadow-lg:
+      10px 10px 20px rgba(163, 177, 198, 0.6),
+      -10px -10px 20px rgba(255, 255, 255, 1);
+
+    --neo-shadow-inset:
+      inset 4px 4px 8px rgba(163, 177, 198, 0.4),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+
+    --neo-shadow-inset-lg:
+      inset 8px 8px 16px rgba(163, 177, 198, 0.5),
+      inset -8px -8px 16px rgba(255, 255, 255, 1);
+
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --transition-fast: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
   .dark .theme-neumorphic {
-    /* Arrière-plans */
-    --background: 0 0% 8%;
-    --card: 0 0% 12%;
-    --muted: 0 0% 18%;
+    /* Dark Mode Neumorphism */
+    --background: 215 25% 15%;
+    --card: 215 25% 15%;
+    --muted: 215 25% 20%;
 
-    /* Bordures et inputs */
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
+    --border: 215 25% 20%;
+    --input: 215 25% 15%;
 
-    /* Primaires et secondaires */
-    --secondary: 0 0% 45%;
-    --primary: 0 0% 60%;
-    --ring: 0 0% 60%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 0 0% 70%;
-
-    /* Textes */
-    --foreground: 0 0% 98%;
-    --primary-foreground: 0 0% 100%;
-    --secondary-foreground: 0 0% 100%;
-    --card-foreground: 0 0% 100%;
-    --accent-foreground: 0 0% 8%;
-    /* Contrast for light accent */
-
-    /* Alertes */
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --warning: 35 90% 60%;
-    --warning-foreground: 0 0% 8%;
-    --success: 150 55% 50%;
-    --success-foreground: 0 0% 100%;
+    --primary: 211 100% 60%;
+    --foreground: 210 40% 98%;
+    --card-foreground: 210 40% 98%;
 
     /* Ombres néomorphiques pour mode sombre */
-    --neo-shadow-sm: 4px 4px 8px rgba(0, 0, 0, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.03);
-    --neo-shadow-md: 8px 8px 16px rgba(0, 0, 0, 0.7), -8px -8px 16px rgba(255, 255, 255, 0.05);
-    --neo-shadow-lg: 12px 12px 24px rgba(0, 0, 0, 0.8), -12px -12px 24px rgba(255, 255, 255, 0.08);
-    --neo-shadow-inset: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.03);
+    --neo-shadow-sm:
+      4px 4px 8px rgba(0, 0, 0, 0.5),
+      -4px -4px 8px rgba(255, 255, 255, 0.05);
+
+    --neo-shadow-md:
+      8px 8px 16px rgba(0, 0, 0, 0.6),
+      -8px -8px 16px rgba(255, 255, 255, 0.05);
+
+    --neo-shadow-lg:
+      12px 12px 24px rgba(0, 0, 0, 0.7),
+      -12px -12px 24px rgba(255, 255, 255, 0.05);
+
+    --neo-shadow-inset:
+      inset 4px 4px 8px rgba(0, 0, 0, 0.5),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -231,6 +246,15 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Nouveaux Gradients demandés */
+  .bg-gradient-apple {
+    background: linear-gradient(180deg, hsl(211 100% 58%), hsl(211 100% 45%));
+  }
+
+  .bg-gradient-sunny {
+    background: linear-gradient(135deg, hsl(45 100% 55%), hsl(25 100% 55%));
   }
 
   /* Hover scale effect */
@@ -303,6 +327,22 @@
     box-shadow: var(--neo-shadow-inset);
     border-radius: var(--radius);
     transition: var(--transition-fast);
+  }
+
+  .custom-mapbox-popup .mapboxgl-popup-content {
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .custom-mapbox-popup .mapboxgl-popup-tip {
+    border-top-color: #020617 !important;
+    /* slate-950 matching the card */
+  }
+
+  .dark .custom-mapbox-popup .mapboxgl-popup-tip {
+    border-top-color: #020617 !important;
   }
 }
 

@@ -74,6 +74,7 @@ export interface Company {
 
     // Adresse
     address: AddressData;
+    coordinates?: [number, number];
 
     // Relation avec l'utilisateur créateur
     ownerId: string;

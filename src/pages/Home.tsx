@@ -1,126 +1,207 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, BookKey, Users, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
+import { HubHero } from "@/components/hub/HubHero";
+import { ProfileCard } from "@/components/hub/ProfileCard";
+import { ServiceGrid } from "@/components/hub/ServiceGrid";
 import { InteractiveWorldMap } from "@/components/InteractiveWorldMap";
+import { GraduationCap, Home as HomeIcon, Plane, Newspaper, FileText, Globe, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function Home() {
-  const { t } = useTranslation();
-  
-  const services = [
+  const navigate = useNavigate();
+
+  const profiles = [
     {
-      icon: FileText,
-      title: t('home.services.visa.title'),
-      description: t('home.services.visa.description'),
-      color: "text-gabon-green",
+      title: "Je suis Étudiant",
+      description: "Bourses, logement, équivalences de diplômes et vie étudiante.",
+      icon: GraduationCap,
+      color: "blue" as const,
+      path: "/hub/etudiant"
     },
     {
-      icon: BookKey,
-      title: t('home.services.passport.title'),
-      description: t('home.services.passport.description'),
-      color: "text-gabon-blue",
+      title: "Je suis Résident",
+      description: "Démarches consulaires, recensement, et vie de la communauté.",
+      icon: HomeIcon,
+      color: "green" as const,
+      path: "/hub/resident"
     },
     {
-      icon: Users,
-      title: t('home.services.civilRegistry.title'),
-      description: t('home.services.civilRegistry.description'),
-      color: "text-gabon-yellow",
-    },
+      title: "Je suis Visiteur",
+      description: "Visas, tourisme, opportunités d'affaires et guide pratique.",
+      icon: Plane,
+      color: "orange" as const,
+      path: "/hub/visiteur"
+    }
+  ];
+
+  const quickServices = [
+    { title: "Demande de Visa", icon: FileText, path: "/services/visa" },
+    { title: "Passeport Biométrique", icon: FileText, path: "/services/passeport" },
+    { title: "Carte Consulaire", icon: FileText, path: "/services/carte-consulaire" },
+    { title: "Légalisation", icon: FileText, path: "/services/legalisation" },
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <HubHero
+          title="Bienvenue sur le Hub Numérique du Gabon"
+          subtitle="Votre passerelle unique pour toutes vos démarches, informations et connexions avec le Gabon, où que vous soyez."
+          ctaText="Découvrir les services"
+          onCtaClick={() => document.getElementById('profiles')?.scrollIntoView({ behavior: 'smooth' })}
+        />
 
-      {/* Hero Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              {t('home.hero.title')}
-            </h1>
-            <p className="text-xl md:text-2xl mb-10 text-muted-foreground max-w-3xl mx-auto">
-              {t('home.hero.subtitle')}
+        {/* Profile Selection Section */}
+        <section id="profiles" className="py-20 container mx-auto px-4">
+          <div className="text-center mb-12 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Quel est votre profil ?</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Sélectionnez votre situation pour accéder à des informations et services personnalisés.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/login" className="w-full sm:w-auto">
-                <Button size="lg" variant="default" className="w-full sm:w-auto min-w-[200px]">
-                  {t('common.login')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/actualites" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto min-w-[200px]">
-                  {t('header.news')}
-                </Button>
-              </Link>
+          </div>
+
+          <ServiceGrid>
+            {profiles.map((profile, index) => (
+              <ProfileCard
+                key={index}
+                title={profile.title}
+                description={profile.description}
+                icon={profile.icon}
+                color={profile.color}
+                onClick={() => navigate(profile.path)}
+              />
+            ))}
+          </ServiceGrid>
+        </section>
+
+        {/* Quick Access & News */}
+        <section className="py-16 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Quick Services */}
+              <div className="lg:col-span-2 space-y-8">
+
+                {/* Pour les Gabonais */}
+                <div>
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-foreground/90">
+                    <span className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center mr-3">
+                      <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    </span>
+                    Pour les Gabonais
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { title: "Carte Consulaire", icon: FileText, path: "/services/carte-consulaire" },
+                      { title: "Passeport Biométrique", icon: FileText, path: "/services/passeport" },
+                      { title: "Transcription", icon: FileText, path: "/services/transcription" },
+                      { title: "Légalisation et autres", icon: FileText, path: "/services/legalisation" },
+                    ].map((service, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="h-auto py-4 justify-start text-base font-medium bg-card/50 hover:bg-green-500/5 hover:text-green-600 hover:border-green-500/30 transition-all hover:scale-[1.02] border-border/50"
+                        onClick={() => navigate(service.path)}
+                      >
+                        <service.icon className="mr-3 h-5 w-5 opacity-70" />
+                        {service.title}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pour les Visiteurs */}
+                <div>
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-foreground/90">
+                    <span className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center mr-3">
+                      <Plane className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    </span>
+                    Pour les Visiteurs
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { title: "Demande de Visa", icon: FileText, path: "/services/visa" },
+                      { title: "Légalisation et autres", icon: FileText, path: "/services/legalisation-visiteur" },
+                    ].map((service, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="h-auto py-4 justify-start text-base font-medium bg-card/50 hover:bg-orange-500/5 hover:text-orange-600 hover:border-orange-500/30 transition-all hover:scale-[1.02] border-border/50"
+                        onClick={() => navigate(service.path)}
+                      >
+                        <service.icon className="mr-3 h-5 w-5 opacity-70" />
+                        {service.title}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Latest News Preview */}
+              <div>
+                <h3 className="text-2xl font-bold mb-6 flex items-center">
+                  <Newspaper className="mr-2 text-primary" /> Actualités
+                </h3>
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Lancement du e-Visa</CardTitle>
+                    <CardDescription>Il y a 2 jours</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      La procédure de demande de visa est désormais 100% en ligne...
+                    </p>
+                    <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/actualites')}>
+                      Lire la suite →
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
+        </section>
 
-          {/* Carte Interactive */}
-          <div className="max-w-7xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <InteractiveWorldMap />
+        {/* Diplomatic Network Map */}
+        <section className="py-20 bg-gradient-to-b from-background to-muted/20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12 animate-fade-in">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                <Globe className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Notre Réseau Mondial</h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                Retrouvez ambassades, consulats, entreprises et associations du Gabon à travers le monde.
+                Utilisez la géolocalisation pour trouver votre juridiction administrative.
+              </p>
+            </div>
+
+            <div className="max-w-7xl mx-auto">
+              <InteractiveWorldMap />
+            </div>
+
+            {/* Map Features */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
+              <div className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                <MapPin className="w-8 h-8 mx-auto mb-3 text-blue-500" />
+                <h4 className="font-semibold mb-2">Géolocalisation</h4>
+                <p className="text-sm text-muted-foreground">Trouvez automatiquement votre juridiction la plus proche</p>
+              </div>
+              <div className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                <Globe className="w-8 h-8 mx-auto mb-3 text-emerald-500" />
+                <h4 className="font-semibold mb-2">Réseau Complet</h4>
+                <p className="text-sm text-muted-foreground">Ambassades, consulats et représentations mondiales</p>
+              </div>
+              <div className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                <FileText className="w-8 h-8 mx-auto mb-3 text-orange-500" />
+                <h4 className="font-semibold mb-2">Informations Pratiques</h4>
+                <p className="text-sm text-muted-foreground">Horaires, adresses et services disponibles</p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-20 md:py-24 bg-gradient-official">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-16 animate-fade-in">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{t('home.services.title')}</h2>
-            <p className="text-muted-foreground text-lg md:text-xl">
-              {t('home.hero.description')}
-            </p>
-          </div>
-
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {services.map((service, index) => (
-              <Card
-                key={index}
-                className="group hover:shadow-elevation transition-all duration-300 hover:-translate-y-2 animate-scale-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardHeader className="text-center">
-                  <div className={`w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-4 mx-auto ${service.color} transition-transform group-hover:scale-110`}>
-                    <service.icon className="h-7 w-7" />
-                  </div>
-                  <CardTitle className="text-xl mb-3">{service.title}</CardTitle>
-                  <CardDescription className="text-base">
-                    {service.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="ghost" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    {t('home.features.online.description')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 md:py-24 bg-muted/50">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('home.features.title')}</h2>
-            <p className="text-muted-foreground text-lg mb-10 max-w-2xl mx-auto">
-              {t('home.hero.description')}
-            </p>
-            <Button size="lg" variant="default" className="min-w-[200px]">
-              {t('header.messaging')}
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
+        </section>
+      </main>
     </div>
   );
 }

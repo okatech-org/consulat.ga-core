@@ -23,7 +23,7 @@ export default function EntityPortal() {
     );
   }
 
-  const enabledServices = entity.enabledServices as ServiceType[];
+  const enabledServices = (entity.enabledServices || []) as ServiceType[];
 
   return (
     <div className="py-12 bg-gradient-official">
@@ -102,7 +102,7 @@ export default function EntityPortal() {
                 <strong>Horaires :</strong> Lundi - Vendredi, 9h00 - 17h00
               </p>
               <p className="text-sm">
-                <strong>Email :</strong> contact@consulat-{entity.countryCode.toLowerCase()}.ga
+                <strong>Email :</strong> contact@consulat-{(entity.countryCode || 'ga').toLowerCase()}.ga
               </p>
             </CardContent>
           </Card>

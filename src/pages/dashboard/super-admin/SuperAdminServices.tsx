@@ -1,10 +1,11 @@
-import { FileText, Settings, CheckCircle2, AlertCircle, Plus } from "lucide-react";
+import { FileText, Settings, CheckCircle2, AlertCircle, Plus, RefreshCcw } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { ConsularService } from "@/types/services";
 import { useState, useEffect } from "react";
 import { ServiceDialog } from "@/components/super-admin/ServiceDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { serviceCatalog } from "@/services/serviceCatalog";
+import { DEFAULT_SERVICES } from "@/data/defaultServices";
 
 export default function SuperAdminServices() {
     const { toast } = useToast();
@@ -12,6 +13,7 @@ export default function SuperAdminServices() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedService, setSelectedService] = useState<ConsularService | null>(null);
     const [loading, setLoading] = useState(true);
+    const [seeding, setSeeding] = useState(false);
 
     useEffect(() => {
         loadServices();
@@ -30,6 +32,44 @@ export default function SuperAdminServices() {
             });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSeedServices = async () => {
+        setSeeding(true);
+        try {
+            // Check if services already exist to avoid duplicates (simple check by name)
+            const existingNames = new Set(services.map(s => s.name));
+            let addedCount = 0;
+
+            for (const service of DEFAULT_SERVICES) {
+                if (!existingNames.has(service.name)) {
+                    await serviceCatalog.create(service);
+                    addedCount++;
+                }
+            }
+
+            if (addedCount > 0) {
+                toast({
+                    title: "Services initialisés",
+                    description: `${addedCount} services ont été ajoutés au catalogue.`,
+                });
+                loadServices();
+            } else {
+                toast({
+                    title: "Déjà à jour",
+                    description: "Tous les services par défaut sont déjà présents.",
+                });
+            }
+        } catch (error) {
+            console.error("Failed to seed services", error);
+            toast({
+                title: "Erreur",
+                description: "Erreur lors de l'initialisation des services.",
+                variant: "destructive"
+            });
+        } finally {
+            setSeeding(false);
         }
     };
 
@@ -80,13 +120,23 @@ export default function SuperAdminServices() {
                             Configuration des types de demandes et des procédures
                         </p>
                     </div>
-                    <button
-                        onClick={handleAdd}
-                        className="neu-raised px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium text-primary hover:shadow-neo-md transition-all"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Nouveau Service
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleSeedServices}
+                            disabled={seeding}
+                            className="neu-raised px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary hover:shadow-neo-md transition-all disabled:opacity-50"
+                        >
+                            <RefreshCcw className={`w-4 h-4 ${seeding ? 'animate-spin' : ''}`} />
+                            {seeding ? 'Initialisation...' : 'Initialiser les services'}
+                        </button>
+                        <button
+                            onClick={handleAdd}
+                            className="neu-raised px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium text-primary hover:shadow-neo-md transition-all"
+                        >
+                            <Plus className="w-4 h-4" />
+                            Nouveau Service
+                        </button>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -106,7 +156,7 @@ export default function SuperAdminServices() {
                                 </div>
 
                                 <h3 className="font-bold text-lg mb-2">{service.name}</h3>
-                                <p className="text-sm text-muted-foreground mb-6 flex-1">
+                                <p className="text-sm text-muted-foreground mb-6 flex-1 line-clamp-3" title={service.description}>
                                     {service.description}
                                 </p>
 

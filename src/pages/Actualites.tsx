@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Tag } from "lucide-react";
+import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 
 export default function Actualites() {
   const articles = [
@@ -12,6 +13,7 @@ export default function Actualites() {
       date: "15 Décembre 2024",
       badge: "Important",
       badgeVariant: "destructive" as const,
+      image: null
     },
     {
       id: 2,
@@ -21,6 +23,7 @@ export default function Actualites() {
       date: "10 Décembre 2024",
       badge: "Urgent",
       badgeVariant: "default" as const,
+      image: null
     },
     {
       id: 3,
@@ -30,6 +33,7 @@ export default function Actualites() {
       date: "5 Décembre 2024",
       badge: "Événement",
       badgeVariant: "secondary" as const,
+      image: null
     },
     {
       id: 4,
@@ -39,6 +43,7 @@ export default function Actualites() {
       date: "1 Décembre 2024",
       badge: "Info",
       badgeVariant: "outline" as const,
+      image: null
     },
     {
       id: 5,
@@ -48,6 +53,7 @@ export default function Actualites() {
       date: "25 Novembre 2024",
       badge: "Nouveau",
       badgeVariant: "default" as const,
+      image: null
     },
     {
       id: 6,
@@ -57,14 +63,15 @@ export default function Actualites() {
       date: "20 Novembre 2024",
       badge: "Événement",
       badgeVariant: "secondary" as const,
+      image: null
     },
   ];
 
   return (
-    <div className="flex-1 py-16 md:py-20 bg-gradient-official">
+    <div className="flex-1 py-16 md:py-20 bg-gradient-official dark:bg-none dark:bg-background">
       <div className="container mx-auto">
         <div className="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Actualités & Sensibilisation</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Actualités & Sensibilisation</h1>
           <p className="text-muted-foreground text-lg md:text-xl">
             Restez informé des dernières nouvelles et annonces consulaires
           </p>
@@ -74,9 +81,16 @@ export default function Actualites() {
           {articles.map((article, index) => (
             <Card
               key={article.id}
-              className="group hover:shadow-elevation transition-all duration-300 hover:-translate-y-1 animate-scale-in"
+              className="group hover:shadow-elevation transition-all duration-300 hover:-translate-y-1 animate-scale-in overflow-hidden dark:bg-card dark:border-border"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
+              <div className="h-48 w-full">
+                {article.image ? (
+                  <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                ) : (
+                  <ImagePlaceholder className="w-full h-full" text="Image de l'article" />
+                )}
+              </div>
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <Badge variant={article.badgeVariant}>{article.badge}</Badge>
@@ -85,10 +99,10 @@ export default function Actualites() {
                     <span>{article.category}</span>
                   </div>
                 </div>
-                <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2 text-foreground">
                   {article.title}
                 </CardTitle>
-                <CardDescription>{article.description}</CardDescription>
+                <CardDescription className="line-clamp-3 text-muted-foreground">{article.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

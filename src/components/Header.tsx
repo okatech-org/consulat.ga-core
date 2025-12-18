@@ -42,6 +42,15 @@ export const Header = () => {
           <Link to="/actualites" className="text-sm font-medium hover:text-primary transition-colors">
             {t('header.news')}
           </Link>
+          <Link to="/hub/information" className="text-sm font-medium hover:text-primary transition-colors">
+            Information
+          </Link>
+          <Link to="/hub/tutorials" className="text-sm font-medium hover:text-primary transition-colors">
+            Académie
+          </Link>
+          <Link to="/hub/community" className="text-sm font-medium hover:text-primary transition-colors">
+            Communauté
+          </Link>
           {isSimulating && currentUser && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full text-sm">
               <span>{currentUser.badge}</span>
@@ -92,6 +101,27 @@ export const Header = () => {
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('header.news')}
+            </Link>
+            <Link
+              to="/hub/information"
+              className="text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Information
+            </Link>
+            <Link
+              to="/hub/tutorials"
+              className="text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Académie
+            </Link>
+            <Link
+              to="/hub/community"
+              className="text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Communauté
             </Link>
             <Link
               to="/demo-portal"
