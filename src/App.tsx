@@ -41,6 +41,7 @@ import AgentRequestsPage from "./pages/dashboard/agent/AgentRequestsPage";
 import AgentsPage from "./pages/dashboard/admin/AgentsPage";
 import OrganizationSettingsPage from "./pages/dashboard/admin/OrganizationSettingsPage";
 import AdminRequestsPage from "./pages/dashboard/admin/AdminRequestsPage";
+import BookAppointmentPage from "./pages/appointments/BookAppointmentPage";
 
 import CompaniesPage from "./pages/companies/CompaniesPage";
 import NewCompanyPage from "./pages/companies/NewCompanyPage";
@@ -119,6 +120,7 @@ const App = () => (
                 <Route path="/iboite" element={<MessagingPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/mes-demandes" element={<RequestTrackingPage />} />
+                <Route path="/prendre-rendez-vous" element={<BookAppointmentPage />} />
 
                 {/* DASHBOARDS (Protected in real app) */}
 
