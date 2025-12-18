@@ -1,9 +1,10 @@
 import { HubHero } from "@/components/hub/HubHero";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Store, Vote, Calendar, ArrowRight, MapPin, Users, Building2, Globe } from "lucide-react";
+import { Store, Vote, Calendar, ArrowRight, MapPin, Users, Building2, Globe, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import communityHero from "@/assets/community-hero.jpg";
+import { EventGallery } from "@/components/community/EventGallery";
 
 export default function Community() {
     const navigate = useNavigate();
@@ -191,6 +192,24 @@ export default function Community() {
                                 </Card>
                             ))}
                         </div>
+                    </div>
+                </section>
+
+                {/* Past Events Gallery Section */}
+                <section className="py-20 bg-muted/30">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold mb-4 flex items-center justify-center text-foreground">
+                                <span className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
+                                    <Camera className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                                </span>
+                                Événements Passés
+                            </h2>
+                            <p className="text-muted-foreground max-w-2xl mx-auto">
+                                Revivez les moments forts de notre communauté à travers notre galerie photo.
+                            </p>
+                        </div>
+                        <EventGallery />
                     </div>
                 </section>
 
