@@ -5,7 +5,7 @@ import { HubHero } from "@/components/hub/HubHero";
 import { ProfileCard } from "@/components/hub/ProfileCard";
 import { ServiceGrid } from "@/components/hub/ServiceGrid";
 import { InteractiveWorldMap } from "@/components/InteractiveWorldMap";
-import { GraduationCap, Home as HomeIcon, Plane, Newspaper, FileText, Globe, MapPin } from "lucide-react";
+import { GraduationCap, Home as HomeIcon, Plane, Newspaper, Globe, MapPin, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -13,6 +13,11 @@ import profileStudent from "@/assets/profile-student.jpg";
 import profileResident from "@/assets/profile-resident.jpg";
 import profileVisitor from "@/assets/profile-visitor.jpg";
 import heroHome from "@/assets/hero-home.jpg";
+
+import iconPassport from "@/assets/icons/icon-passport.png";
+import iconVisa from "@/assets/icons/icon-visa.png";
+import iconConsularCard from "@/assets/icons/icon-consular-card.png";
+import iconLegalization from "@/assets/icons/icon-legalization.png";
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -162,10 +167,10 @@ export default function Home() {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { title: "Carte Consulaire", icon: FileText, path: "/services/carte-consulaire" },
-                      { title: "Passeport Biométrique", icon: FileText, path: "/services/passeport" },
-                      { title: "Transcription", icon: FileText, path: "/services/transcription" },
-                      { title: "Légalisation et autres", icon: FileText, path: "/services/legalisation" },
+                      { title: "Carte Consulaire", icon: iconConsularCard, path: "/services/carte-consulaire" },
+                      { title: "Passeport Biométrique", icon: iconPassport, path: "/services/passeport" },
+                      { title: "Transcription", icon: iconLegalization, path: "/services/transcription" },
+                      { title: "Légalisation et autres", icon: iconLegalization, path: "/services/legalisation" },
                     ].map((service, index) => (
                       <Button
                         key={index}
@@ -173,7 +178,7 @@ export default function Home() {
                         className="h-auto py-4 justify-start text-base font-medium bg-card/50 hover:bg-green-500/5 hover:text-green-600 hover:border-green-500/30 transition-all hover:scale-[1.02] border-border/50"
                         onClick={() => navigate(service.path)}
                       >
-                        <service.icon className="mr-3 h-5 w-5 opacity-70" />
+                        <img src={service.icon} alt="" className="mr-3 h-6 w-6 object-contain" />
                         {service.title}
                       </Button>
                     ))}
@@ -190,8 +195,8 @@ export default function Home() {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { title: "Demande de Visa", icon: FileText, path: "/services/visa" },
-                      { title: "Légalisation et autres", icon: FileText, path: "/services/legalisation-visiteur" },
+                      { title: "Demande de Visa", icon: iconVisa, path: "/services/visa" },
+                      { title: "Légalisation et autres", icon: iconLegalization, path: "/services/legalisation-visiteur" },
                     ].map((service, index) => (
                       <Button
                         key={index}
@@ -199,7 +204,7 @@ export default function Home() {
                         className="h-auto py-4 justify-start text-base font-medium bg-card/50 hover:bg-orange-500/5 hover:text-orange-600 hover:border-orange-500/30 transition-all hover:scale-[1.02] border-border/50"
                         onClick={() => navigate(service.path)}
                       >
-                        <service.icon className="mr-3 h-5 w-5 opacity-70" />
+                        <img src={service.icon} alt="" className="mr-3 h-6 w-6 object-contain" />
                         {service.title}
                       </Button>
                     ))}

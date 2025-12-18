@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Information from "./pages/public/Information";
 import Tutorials from "./pages/public/Tutorials";
 import Community from "./pages/public/Community";
+import ServicesConsulaires from "./pages/public/ServicesConsulaires";
 import Actualites from "./pages/Actualites";
 import Login from "./pages/Login";
 import DemoPortal from "./pages/DemoPortal";
@@ -83,6 +84,7 @@ const App = () => (
                   <Route path="/hub/etudiant" element={<Information />} />
                   <Route path="/hub/resident" element={<Information />} />
                   <Route path="/hub/visiteur" element={<Information />} />
+                  <Route path="/services" element={<ServicesConsulaires />} />
                   <Route path="/actualites" element={<Actualites />} />
                   <Route path="/login" element={<Login />} />
 
