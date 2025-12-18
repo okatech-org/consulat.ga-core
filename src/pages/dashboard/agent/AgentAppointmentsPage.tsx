@@ -29,11 +29,11 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const STATUS_STYLES = {
-    [AppointmentStatus.CONFIRMED]: { label: 'Confirmé', color: 'bg-green-100 text-green-700 border-green-200', icon: CheckCircle2 },
-    [AppointmentStatus.PENDING]: { label: 'En Attente', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: Clock },
-    [AppointmentStatus.COMPLETED]: { label: 'Terminé', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: CheckCircle2 },
-    [AppointmentStatus.CANCELLED]: { label: 'Annulé', color: 'bg-red-100 text-red-700 border-red-200', icon: XCircle },
-    [AppointmentStatus.NO_SHOW]: { label: 'Absent', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: AlertCircle },
+    [AppointmentStatus.Confirmed]: { label: 'Confirmé', color: 'bg-green-100 text-green-700 border-green-200', icon: CheckCircle2 },
+    [AppointmentStatus.Pending]: { label: 'En Attente', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: Clock },
+    [AppointmentStatus.Completed]: { label: 'Terminé', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: CheckCircle2 },
+    [AppointmentStatus.Cancelled]: { label: 'Annulé', color: 'bg-red-100 text-red-700 border-red-200', icon: XCircle },
+    [AppointmentStatus.Missed]: { label: 'Absent', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: AlertCircle },
 };
 
 export default function AgentAppointmentsPage() {
@@ -133,7 +133,7 @@ export default function AgentAppointmentsPage() {
                         </div>
                     ) : (
                         filteredAppointments.map((app) => {
-                            const style = STATUS_STYLES[app.status] || STATUS_STYLES[AppointmentStatus.PENDING];
+                            const style = STATUS_STYLES[app.status as AppointmentStatus] || STATUS_STYLES[AppointmentStatus.Pending];
                             const StatusIcon = style.icon;
                             const citizenName = app.profile ? `${app.profile.first_name} ${app.profile.last_name}` : 'Inconnu';
 
@@ -141,8 +141,8 @@ export default function AgentAppointmentsPage() {
                                 <div key={app.id} className="neu-raised p-4 rounded-xl flex flex-col md:flex-row gap-4 items-start md:items-center justify-between group hover:shadow-neo-lg transition-all">
                                     {/* Time & Date */}
                                     <div className="flex md:flex-col items-center md:items-start gap-2 md:gap-0 min-w-[100px] border-r md:border-r-0 border-border pr-4 md:pr-0">
-                                        <span className="text-xl font-bold text-primary">{format(new Date(app.date), 'HH:mm')}</span>
-                                        <span className="text-sm text-muted-foreground font-medium">{format(new Date(app.date), 'd MMM', { locale: fr })}</span>
+                                        <span className="text-xl font-bold text-primary">{format(new Date(app.start_time), 'HH:mm')}</span>
+                                        <span className="text-sm text-muted-foreground font-medium">{format(new Date(app.start_time), 'd MMM', { locale: fr })}</span>
                                     </div>
 
                                     {/* Citizen Info */}

@@ -1,4 +1,4 @@
-import { Profile } from "@/services/profileService";
+import { LegacyProfile as Profile } from "@/types/profile";
 import { ConsularRole } from "@/types/consular-roles";
 import { MOCK_ORGANIZATIONS } from "./mock-organizations";
 

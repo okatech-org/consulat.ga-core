@@ -9,14 +9,27 @@ import { Search, Filter, Building2, User, Mail, Shield } from "lucide-react";
 import { COUNTRY_FLAGS } from "@/types/entity";
 import { UserDialog } from "@/components/super-admin/UserDialog";
 import { useToast } from "@/components/ui/use-toast";
-import { profileService, Profile } from "@/services/profileService";
+import { profileService } from "@/services/profileService";
+
+interface UserProfile {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email?: string;
+    role?: string;
+    organization_id?: string;
+    organization?: {
+        name: string;
+        metadata?: any;
+    };
+}
 
 export default function SuperAdminUsers() {
     const { toast } = useToast();
     const [searchTerm, setSearchTerm] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
-    const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [profiles, setProfiles] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -25,7 +38,7 @@ export default function SuperAdminUsers() {
 
     const loadProfiles = async () => {
         try {
-            const data = await profileService.getAll();
+            const data = await profileService.getAll() as unknown as UserProfile[];
             setProfiles(data);
         } catch (error) {
             console.error("Failed to load profiles", error);
@@ -57,11 +70,10 @@ export default function SuperAdminUsers() {
                 const lastName = lastNameParts.join(' ');
 
                 await profileService.update(selectedUser.id, {
-                    first_name: firstName,
-                    last_name: lastName,
-                    role: data.role,
-                    email: data.email
-                    // Note: organization_id update would require looking up the org by name or ID
+                    personal: {
+                        firstName,
+                        lastName,
+                    }
                 });
 
                 toast({
@@ -95,7 +107,7 @@ export default function SuperAdminUsers() {
                 id: user.id,
                 name: `${user.first_name} ${user.last_name}`,
                 email: user.email,
-                role: user.role,
+                role: user.role || 'CITIZEN',
                 entityName: user.organization?.name || "Non assigné",
                 country: user.organization?.metadata?.country || "Non assigné",
                 countryCode: "GA", // Default to Gabon if unknown, or map from country name

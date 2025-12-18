@@ -13,7 +13,8 @@ import {
     Calendar, User, Phone, Mail, Paperclip
 } from "lucide-react";
 import { requestService } from "@/services/requestService";
-import { ServiceRequest, RequestStatus, RequestType, RequestPriority } from "@/types/request";
+import { ServiceRequest } from "@/types/request";
+import { RequestStatus } from "@/lib/constants";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -40,19 +41,20 @@ export default function AgentRequestsPage() {
         }
     };
 
-    const getStatusBadge = (status: RequestStatus) => {
-        const config = {
-            [RequestStatus.PENDING]: { variant: "outline" as const, className: "bg-yellow-50 text-yellow-700 border-yellow-200", icon: Clock },
-            [RequestStatus.IN_PROGRESS]: { variant: "outline" as const, className: "bg-blue-50 text-blue-700 border-blue-200", icon: Play },
-            [RequestStatus.AWAITING_DOCUMENTS]: { variant: "outline" as const, className: "bg-orange-50 text-orange-700 border-orange-200", icon: AlertCircle },
-            [RequestStatus.VALIDATED]: { variant: "outline" as const, className: "bg-green-50 text-green-700 border-green-200", icon: CheckCircle2 },
-            [RequestStatus.REJECTED]: { variant: "outline" as const, className: "bg-red-50 text-red-700 border-red-200", icon: XCircle },
-            [RequestStatus.COMPLETED]: { variant: "outline" as const, className: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCheck }
+    const getStatusBadge = (status: string) => {
+        const config: Record<string, { className: string; icon: typeof Clock }> = {
+            [RequestStatus.Pending]: { className: "bg-yellow-50 text-yellow-700 border-yellow-200", icon: Clock },
+            [RequestStatus.UnderReview]: { className: "bg-blue-50 text-blue-700 border-blue-200", icon: Play },
+            [RequestStatus.PendingCompletion]: { className: "bg-orange-50 text-orange-700 border-orange-200", icon: AlertCircle },
+            [RequestStatus.Validated]: { className: "bg-green-50 text-green-700 border-green-200", icon: CheckCircle2 },
+            [RequestStatus.Rejected]: { className: "bg-red-50 text-red-700 border-red-200", icon: XCircle },
+            [RequestStatus.Completed]: { className: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCheck }
         };
 
-        const { className, icon: Icon } = config[status] || config[RequestStatus.PENDING];
+        const statusConfig = config[status] || config[RequestStatus.Pending];
+        const Icon = statusConfig.icon;
         return (
-            <Badge className={`${className} gap-1 font-medium`}>
+            <Badge className={`${statusConfig.className} gap-1 font-medium`}>
                 <Icon className="w-3 h-3" />
                 {status.replace(/_/g, ' ')}
             </Badge>
@@ -80,18 +82,18 @@ export default function AgentRequestsPage() {
 
         // Tab filter
         const matchesTab = activeTab === "all" ||
-            (activeTab === "pending" && request.status === RequestStatus.PENDING) ||
-            (activeTab === "in-progress" && request.status === RequestStatus.IN_PROGRESS) ||
-            (activeTab === "completed" && (request.status === RequestStatus.COMPLETED || request.status === RequestStatus.VALIDATED));
+            (activeTab === "pending" && request.status === RequestStatus.Pending) ||
+            (activeTab === "in-progress" && request.status === RequestStatus.UnderReview) ||
+            (activeTab === "completed" && (request.status === RequestStatus.Completed || request.status === RequestStatus.Validated));
 
         return matchesSearch && matchesType && matchesStatus && matchesTab;
     });
 
     const stats = {
         total: requests.length,
-        pending: requests.filter(r => r.status === RequestStatus.PENDING).length,
-        inProgress: requests.filter(r => r.status === RequestStatus.IN_PROGRESS).length,
-        completed: requests.filter(r => r.status === RequestStatus.COMPLETED || r.status === RequestStatus.VALIDATED).length
+        pending: requests.filter(r => r.status === RequestStatus.Pending).length,
+        inProgress: requests.filter(r => r.status === RequestStatus.UnderReview).length,
+        completed: requests.filter(r => r.status === RequestStatus.Completed || r.status === RequestStatus.Validated).length
     };
 
     // Extract unique service names for filter
@@ -285,10 +287,10 @@ export default function AgentRequestsPage() {
                                                     </div>
                                                 </div>
 
-                                                {request.documents && Object.keys(request.documents).length > 0 && (
+                                                {request.document_ids && request.document_ids.length > 0 && (
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                         <Paperclip className="w-4 h-4" />
-                                                        <span>{Object.keys(request.documents).length} document(s) joint(s)</span>
+                                                        <span>{request.document_ids.length} document(s) joint(s)</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -299,13 +301,13 @@ export default function AgentRequestsPage() {
                                                     <Eye className="w-4 h-4 mr-2" />
                                                     Voir
                                                 </Button>
-                                                {request.status === RequestStatus.PENDING && (
+                                                {request.status === RequestStatus.Pending && (
                                                     <Button size="sm" className="neu-raised flex-1 md:flex-none">
                                                         <Play className="w-4 h-4 mr-2" />
                                                         Traiter
                                                     </Button>
                                                 )}
-                                                {request.status === RequestStatus.IN_PROGRESS && (
+                                                {request.status === RequestStatus.UnderReview && (
                                                     <Button size="sm" className="neu-raised flex-1 md:flex-none">
                                                         <CheckCheck className="w-4 h-4 mr-2" />
                                                         Valider
