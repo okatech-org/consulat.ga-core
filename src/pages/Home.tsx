@@ -164,7 +164,7 @@ export default function Home() {
         </section>
 
         {/* Diplomatic Network Map */}
-        <section className="py-20 bg-gradient-to-b from-background to-muted/20">
+        <section id="reseau-mondial" className="py-20 bg-gradient-to-b from-background to-muted/20">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12 animate-fade-in">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
