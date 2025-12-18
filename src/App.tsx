@@ -57,6 +57,7 @@ import MessagingPage from "./pages/MessagingPage";
 import IAstedInterfaceWrapper from "@/components/iasted/IAstedInterfaceWrapper";
 import ConsularRegistrationPage from "./pages/registration/ConsularRegistrationPage";
 import RequestTimelinePage from "./pages/requests/RequestTimelinePage";
+import CitizenNotificationsPage from "./pages/dashboard/citizen/CitizenNotificationsPage";
 
 const queryClient = new QueryClient();
 
@@ -120,6 +121,7 @@ const App = () => (
                   <Route path="child/:childId" element={<ChildRegistrationPage />} />
                   <Route path="registration" element={<ConsularRegistrationPage />} />
                   <Route path="timeline" element={<RequestTimelinePage />} />
+                  <Route path="notifications" element={<CitizenNotificationsPage />} />
                 </Route>
 
                 <Route path="/dashboard/foreigner" element={<ForeignerDashboard />} />

@@ -2,7 +2,7 @@ import { useDemo } from "@/contexts/DemoContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Globe } from "lucide-react";
+import { AlertTriangle, Globe, BarChart3 } from "lucide-react";
 import { KPITrendsCard } from "@/components/dashboard/admin/KPITrendsCard";
 import { ServiceHealthWidget } from "@/components/dashboard/admin/ServiceHealthWidget";
 import { SensitiveCasesSection } from "@/components/dashboard/admin/SensitiveCasesSection";
@@ -10,6 +10,12 @@ import { DiplomaticAgenda } from "@/components/dashboard/admin/DiplomaticAgenda"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { WorldMapDashboard } from "@/components/admin/WorldMapDashboard";
 import { ConsularRole } from "@/types/consular-roles";
+import { 
+  QuickStatsGrid, 
+  RequestsByTypeChart, 
+  MonthlyTrendsChart, 
+  AgentPerformanceChart 
+} from "@/components/dashboard/admin/AdminStatsCard";
 
 export default function AdminDashboard() {
   const { currentUser } = useDemo();
@@ -55,15 +61,31 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Quick Stats Grid */}
+      <div className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
+        <QuickStatsGrid />
+      </div>
+
       {/* KPI Trends - Strategic Indicators */}
       <div className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
         <KPITrendsCard />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up" style={{ animationDelay: "0.15s" }}>
+        <RequestsByTypeChart />
+        <MonthlyTrendsChart />
       </div>
 
       {/* Two Column Layout: Service Health + Sensitive Cases */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up" style={{ animationDelay: "0.2s" }}>
         <ServiceHealthWidget />
         <SensitiveCasesSection />
+      </div>
+
+      {/* Agent Performance */}
+      <div className="animate-slide-up" style={{ animationDelay: "0.25s" }}>
+        <AgentPerformanceChart />
       </div>
 
       {/* Geographic Distribution Map (Reusing existing component) */}
