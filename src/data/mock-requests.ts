@@ -1,11 +1,12 @@
-import { Request, RequestType, RequestStatus, RequestPriority } from '@/types/request';
+import { Request, RequestType } from '@/types/request';
+import { RequestStatus, RequestPriority } from '@/lib/constants';
 
 export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-001',
         type: RequestType.PASSPORT,
-        status: RequestStatus.PENDING,
-        priority: RequestPriority.NORMAL,
+        status: RequestStatus.Pending,
+        priority: RequestPriority.Normal,
         citizenName: 'Marie Dupont',
         citizenEmail: 'marie.dupont@email.com',
         citizenPhone: '+33 6 12 34 56 78',
@@ -20,8 +21,8 @@ export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-002',
         type: RequestType.VISA,
-        status: RequestStatus.IN_PROGRESS,
-        priority: RequestPriority.HIGH,
+        status: RequestStatus.UnderReview,
+        priority: RequestPriority.Urgent,
         citizenName: 'Jean Martin',
         citizenEmail: 'j.martin@email.com',
         subject: 'Visa tourisme - Voyage urgent',
@@ -38,8 +39,8 @@ export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-003',
         type: RequestType.CIVIL_REGISTRY,
-        status: RequestStatus.VALIDATED,
-        priority: RequestPriority.NORMAL,
+        status: RequestStatus.Validated,
+        priority: RequestPriority.Normal,
         citizenName: 'Claire Dubois',
         citizenEmail: 'claire.dubois@email.com',
         subject: 'Transcription acte de naissance',
@@ -55,8 +56,8 @@ export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-004',
         type: RequestType.LEGALIZATION,
-        status: RequestStatus.PENDING,
-        priority: RequestPriority.URGENT,
+        status: RequestStatus.Pending,
+        priority: RequestPriority.Urgent,
         citizenName: 'Pierre Lambert',
         citizenEmail: 'p.lambert@email.com',
         citizenPhone: '+33 6 98 76 54 32',
@@ -71,8 +72,8 @@ export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-005',
         type: RequestType.CONSULAR_CARD,
-        status: RequestStatus.AWAITING_DOCUMENTS,
-        priority: RequestPriority.NORMAL,
+        status: RequestStatus.PendingCompletion,
+        priority: RequestPriority.Normal,
         citizenName: 'Julie Moreau',
         citizenEmail: 'julie.moreau@email.com',
         subject: 'Immatriculation consulaire',
@@ -88,8 +89,8 @@ export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-006',
         type: RequestType.PASSPORT,
-        status: RequestStatus.COMPLETED,
-        priority: RequestPriority.NORMAL,
+        status: RequestStatus.Completed,
+        priority: RequestPriority.Normal,
         citizenName: 'Thomas Rousseau',
         citizenEmail: 'thomas.rousseau@email.com',
         subject: 'Passeport enfant mineur',
@@ -105,8 +106,8 @@ export const MOCK_REQUESTS: Request[] = [
     {
         id: 'REQ-2024-007',
         type: RequestType.ATTESTATION,
-        status: RequestStatus.IN_PROGRESS,
-        priority: RequestPriority.HIGH,
+        status: RequestStatus.UnderReview,
+        priority: RequestPriority.Urgent,
         citizenName: 'Anne Petit',
         citizenEmail: 'anne.petit@email.com',
         subject: 'Attestation de résidence',

@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Plus, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { requestService } from '@/services/requestService';
-import { ServiceRequest, RequestStatus } from '@/types/request';
+import { ServiceRequest } from '@/types/request';
+import { RequestStatus } from '@/lib/constants';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -26,16 +27,16 @@ export default function CitizenRequestsPage() {
         }
     };
 
-    const getStatusBadge = (status: RequestStatus) => {
+    const getStatusBadge = (status: string) => {
         switch (status) {
-            case RequestStatus.COMPLETED:
-            case RequestStatus.VALIDATED:
+            case RequestStatus.Completed:
+            case RequestStatus.Validated:
                 return <Badge className="bg-green-500 hover:bg-green-600 gap-1"><CheckCircle className="w-3 h-3" /> Terminé</Badge>;
-            case RequestStatus.IN_PROGRESS:
-            case RequestStatus.PENDING:
-            case RequestStatus.AWAITING_DOCUMENTS:
+            case RequestStatus.UnderReview:
+            case RequestStatus.Pending:
+            case RequestStatus.PendingCompletion:
                 return <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 gap-1"><Clock className="w-3 h-3" /> En cours</Badge>;
-            case RequestStatus.REJECTED:
+            case RequestStatus.Rejected:
                 return <Badge variant="destructive" className="gap-1"><XCircle className="w-3 h-3" /> Rejeté</Badge>;
             default:
                 return <Badge variant="outline" className="gap-1"><AlertCircle className="w-3 h-3" /> Inconnu</Badge>;

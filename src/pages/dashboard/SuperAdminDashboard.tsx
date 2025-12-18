@@ -3,9 +3,22 @@ import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Organization, OrganizationType } from "@/types/organization";
 import { organizationService } from "@/services/organizationService";
-import { profileService, Profile } from "@/services/profileService";
+import { profileService } from "@/services/profileService";
 import { ConsularRole } from "@/types/consular-roles";
 import { COUNTRY_FLAGS } from "@/types/entity";
+
+interface DashboardProfile {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email?: string;
+    role?: string;
+    organization_id?: string;
+    organization?: {
+        name: string;
+        metadata: any;
+    };
+}
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
@@ -40,7 +53,7 @@ export default function SuperAdminDashboard() {
     const [page, setPage] = useState(0);
     const [direction, setDirection] = useState(0);
     const [entities, setEntities] = useState<Organization[]>([]);
-    const [users, setUsers] = useState<Profile[]>([]);
+    const [users, setUsers] = useState<DashboardProfile[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Global Search State
@@ -51,10 +64,8 @@ export default function SuperAdminDashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [orgsData, usersData] = await Promise.all([
-                    organizationService.getAll(),
-                    profileService.getAll()
-                ]);
+                const orgsData = await organizationService.getAll();
+                const usersData = await profileService.getAll() as unknown as DashboardProfile[];
                 setEntities(orgsData);
                 setUsers(usersData);
             } catch (error) {
