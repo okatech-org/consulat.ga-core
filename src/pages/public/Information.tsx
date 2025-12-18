@@ -3,9 +3,8 @@ import { ServiceGrid } from "@/components/hub/ServiceGrid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Home, GraduationCap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-
 import { useNavigate } from "react-router-dom";
+import informationHero from "@/assets/information-hero.jpg";
 
 export default function Information() {
     const navigate = useNavigate();
@@ -42,7 +41,7 @@ export default function Information() {
                 <HubHero
                     title="Centre d'Information"
                     subtitle="La base de connaissances officielle pour les Gabonais de l'étranger. Trouvez toutes les réponses à vos questions."
-                    backgroundImage="/lovable-uploads/libreville-bg.jpg" // Placeholder
+                    backgroundImage={informationHero}
                     align="center"
                 />
 

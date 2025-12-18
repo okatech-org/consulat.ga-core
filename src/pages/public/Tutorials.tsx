@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlayCircle, FileText, Search, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import academieHero from "@/assets/academie-hero.jpg";
 
 
 export default function Tutorials() {
@@ -33,7 +34,7 @@ export default function Tutorials() {
                 <HubHero
                     title="Académie Numérique"
                     subtitle="Apprenez à réaliser vos démarches en toute autonomie grâce à nos tutoriels interactifs et guides pratiques."
-                    backgroundImage="/lovable-uploads/libreville-bg.jpg" // Placeholder
+                    backgroundImage={academieHero}
                     align="center"
                 />
 
