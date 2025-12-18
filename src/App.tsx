@@ -13,6 +13,10 @@ import Information from "./pages/public/Information";
 import Tutorials from "./pages/public/Tutorials";
 import Community from "./pages/public/Community";
 import ServicesConsulaires from "./pages/public/ServicesConsulaires";
+import PassportServicePage from "./pages/services/PassportServicePage";
+import VisaServicePage from "./pages/services/VisaServicePage";
+import ConsularCardServicePage from "./pages/services/ConsularCardServicePage";
+import LegalizationServicePage from "./pages/services/LegalizationServicePage";
 import Actualites from "./pages/Actualites";
 import Login from "./pages/Login";
 import DemoPortal from "./pages/DemoPortal";
@@ -85,6 +89,10 @@ const App = () => (
                   <Route path="/hub/resident" element={<Information />} />
                   <Route path="/hub/visiteur" element={<Information />} />
                   <Route path="/services" element={<ServicesConsulaires />} />
+                  <Route path="/services/passeport" element={<PassportServicePage />} />
+                  <Route path="/services/visa" element={<VisaServicePage />} />
+                  <Route path="/services/carte-consulaire" element={<ConsularCardServicePage />} />
+                  <Route path="/services/legalisation" element={<LegalizationServicePage />} />
                   <Route path="/actualites" element={<Actualites />} />
                   <Route path="/login" element={<Login />} />
 
