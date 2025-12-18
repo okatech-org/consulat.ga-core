@@ -40,6 +40,7 @@ import AgentAppointmentsPage from "./pages/dashboard/agent/AgentAppointmentsPage
 import AgentRequestsPage from "./pages/dashboard/agent/AgentRequestsPage";
 import AgentsPage from "./pages/dashboard/admin/AgentsPage";
 import OrganizationSettingsPage from "./pages/dashboard/admin/OrganizationSettingsPage";
+import AdminRequestsPage from "./pages/dashboard/admin/AdminRequestsPage";
 
 import CompaniesPage from "./pages/companies/CompaniesPage";
 import NewCompanyPage from "./pages/companies/NewCompanyPage";
@@ -150,6 +151,7 @@ const App = () => (
                 {/* Consul General / Admin Routes */}
                 <Route path="/dashboard/admin/agents" element={<AgentsPage />} />
                 <Route path="/dashboard/admin/settings" element={<OrganizationSettingsPage />} />
+                <Route path="/dashboard/admin/requests" element={<AdminRequestsPage />} />
 
                 {/* ADMIN PORTAL (Back-Office) */}
                 <Route path="/admin" element={<AdminLayout />}>
