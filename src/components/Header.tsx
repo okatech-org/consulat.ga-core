@@ -48,6 +48,9 @@ export const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
+          <Link to="/services" className="text-sm font-medium hover:text-primary transition-colors">
+            Services
+          </Link>
           <button 
             onClick={scrollToNetwork} 
             className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
@@ -113,6 +116,13 @@ export const Header = () => {
               <Globe className="h-4 w-4" />
               {t('header.worldNetwork')}
             </button>
+            <Link
+              to="/services"
+              className="text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Services
+            </Link>
             <Link
               to="/actualites"
               className="text-sm font-medium hover:text-primary transition-colors"
