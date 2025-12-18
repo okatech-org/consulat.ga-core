@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Store, Vote, Calendar, ArrowRight, MapPin, Users, Building2, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import communityHero from "@/assets/community-hero.jpg";
 
 export default function Community() {
     const navigate = useNavigate();
@@ -76,6 +77,7 @@ export default function Community() {
                 <HubHero
                     title="Réseau & Communauté"
                     subtitle="Connectez-vous avec la diaspora gabonaise : économie, entraide et culture."
+                    backgroundImage={communityHero}
                     ctaText="Rejoindre le réseau"
                     onCtaClick={() => navigate('/register')}
                 />

@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle, TestTube2, Shield, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import loginVisual from "@/assets/login-visual.jpg";
 
 export default function Login() {
   const isDev = import.meta.env.DEV;
@@ -11,9 +12,9 @@ export default function Login() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex">
       {/* Left Side - Visual */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary relative overflow-hidden items-center justify-center text-white p-12">
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/gabon-pattern.png')] opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-900 opacity-90" />
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center text-white p-12">
+        <img src={loginVisual} alt="Secure login" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-blue-900/80" />
 
         <div className="relative z-10 max-w-lg space-y-6">
           <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm mb-8">

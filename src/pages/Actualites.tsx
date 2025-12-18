@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Tag } from "lucide-react";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import actualitesHero from "@/assets/actualites-hero.jpg";
 
 export default function Actualites() {
   const articles = [
@@ -13,7 +13,7 @@ export default function Actualites() {
       date: "15 Décembre 2024",
       badge: "Important",
       badgeVariant: "destructive" as const,
-      image: null
+      image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop&q=60"
     },
     {
       id: 2,
@@ -23,7 +23,7 @@ export default function Actualites() {
       date: "10 Décembre 2024",
       badge: "Urgent",
       badgeVariant: "default" as const,
-      image: null
+      image: "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=800&auto=format&fit=crop&q=60"
     },
     {
       id: 3,
@@ -33,7 +33,7 @@ export default function Actualites() {
       date: "5 Décembre 2024",
       badge: "Événement",
       badgeVariant: "secondary" as const,
-      image: null
+      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=60"
     },
     {
       id: 4,
@@ -43,7 +43,7 @@ export default function Actualites() {
       date: "1 Décembre 2024",
       badge: "Info",
       badgeVariant: "outline" as const,
-      image: null
+      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=60"
     },
     {
       id: 5,
@@ -53,7 +53,7 @@ export default function Actualites() {
       date: "25 Novembre 2024",
       badge: "Nouveau",
       badgeVariant: "default" as const,
-      image: null
+      image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&auto=format&fit=crop&q=60"
     },
     {
       id: 6,
@@ -63,19 +63,31 @@ export default function Actualites() {
       date: "20 Novembre 2024",
       badge: "Événement",
       badgeVariant: "secondary" as const,
-      image: null
+      image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&auto=format&fit=crop&q=60"
     },
   ];
 
   return (
-    <div className="flex-1 py-16 md:py-20 bg-gradient-official dark:bg-none dark:bg-background">
-      <div className="container mx-auto">
-        <div className="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Actualités & Sensibilisation</h1>
-          <p className="text-muted-foreground text-lg md:text-xl">
-            Restez informé des dernières nouvelles et annonces consulaires
-          </p>
+    <div className="flex-1 bg-gradient-official dark:bg-none dark:bg-background">
+      {/* Hero Section */}
+      <div className="relative h-64 md:h-80 overflow-hidden">
+        <img 
+          src={actualitesHero} 
+          alt="Actualités consulaires" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg">Actualités & Sensibilisation</h1>
+            <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto px-4 drop-shadow">
+              Restez informé des dernières nouvelles et annonces consulaires
+            </p>
+          </div>
         </div>
+      </div>
+
+      <div className="container mx-auto py-12 px-4">
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {articles.map((article, index) => (
@@ -84,12 +96,12 @@ export default function Actualites() {
               className="group hover:shadow-elevation transition-all duration-300 hover:-translate-y-1 animate-scale-in overflow-hidden dark:bg-card dark:border-border"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <div className="h-48 w-full">
-                {article.image ? (
-                  <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
-                ) : (
-                  <ImagePlaceholder className="w-full h-full" text="Image de l'article" />
-                )}
+              <div className="h-48 w-full overflow-hidden">
+                <img 
+                  src={article.image} 
+                  alt={article.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
               </div>
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
