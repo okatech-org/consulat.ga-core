@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutDashboard, Settings, LogOut, FileText, Building2, Users, ShieldCheck, Globe, Mail } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, FileText, Building2, Users, ShieldCheck, Globe, Mail, ClipboardList, UserPlus, Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GlobalSettings } from "@/components/GlobalSettings";
 import { useDemo } from "@/contexts/DemoContext";
@@ -76,8 +76,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         // Default to Citizen
         return [
             { label: "Tableau de Bord", icon: LayoutDashboard, path: "/dashboard/citizen" },
+            { label: "Inscription Consulaire", icon: UserPlus, path: "/dashboard/citizen/registration" },
             { label: "Mes Demandes", icon: FileText, path: "/dashboard/citizen/requests" },
+            { label: "Suivi Timeline", icon: ClipboardList, path: "/dashboard/citizen/timeline" },
             { label: "Mes Documents", icon: ShieldCheck, path: "/dashboard/citizen/documents" },
+            { label: "Notifications", icon: Bell, path: "/dashboard/citizen/notifications" },
             { label: "Associations", icon: Users, path: "/dashboard/citizen/associations" },
             { label: "Entreprises", icon: Building2, path: "/dashboard/citizen/companies" },
             { label: "Mon CV", icon: FileText, path: "/dashboard/citizen/cv" },
