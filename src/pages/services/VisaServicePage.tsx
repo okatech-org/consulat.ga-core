@@ -1,28 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Globe, Upload, CheckCircle, Clock, FileText, AlertCircle, Plane } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Upload, CheckCircle, Clock, AlertCircle, Plane, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { serviceRequestService, visaRequestSchema, type VisaRequest } from "@/services/serviceRequestService";
 import iconVisa from "@/assets/icons/icon-visa.png";
 
 export default function VisaServicePage() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [formData, setFormData] = useState<VisaRequest>({
     firstName: "",
     lastName: "",
     birthDate: "",
     nationality: "",
     passportNumber: "",
     passportExpiry: "",
-    visaType: "",
-    travelPurpose: "",
+    visaType: "tourist",
     arrivalDate: "",
     departureDate: "",
     accommodation: "",
@@ -31,12 +36,59 @@ export default function VisaServicePage() {
     comments: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Demande de visa soumise avec succès", {
-      description: "Vous recevrez un email de confirmation sous 24h.",
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user);
+      if (user?.email) {
+        setFormData(prev => ({ ...prev, email: user.email || "" }));
+      }
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsLoggedIn(!!session?.user);
     });
-    setStep(3);
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const validateStep1 = () => {
+    const result = visaRequestSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as string] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast.error("Veuillez corriger les erreurs dans le formulaire");
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isLoggedIn) {
+      toast.error("Connexion requise");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await serviceRequestService.submitVisaRequest(formData);
+      setReferenceNumber(`VIS-${result.id.slice(0, 8).toUpperCase()}`);
+      toast.success("Demande de visa soumise avec succès");
+      setStep(3);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Une erreur est survenue");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const visaTypes = [
@@ -57,7 +109,6 @@ export default function VisaServicePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="container mx-auto px-4">
           <Link to="/services" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6">
@@ -68,9 +119,7 @@ export default function VisaServicePage() {
             <img src={iconVisa} alt="Visa" className="h-20 w-20" />
             <div>
               <h1 className="text-4xl font-bold mb-2">Demande de Visa</h1>
-              <p className="text-lg text-white/80">
-                Obtenez votre visa pour entrer au Gabon
-              </p>
+              <p className="text-lg text-white/80">Obtenez votre visa pour entrer au Gabon</p>
             </div>
           </div>
         </div>
@@ -78,9 +127,7 @@ export default function VisaServicePage() {
 
       <div className="container mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Form */}
           <div className="lg:col-span-2">
-            {/* Progress Steps */}
             <div className="flex items-center gap-4 mb-8">
               {[1, 2, 3].map((s) => (
                 <div key={s} className="flex items-center gap-2">
@@ -99,18 +146,31 @@ export default function VisaServicePage() {
 
             {step === 1 && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                {!isLoggedIn && (
+                  <Card className="mb-6 border-amber-200 bg-amber-50 dark:bg-amber-950/20">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-3">
+                        <LogIn className="h-5 w-5 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="font-medium text-amber-800 dark:text-amber-200">Connexion requise</p>
+                          <p className="text-sm text-amber-700 dark:text-amber-300">Connectez-vous pour soumettre une demande.</p>
+                        </div>
+                        <Button size="sm" onClick={() => navigate("/login")}>Se connecter</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
                 <Card>
                   <CardHeader>
                     <CardTitle>Informations de voyage</CardTitle>
                     <CardDescription>Renseignez les détails de votre séjour au Gabon</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {/* Type de visa */}
                     <div className="space-y-4">
                       <Label>Type de visa *</Label>
                       <RadioGroup
                         value={formData.visaType}
-                        onValueChange={(value) => setFormData({ ...formData, visaType: value })}
+                        onValueChange={(value: "tourist" | "business" | "transit" | "long") => setFormData({ ...formData, visaType: value })}
                         className="grid md:grid-cols-2 gap-4"
                       >
                         {visaTypes.map((visa) => (
@@ -118,7 +178,7 @@ export default function VisaServicePage() {
                             <RadioGroupItem value={visa.id} id={visa.id} className="peer sr-only" />
                             <Label
                               htmlFor={visa.id}
-                              className="flex flex-col p-4 border-2 rounded-lg cursor-pointer hover:border-blue-300 peer-checked:border-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-950/30"
+                              className="flex flex-col p-4 border-2 rounded-lg cursor-pointer hover:border-blue-300 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:bg-blue-50 dark:peer-data-[state=checked]:bg-blue-950/30"
                             >
                               <span className="font-semibold">{visa.name}</span>
                               <span className="text-sm text-muted-foreground">{visa.duration}</span>
@@ -131,131 +191,68 @@ export default function VisaServicePage() {
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Nom de famille *</Label>
-                        <Input
-                          id="lastName"
-                          value={formData.lastName}
-                          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                          placeholder="Comme sur le passeport"
-                          required
-                        />
+                        <Label>Nom *</Label>
+                        <Input value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} className={errors.lastName ? "border-red-500" : ""} />
+                        {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">Prénom(s) *</Label>
-                        <Input
-                          id="firstName"
-                          value={formData.firstName}
-                          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                          required
-                        />
+                        <Label>Prénom(s) *</Label>
+                        <Input value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} className={errors.firstName ? "border-red-500" : ""} />
+                        {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="birthDate">Date de naissance *</Label>
-                        <Input
-                          id="birthDate"
-                          type="date"
-                          value={formData.birthDate}
-                          onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                          required
-                        />
+                        <Label>Date de naissance *</Label>
+                        <Input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="nationality">Nationalité *</Label>
-                        <Input
-                          id="nationality"
-                          value={formData.nationality}
-                          onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                          placeholder="Française, Américaine, etc."
-                          required
-                        />
+                        <Label>Nationalité *</Label>
+                        <Input value={formData.nationality} onChange={(e) => setFormData({ ...formData, nationality: e.target.value })} placeholder="Française, etc." />
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="passportNumber">Numéro de passeport *</Label>
-                        <Input
-                          id="passportNumber"
-                          value={formData.passportNumber}
-                          onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })}
-                          placeholder="AB1234567"
-                          required
-                        />
+                        <Label>Numéro de passeport *</Label>
+                        <Input value={formData.passportNumber} onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="passportExpiry">Date d'expiration *</Label>
-                        <Input
-                          id="passportExpiry"
-                          type="date"
-                          value={formData.passportExpiry}
-                          onChange={(e) => setFormData({ ...formData, passportExpiry: e.target.value })}
-                          required
-                        />
+                        <Label>Date d'expiration *</Label>
+                        <Input type="date" value={formData.passportExpiry} onChange={(e) => setFormData({ ...formData, passportExpiry: e.target.value })} />
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="arrivalDate">Date d'arrivée prévue *</Label>
-                        <Input
-                          id="arrivalDate"
-                          type="date"
-                          value={formData.arrivalDate}
-                          onChange={(e) => setFormData({ ...formData, arrivalDate: e.target.value })}
-                          required
-                        />
+                        <Label>Date d'arrivée *</Label>
+                        <Input type="date" value={formData.arrivalDate} onChange={(e) => setFormData({ ...formData, arrivalDate: e.target.value })} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="departureDate">Date de départ prévue *</Label>
-                        <Input
-                          id="departureDate"
-                          type="date"
-                          value={formData.departureDate}
-                          onChange={(e) => setFormData({ ...formData, departureDate: e.target.value })}
-                          required
-                        />
+                        <Label>Date de départ *</Label>
+                        <Input type="date" value={formData.departureDate} onChange={(e) => setFormData({ ...formData, departureDate: e.target.value })} />
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Téléphone *</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          required
-                        />
+                        <Label>Téléphone *</Label>
+                        <Input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email *</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          required
-                        />
+                        <Label>Email *</Label>
+                        <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="accommodation">Adresse d'hébergement au Gabon *</Label>
-                      <Textarea
-                        id="accommodation"
-                        value={formData.accommodation}
-                        onChange={(e) => setFormData({ ...formData, accommodation: e.target.value })}
-                        placeholder="Hôtel, adresse résidentielle..."
-                        required
-                      />
+                      <Label>Adresse d'hébergement au Gabon *</Label>
+                      <Textarea value={formData.accommodation} onChange={(e) => setFormData({ ...formData, accommodation: e.target.value })} placeholder="Hôtel, adresse résidentielle..." />
                     </div>
 
-                    <Button onClick={() => setStep(2)} className="w-full bg-blue-600 hover:bg-blue-700">
-                      Continuer vers les documents
+                    <Button onClick={() => { if (validateStep1()) setStep(2); }} className="w-full bg-blue-600 hover:bg-blue-700" disabled={!isLoggedIn}>
+                      {isLoggedIn ? "Continuer" : "Connectez-vous"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -267,39 +264,25 @@ export default function VisaServicePage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Documents requis</CardTitle>
-                    <CardDescription>Téléchargez les documents nécessaires à votre demande de visa</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {requiredDocuments.map((doc, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-blue-300 transition-colors">
+                      <div key={index} className="flex items-center gap-4 p-4 border rounded-lg">
                         <div className="flex-1">
                           <p className="font-medium">{doc}</p>
-                          <p className="text-sm text-muted-foreground">Format: PDF, JPG, PNG (max 5 Mo)</p>
+                          <p className="text-sm text-muted-foreground">PDF, JPG, PNG (max 5 Mo)</p>
                         </div>
-                        <Button variant="outline" size="sm">
-                          <Upload className="h-4 w-4 mr-2" />
-                          Télécharger
-                        </Button>
+                        <Button variant="outline" size="sm"><Upload className="h-4 w-4 mr-2" />Télécharger</Button>
                       </div>
                     ))}
-
                     <div className="space-y-2">
-                      <Label htmlFor="comments">Motif détaillé du voyage</Label>
-                      <Textarea
-                        id="comments"
-                        value={formData.comments}
-                        onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
-                        placeholder="Décrivez l'objectif de votre voyage..."
-                        rows={3}
-                      />
+                      <Label>Motif du voyage</Label>
+                      <Textarea value={formData.comments} onChange={(e) => setFormData({ ...formData, comments: e.target.value })} />
                     </div>
-
                     <div className="flex gap-4">
-                      <Button variant="outline" onClick={() => setStep(1)}>
-                        Retour
-                      </Button>
-                      <Button onClick={handleSubmit} className="flex-1 bg-blue-600 hover:bg-blue-700">
-                        Soumettre la demande
+                      <Button variant="outline" onClick={() => setStep(1)}>Retour</Button>
+                      <Button onClick={handleSubmit} className="flex-1 bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+                        {isSubmitting ? "Envoi..." : "Soumettre"}
                       </Button>
                     </div>
                   </CardContent>
@@ -316,18 +299,11 @@ export default function VisaServicePage() {
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold mb-2">Demande envoyée !</h2>
-                      <p className="text-muted-foreground">
-                        Votre demande de visa a été soumise avec succès.<br />
-                        Numéro de référence: <strong>VIS-2024-{Math.random().toString(36).substr(2, 9).toUpperCase()}</strong>
-                      </p>
+                      <p className="text-muted-foreground">Référence: <strong>{referenceNumber}</strong></p>
                     </div>
                     <div className="flex gap-4 justify-center">
-                      <Button variant="outline" asChild>
-                        <Link to="/services">Retour aux services</Link>
-                      </Button>
-                      <Button className="bg-blue-600 hover:bg-blue-700" asChild>
-                        <Link to="/dashboard/citizen/requests">Suivre ma demande</Link>
-                      </Button>
+                      <Button variant="outline" asChild><Link to="/services">Services</Link></Button>
+                      <Button className="bg-blue-600" asChild><Link to="/dashboard/citizen/requests">Suivre</Link></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -335,69 +311,35 @@ export default function VisaServicePage() {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-blue-600" />
-                  Délais de traitement
-                </CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><Clock className="h-5 w-5 text-blue-600" />Délais</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between items-center pb-4 border-b">
-                  <span>Visa touristique</span>
-                  <span className="font-semibold">5-7 jours</span>
-                </div>
-                <div className="flex justify-between items-center pb-4 border-b">
-                  <span>Visa affaires</span>
-                  <span className="font-semibold">7-10 jours</span>
-                </div>
-                <div className="flex justify-between items-center pb-4 border-b">
-                  <span>Visa transit</span>
-                  <span className="font-semibold">2-3 jours</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Visa long séjour</span>
-                  <span className="font-semibold">2-3 semaines</span>
-                </div>
+                {visaTypes.map((v, i) => (
+                  <div key={i} className={`flex justify-between ${i < visaTypes.length - 1 ? 'pb-4 border-b' : ''}`}>
+                    <span>{v.name}</span>
+                    <span className="font-semibold">{v.duration}</span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
-
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plane className="h-5 w-5 text-blue-600" />
-                  Conditions d'entrée
-                </CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><Plane className="h-5 w-5 text-blue-600" />Conditions</CardTitle></CardHeader>
               <CardContent>
                 <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                    Passeport valide 6 mois après retour
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                    Certificat de vaccination fièvre jaune
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
-                    Billet retour confirmé
-                  </li>
+                  <li className="flex gap-2"><CheckCircle className="h-4 w-4 text-green-600 shrink-0" />Passeport valide 6 mois</li>
+                  <li className="flex gap-2"><CheckCircle className="h-4 w-4 text-green-600 shrink-0" />Vaccination fièvre jaune</li>
+                  <li className="flex gap-2"><CheckCircle className="h-4 w-4 text-green-600 shrink-0" />Billet retour confirmé</li>
                 </ul>
               </CardContent>
             </Card>
-
-            <Card className="bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900/50">
+            <Card className="bg-blue-50 border-blue-200 dark:bg-blue-950/20">
               <CardContent className="pt-6">
                 <div className="flex gap-3">
                   <AlertCircle className="h-5 w-5 text-blue-600 shrink-0" />
                   <div>
-                    <p className="font-medium text-blue-800 dark:text-blue-200">E-Visa disponible</p>
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                      Pour certaines nationalités, le e-Visa est disponible en ligne avec un délai de traitement réduit.
-                    </p>
+                    <p className="font-medium text-blue-800 dark:text-blue-200">E-Visa</p>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">Disponible pour certaines nationalités.</p>
                   </div>
                 </div>
               </CardContent>
