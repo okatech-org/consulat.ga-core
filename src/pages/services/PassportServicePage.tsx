@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, BookKey, Upload, CheckCircle, Clock, FileText, AlertCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Upload, CheckCircle, Clock, FileText, AlertCircle, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,30 +9,89 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { serviceRequestService, passportRequestSchema, type PassportRequest } from "@/services/serviceRequestService";
 import iconPassport from "@/assets/icons/icon-passport.png";
 
 export default function PassportServicePage() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [formData, setFormData] = useState<PassportRequest>({
     firstName: "",
     lastName: "",
     birthDate: "",
     birthPlace: "",
-    nationality: "Gabonaise",
     address: "",
     phone: "",
     email: "",
-    requestType: "",
+    requestType: "first",
     urgency: "normal",
     comments: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Demande de passeport soumise avec succès", {
-      description: "Vous recevrez un email de confirmation sous 24h.",
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user);
+      if (user?.email) {
+        setFormData(prev => ({ ...prev, email: user.email || "" }));
+      }
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsLoggedIn(!!session?.user);
     });
-    setStep(3);
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const validateStep1 = () => {
+    const result = passportRequestSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as string] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast.error("Veuillez corriger les erreurs dans le formulaire");
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isLoggedIn) {
+      toast.error("Connexion requise", {
+        description: "Veuillez vous connecter pour soumettre une demande.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await serviceRequestService.submitPassportRequest(formData);
+      setReferenceNumber(`PSP-${result.id.slice(0, 8).toUpperCase()}`);
+      toast.success("Demande de passeport soumise avec succès", {
+        description: "Vous recevrez un email de confirmation sous 24h.",
+      });
+      setStep(3);
+    } catch (error) {
+      toast.error("Erreur", {
+        description: error instanceof Error ? error.message : "Une erreur est survenue",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const requiredDocuments = [
@@ -87,6 +146,24 @@ export default function PassportServicePage() {
 
             {step === 1 && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                {!isLoggedIn && (
+                  <Card className="mb-6 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900/50">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-3">
+                        <LogIn className="h-5 w-5 text-amber-600" />
+                        <div className="flex-1">
+                          <p className="font-medium text-amber-800 dark:text-amber-200">Connexion requise</p>
+                          <p className="text-sm text-amber-700 dark:text-amber-300">
+                            Vous devez être connecté pour soumettre une demande.
+                          </p>
+                        </div>
+                        <Button size="sm" onClick={() => navigate("/login")}>
+                          Se connecter
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
                 <Card>
                   <CardHeader>
                     <CardTitle>Informations personnelles</CardTitle>
@@ -101,8 +178,9 @@ export default function PassportServicePage() {
                           value={formData.lastName}
                           onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                           placeholder="DUPONT"
-                          required
+                          className={errors.lastName ? "border-red-500" : ""}
                         />
+                        {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="firstName">Prénom(s) *</Label>
@@ -111,8 +189,9 @@ export default function PassportServicePage() {
                           value={formData.firstName}
                           onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                           placeholder="Jean Marie"
-                          required
+                          className={errors.firstName ? "border-red-500" : ""}
                         />
+                        {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
                       </div>
                     </div>
 
@@ -124,8 +203,9 @@ export default function PassportServicePage() {
                           type="date"
                           value={formData.birthDate}
                           onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                          required
+                          className={errors.birthDate ? "border-red-500" : ""}
                         />
+                        {errors.birthDate && <p className="text-sm text-red-500">{errors.birthDate}</p>}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="birthPlace">Lieu de naissance *</Label>
@@ -134,8 +214,9 @@ export default function PassportServicePage() {
                           value={formData.birthPlace}
                           onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
                           placeholder="Libreville, Gabon"
-                          required
+                          className={errors.birthPlace ? "border-red-500" : ""}
                         />
+                        {errors.birthPlace && <p className="text-sm text-red-500">{errors.birthPlace}</p>}
                       </div>
                     </div>
 
@@ -146,8 +227,9 @@ export default function PassportServicePage() {
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                         placeholder="123 Rue de la République, 75001 Paris, France"
-                        required
+                        className={errors.address ? "border-red-500" : ""}
                       />
+                      {errors.address && <p className="text-sm text-red-500">{errors.address}</p>}
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
@@ -159,8 +241,9 @@ export default function PassportServicePage() {
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+33 6 12 34 56 78"
-                          required
+                          className={errors.phone ? "border-red-500" : ""}
                         />
+                        {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email">Email *</Label>
@@ -170,8 +253,9 @@ export default function PassportServicePage() {
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="jean.dupont@email.com"
-                          required
+                          className={errors.email ? "border-red-500" : ""}
                         />
+                        {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                       </div>
                     </div>
 
@@ -180,9 +264,9 @@ export default function PassportServicePage() {
                         <Label htmlFor="requestType">Type de demande *</Label>
                         <Select
                           value={formData.requestType}
-                          onValueChange={(value) => setFormData({ ...formData, requestType: value })}
+                          onValueChange={(value: "first" | "renewal" | "lost") => setFormData({ ...formData, requestType: value })}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className={errors.requestType ? "border-red-500" : ""}>
                             <SelectValue placeholder="Sélectionner" />
                           </SelectTrigger>
                           <SelectContent>
@@ -191,12 +275,13 @@ export default function PassportServicePage() {
                             <SelectItem value="lost">Perte / Vol</SelectItem>
                           </SelectContent>
                         </Select>
+                        {errors.requestType && <p className="text-sm text-red-500">{errors.requestType}</p>}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="urgency">Urgence</Label>
                         <Select
                           value={formData.urgency}
-                          onValueChange={(value) => setFormData({ ...formData, urgency: value })}
+                          onValueChange={(value: "normal" | "urgent") => setFormData({ ...formData, urgency: value })}
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -209,8 +294,14 @@ export default function PassportServicePage() {
                       </div>
                     </div>
 
-                    <Button onClick={() => setStep(2)} className="w-full">
-                      Continuer vers les documents
+                    <Button 
+                      onClick={() => {
+                        if (validateStep1()) setStep(2);
+                      }} 
+                      className="w-full"
+                      disabled={!isLoggedIn}
+                    >
+                      {isLoggedIn ? "Continuer vers les documents" : "Connectez-vous pour continuer"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -253,8 +344,8 @@ export default function PassportServicePage() {
                       <Button variant="outline" onClick={() => setStep(1)}>
                         Retour
                       </Button>
-                      <Button onClick={handleSubmit} className="flex-1">
-                        Soumettre la demande
+                      <Button onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
+                        {isSubmitting ? "Envoi en cours..." : "Soumettre la demande"}
                       </Button>
                     </div>
                   </CardContent>
@@ -273,7 +364,7 @@ export default function PassportServicePage() {
                       <h2 className="text-2xl font-bold mb-2">Demande envoyée !</h2>
                       <p className="text-muted-foreground">
                         Votre demande de passeport a été soumise avec succès.<br />
-                        Numéro de référence: <strong>PSP-2024-{Math.random().toString(36).substr(2, 9).toUpperCase()}</strong>
+                        Numéro de référence: <strong>{referenceNumber}</strong>
                       </p>
                     </div>
                     <div className="flex gap-4 justify-center">
