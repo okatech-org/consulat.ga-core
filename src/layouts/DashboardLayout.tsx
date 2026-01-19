@@ -73,18 +73,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             ];
         }
 
-        // Default to Citizen
+        // Default to Citizen - Simplified menu structure
         return [
             { label: "Tableau de Bord", icon: LayoutDashboard, path: "/dashboard/citizen" },
-            { label: "Inscription Consulaire", icon: UserPlus, path: "/dashboard/citizen/registration" },
-            { label: "Mes Demandes", icon: FileText, path: "/dashboard/citizen/requests" },
+            { label: "Démarches", icon: FileText, path: "/dashboard/citizen/requests" },
             { label: "Suivi Timeline", icon: ClipboardList, path: "/dashboard/citizen/timeline" },
-            { label: "Mes Documents", icon: ShieldCheck, path: "/dashboard/citizen/documents" },
-            { label: "Notifications", icon: Bell, path: "/dashboard/citizen/notifications" },
-            { label: "Associations", icon: Users, path: "/dashboard/citizen/associations" },
-            { label: "Entreprises", icon: Building2, path: "/dashboard/citizen/companies" },
-            { label: "Mon CV", icon: FileText, path: "/dashboard/citizen/cv" },
+            { label: "iDocuments", icon: ShieldCheck, path: "/dashboard/citizen/documents" },
             { label: "iBoîte", icon: Mail, path: "/iboite" },
+            { label: "iCV", icon: FileText, path: "/dashboard/citizen/cv" },
+            { label: "Enfants", icon: Users, path: "/dashboard/citizen/children" },
+            { label: "Entreprises", icon: Building2, path: "/dashboard/citizen/companies" },
+            { label: "Associations", icon: Users, path: "/dashboard/citizen/associations" },
         ];
     };
 

@@ -551,59 +551,22 @@ export const DIPLOMATIC_NETWORK: Organization[] = [
         }
     },
     {
-        id: 'fr-consulat-bordeaux',
-        name: 'Consulat Honoraire du Gabon à Bordeaux',
-        type: OrganizationType.CONSULAT_HONORAIRE,
+        id: 'fr-delegation-unesco',
+        name: 'Délégation Permanente du Gabon auprès de l\'UNESCO',
+        type: OrganizationType.MISSION_PERMANENTE,
         isActive: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         metadata: {
-            city: 'Bordeaux',
+            city: 'Paris (UNESCO)',
             country: 'France',
             countryCode: 'FR',
-            jurisdiction: ['Bordeaux'],
+            jurisdiction: ['UNESCO'],
+            coordinates: [2.3063, 48.8490],
             contact: {
-                address: '30 cours de Verdun',
-                phone: '05 56 01 19 02',
-                email: ''
-            }
-        }
-    },
-    {
-        id: 'fr-consulat-lyon',
-        name: 'Consulat Honoraire du Gabon à Lyon',
-        type: OrganizationType.CONSULAT_HONORAIRE,
-        isActive: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        metadata: {
-            city: 'Lyon',
-            country: 'France',
-            countryCode: 'FR',
-            jurisdiction: ['Lyon'],
-            contact: {
-                address: '3, rue de Sévigné',
-                phone: '04 72 84 26 52',
-                email: ''
-            }
-        }
-    },
-    {
-        id: 'fr-consulat-perpignan',
-        name: 'Consulat Honoraire du Gabon à Perpignan',
-        type: OrganizationType.CONSULAT_HONORAIRE,
-        isActive: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        metadata: {
-            city: 'Perpignan',
-            country: 'France',
-            countryCode: 'FR',
-            jurisdiction: ['Perpignan'],
-            contact: {
-                address: '6 bd du Foment de la Sardane',
-                phone: '',
-                email: ''
+                address: '1, rue Miollis, 75015 Paris',
+                phone: '+33 1 45 68 33 50',
+                email: 'dl.gabon@unesco-delegations.org'
             }
         }
     },

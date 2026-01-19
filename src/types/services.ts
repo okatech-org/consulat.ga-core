@@ -165,6 +165,7 @@ export interface ConsularService {
   status?: ServiceStatus | string;
   countries?: string[]; // ISO country codes where available
   organization_id?: string;
+  imageUrl?: string; // URL for service card illustration
 
   // Service steps (workflow)
   steps?: ServiceStep[];
@@ -190,6 +191,19 @@ export interface ConsularService {
   // Timestamps
   created_at?: string;
   updated_at?: string;
+
+  // Legal & Assistance Info
+  legalBasis?: {
+    reference: string;
+    title: string;
+    link?: string;
+  };
+  assistanceDetails?: {
+    beneficiaries: string[];
+    situations: string[];
+    fundAmount?: string;
+    limitations?: string[];
+  };
 }
 
 // ============================================================================

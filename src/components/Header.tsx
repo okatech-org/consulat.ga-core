@@ -14,16 +14,7 @@ export const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const scrollToNetwork = () => {
-    if (location.pathname === '/') {
-      document.getElementById('reseau-mondial')?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigate('/');
-      setTimeout(() => {
-        document.getElementById('reseau-mondial')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-  };
+
 
   return (
     <header className={`sticky z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
@@ -51,13 +42,13 @@ export const Header = () => {
           <Link to="/services" className="text-sm font-medium hover:text-primary transition-colors">
             Services
           </Link>
-          <button 
-            onClick={scrollToNetwork} 
+          <Link
+            to="/reseau-mondial"
             className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
           >
             <Globe className="h-4 w-4" />
             {t('header.worldNetwork')}
-          </button>
+          </Link>
           <Link to="/actualites" className="text-sm font-medium hover:text-primary transition-colors">
             {t('header.news')}
           </Link>
@@ -106,16 +97,14 @@ export const Header = () => {
                 )}
               </div>
             )}
-            <button
+            <Link
+              to="/reseau-mondial"
               className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-2"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                scrollToNetwork();
-              }}
+              onClick={() => setMobileMenuOpen(false)}
             >
               <Globe className="h-4 w-4" />
               {t('header.worldNetwork')}
-            </button>
+            </Link>
             <Link
               to="/services"
               className="text-sm font-medium hover:text-primary transition-colors"

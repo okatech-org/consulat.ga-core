@@ -1,128 +1,63 @@
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { HubHero } from "@/components/hub/HubHero";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileCheck, ArrowRight, CheckCircle2, Users, Globe } from "lucide-react";
+import { Search, X, FileText, Users, Shield, Stamp, Plane, SlidersHorizontal } from "lucide-react";
 
-import iconPassport from "@/assets/icons/icon-passport.png";
-import iconVisa from "@/assets/icons/icon-visa.png";
-import iconConsularCard from "@/assets/icons/icon-consular-card.png";
-import iconLegalization from "@/assets/icons/icon-legalization.png";
 import heroConsulat from "@/assets/hero-consulat.jpg";
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
+import { PublicServiceCard } from "@/components/services/PublicServiceCard";
+import { MOCK_SERVICES } from "@/data/mock-services";
+import { cn } from "@/lib/utils";
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
+  exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2 } }
 };
 
-interface ConsularService {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  price: string;
-  processingTime: string;
-  requirements: string[];
-  path: string;
-  category: "gabonais" | "visiteur" | "tous";
-  popular?: boolean;
-}
-
-const consularServices: ConsularService[] = [
-  {
-    id: "passport",
-    title: "Passeport Biométrique",
-    description: "Demande de passeport biométrique gabonais pour les citoyens résidant à l'étranger. Validité de 5 ou 10 ans selon l'âge.",
-    icon: iconPassport,
-    price: "75 000 FCFA",
-    processingTime: "4-6 semaines",
-    requirements: [
-      "Carte d'identité gabonaise ou acte de naissance",
-      "Justificatif de domicile",
-      "2 photos d'identité biométriques",
-      "Ancien passeport (si renouvellement)"
-    ],
-    path: "/services/passeport",
-    category: "gabonais",
-    popular: true
-  },
-  {
-    id: "visa",
-    title: "Visa pour le Gabon",
-    description: "Visa d'entrée au Gabon pour les ressortissants étrangers. Plusieurs types disponibles : tourisme, affaires, travail.",
-    icon: iconVisa,
-    price: "À partir de 70 €",
-    processingTime: "5-10 jours",
-    requirements: [
-      "Passeport valide 6 mois minimum",
-      "Formulaire de demande complété",
-      "Photo d'identité récente",
-      "Justificatif d'hébergement",
-      "Billet d'avion aller-retour"
-    ],
-    path: "/services/visa",
-    category: "visiteur",
-    popular: true
-  },
-  {
-    id: "consular-card",
-    title: "Carte Consulaire",
-    description: "Inscription au registre des Gabonais de l'étranger et obtention de la carte consulaire. Obligatoire pour tous les ressortissants.",
-    icon: iconConsularCard,
-    price: "25 000 FCFA",
-    processingTime: "2-3 semaines",
-    requirements: [
-      "Pièce d'identité gabonaise",
-      "Justificatif de domicile à l'étranger",
-      "2 photos d'identité",
-      "Formulaire d'inscription"
-    ],
-    path: "/services/carte-consulaire",
-    category: "gabonais"
-  },
-  {
-    id: "legalization",
-    title: "Légalisation de Documents",
-    description: "Authentification et légalisation de documents officiels pour usage au Gabon ou à l'étranger.",
-    icon: iconLegalization,
-    price: "15 000 FCFA / document",
-    processingTime: "3-5 jours",
-    requirements: [
-      "Document original à légaliser",
-      "Copie du document",
-      "Pièce d'identité du demandeur"
-    ],
-    path: "/services/legalisation",
-    category: "tous"
-  }
+// Category configuration with icons and labels
+const CATEGORIES = [
+  { id: "ALL", label: "Tous", icon: SlidersHorizontal },
+  { id: "PASSPORT", label: "Passeports", icon: FileText },
+  { id: "VISA", label: "Visas", icon: Plane },
+  { id: "ETAT_CIVIL", label: "État Civil", icon: Users },
+  { id: "ADMINISTRATIF", label: "Administratif", icon: Stamp },
+  { id: "ASSISTANCE", label: "Assistance", icon: Shield },
 ];
 
 export default function ServicesConsulaires() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  const getCategoryBadge = (category: string) => {
-    switch (category) {
-      case "gabonais":
-        return <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">Gabonais</Badge>;
-      case "visiteur":
-        return <Badge className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20">Visiteurs</Badge>;
-      default:
-        return <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20">Tous</Badge>;
-    }
+  // Intelligent search: filters by name, description, requirements, and category
+  const filteredServices = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+
+    return MOCK_SERVICES.filter((service) => {
+      // Category filter
+      const matchesCategory = selectedCategory === "ALL" || service.category === selectedCategory;
+
+      // Search filter (name, description, requirements)
+      const matchesSearch = !query ||
+        service.name.toLowerCase().includes(query) ||
+        service.description?.toLowerCase().includes(query) ||
+        service.requirements?.some(req => req.toLowerCase().includes(query)) ||
+        service.category?.toLowerCase().includes(query);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [searchQuery, selectedCategory]);
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSelectedCategory("ALL");
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-official dark:bg-none dark:bg-background">
       <main className="flex-grow">
         <HubHero
           title="Services Consulaires"
@@ -132,147 +67,150 @@ export default function ServicesConsulaires() {
           onCtaClick={() => navigate('/login')}
         />
 
-        {/* Stats Section */}
-        <section className="py-12 bg-muted/30 border-b">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { icon: FileCheck, value: "4", label: "Services principaux" },
-                { icon: Clock, value: "24/7", label: "Disponibilité en ligne" },
-                { icon: Users, value: "150k+", label: "Citoyens servis" },
-                { icon: Globe, value: "30+", label: "Représentations" }
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  className="text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <stat.icon className="w-8 h-8 mx-auto mb-2 text-primary" />
-                  <div className="text-2xl md:text-3xl font-bold">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </motion.div>
-              ))}
+        {/* Search & Filter Section */}
+        <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-lg border-b border-border/50 shadow-sm">
+          <div className="container mx-auto px-4 py-4">
+            <div className="max-w-7xl mx-auto space-y-4">
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Rechercher un service, document ou démarche..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 pr-12 h-12 text-base bg-card border-border/50 rounded-xl shadow-sm focus-visible:ring-primary/50"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
+                  >
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
+
+              {/* Category Tabs */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                {CATEGORIES.map((cat) => {
+                  const Icon = cat.icon;
+                  const isActive = selectedCategory === cat.id;
+                  const count = cat.id === "ALL"
+                    ? MOCK_SERVICES.length
+                    : MOCK_SERVICES.filter(s => s.category === cat.id).length;
+
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200",
+                        isActive
+                          ? "bg-primary text-primary-foreground shadow-md"
+                          : "bg-card hover:bg-muted border border-border/50 text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{cat.label}</span>
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "ml-1 h-5 min-w-5 flex items-center justify-center text-xs",
+                          isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted"
+                        )}
+                      >
+                        {count}
+                      </Badge>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Services Grid */}
-        <section className="py-16 container mx-auto px-4">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Nos Services</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Sélectionnez un service pour découvrir les détails, les documents requis et commencer votre démarche.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {consularServices.map((service) => (
-              <motion.div key={service.id} variants={itemVariants}>
-                <Card className="h-full hover:shadow-xl transition-all duration-300 hover:border-primary/50 group overflow-hidden">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center p-3 group-hover:scale-110 transition-transform duration-300">
-                        <img src={service.icon} alt={service.title} className="w-full h-full object-contain" />
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        {getCategoryBadge(service.category)}
-                        {service.popular && (
-                          <Badge variant="secondary" className="bg-primary/10 text-primary">
-                            Populaire
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                      {service.title}
-                    </CardTitle>
-                    <CardDescription className="text-base mt-2">
-                      {service.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Pricing & Time */}
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="font-semibold text-primary">{service.price}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        {service.processingTime}
-                      </div>
-                    </div>
-
-                    {/* Requirements */}
-                    <div>
-                      <p className="text-sm font-medium mb-2">Documents requis :</p>
-                      <ul className="space-y-1.5">
-                        {service.requirements.slice(0, 3).map((req, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            {req}
-                          </li>
-                        ))}
-                        {service.requirements.length > 3 && (
-                          <li className="text-sm text-muted-foreground pl-6">
-                            + {service.requirements.length - 3} autres documents
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-
-                    <Button
-                      className="w-full group/btn"
-                      onClick={() => navigate(service.path)}
-                    >
-                      Commencer la démarche
-                      <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10">
-          <div className="container mx-auto px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                Besoin d'aide pour vos démarches ?
-              </h2>
-              <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                Notre assistant virtuel IASTED est disponible 24h/24 pour répondre à toutes vos questions.
+        {/* Results Count & Grid */}
+        <div className="container mx-auto py-8 px-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Results Header */}
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-muted-foreground">
+                <span className="font-semibold text-foreground">{filteredServices.length}</span>
+                {" "}service{filteredServices.length > 1 ? "s" : ""} disponible{filteredServices.length > 1 ? "s" : ""}
+                {searchQuery && (
+                  <span className="ml-1">
+                    pour "<span className="text-primary font-medium">{searchQuery}</span>"
+                  </span>
+                )}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => navigate('/login')}>
-                  Créer un compte
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate('/hub/information')}>
-                  Guide des démarches
-                </Button>
-              </div>
-            </motion.div>
+              {(searchQuery || selectedCategory !== "ALL") && (
+                <button
+                  onClick={handleClearSearch}
+                  className="text-sm text-primary hover:underline flex items-center gap-1"
+                >
+                  <X className="h-4 w-4" />
+                  Réinitialiser
+                </button>
+              )}
+            </div>
+
+            {/* Services Grid with AnimatePresence */}
+            <AnimatePresence mode="wait">
+              {filteredServices.length > 0 ? (
+                <motion.div
+                  key="grid"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+                >
+                  {filteredServices.map((service, index) => (
+                    <motion.div
+                      key={service.id}
+                      variants={itemVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ delay: index * 0.05 }}
+                      layout
+                      className="h-full"
+                    >
+                      <PublicServiceCard
+                        service={service}
+                        className="h-full hover:-translate-y-1 hover:shadow-elevation transition-all duration-300"
+                        onRegisterClick={() => navigate('/login')}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center py-16 text-center"
+                >
+                  <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-6">
+                    <Search className="h-10 w-10 text-muted-foreground/50" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Aucun service trouvé</h3>
+                  <p className="text-muted-foreground max-w-md mb-6">
+                    Aucun service ne correspond à votre recherche "{searchQuery}".
+                    Essayez avec d'autres termes ou parcourez les catégories.
+                  </p>
+                  <button
+                    onClick={handleClearSearch}
+                    className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    Voir tous les services
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );

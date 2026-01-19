@@ -12,9 +12,10 @@ import { Check, X, Briefcase, Award } from "lucide-react";
 
 interface DemoUserCardProps {
   user: DemoUser;
+  compact?: boolean;
 }
 
-export function DemoUserCard({ user }: DemoUserCardProps) {
+export function DemoUserCard({ user, compact }: DemoUserCardProps) {
   const navigate = useNavigate();
   const { simulateUser } = useDemo();
   const entity = user.entityId ? getEntityById(user.entityId) : null;
@@ -43,6 +44,8 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
     switch (user.role) {
       case 'ADMIN': return 'bg-red-600';
       case ConsularRole.CONSUL_GENERAL: return 'bg-yellow-600'; // Gold
+      case ConsularRole.AMBASSADEUR: return 'bg-yellow-600'; // Gold
+      case ConsularRole.PREMIER_CONSEILLER: return 'bg-slate-500';
       case ConsularRole.CONSUL: return 'bg-slate-500'; // Silver
       case ConsularRole.VICE_CONSUL: return 'bg-orange-600'; // Bronze
       case ConsularRole.CHARGE_AFFAIRES_CONSULAIRES: return 'bg-blue-600';
@@ -57,8 +60,39 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
   const allServices = Object.keys(SERVICE_CATALOG) as ServiceType[];
   const enabledServices = entity?.enabledServices || allServices;
 
+  if (compact) {
+    return (
+      <Card
+        className="hover-scale transition-all duration-300 border-l-4 overflow-hidden"
+        style={{ borderLeftColor: getRoleColor().replace('bg-', '') }}
+      >
+        <div className="p-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs text-white shadow-sm flex-shrink-0 ${getRoleColor()}`}>
+              {user.badge}
+            </div>
+            <div className="min-w-0">
+              <div className="font-medium text-sm truncate">{user.name}</div>
+              <div className="text-[10px] text-muted-foreground truncate uppercase tracking-widest">
+                {user.role === 'CITIZEN' ? 'CITOYEN' : user.role.replace(/_/g, ' ')}
+              </div>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 hover:bg-primary/5 hover:text-primary"
+            onClick={handleSimulate}
+          >
+            <Check className="h-4 w-4" />
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="hover-scale transition-all duration-300 border-l-4" style={{ borderLeftColor: getRoleColor().replace('bg-', '') }}>
+    <Card className="hover-scale transition-all duration-300 border-l-4 h-full flex flex-col" style={{ borderLeftColor: getRoleColor().replace('bg-', '') }}>
       <CardHeader>
         <div className="flex items-center justify-between mb-2">
           <div className="flex gap-2">
@@ -95,7 +129,7 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
         )}
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-1">
         <div>
           <h4 className="font-semibold text-sm mb-2">Permissions :</h4>
           <ul className="space-y-1">
@@ -135,7 +169,7 @@ export function DemoUserCard({ user }: DemoUserCardProps) {
         )}
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Button
           onClick={handleSimulate}
           className="w-full"

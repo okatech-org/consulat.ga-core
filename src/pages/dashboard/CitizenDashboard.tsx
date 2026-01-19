@@ -7,6 +7,8 @@ import { FileText, Plane, UserCheck, Stamp, Plus, TrendingUp, Building2, MapPin 
 import { QuickChildProfileModal } from "@/components/registration/QuickChildProfileModal";
 import { useState } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import { PublicServiceCard } from "@/components/services/PublicServiceCard";
+import { MOCK_SERVICES } from "@/data/mock-services";
 
 export default function CitizenDashboard() {
     const user = MOCK_GABONAIS_CITIZENS[0]; // Simulate logged in user
@@ -118,21 +120,33 @@ export default function CitizenDashboard() {
                 </div>
             </div>
 
-            <h2 className="text-xl font-bold mb-4 text-foreground/80">Mes Services Disponibles</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                    { name: "Passeport", icon: FileText, color: "text-blue-500", bg: "bg-blue-500/10" },
-                    { name: "Visa de Sortie", icon: Plane, color: "text-green-500", bg: "bg-green-500/10" },
-                    { name: "État Civil", icon: UserCheck, color: "text-purple-500", bg: "bg-purple-500/10" },
-                    { name: "Légalisation", icon: Stamp, color: "text-orange-500", bg: "bg-orange-500/10" },
-                ].map((service) => (
-                    <div key={service.name} className="neu-raised p-6 rounded-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer flex flex-col items-center text-center gap-4 group">
-                        <div className={`p-4 rounded-full neu-inset ${service.bg} group-hover:scale-110 transition-transform duration-300`}>
-                            <service.icon className={`h-8 w-8 ${service.color}`} />
-                        </div>
-                        <span className="font-bold text-foreground/80">{service.name}</span>
-                    </div>
-                ))}
+            <div className="flex flex-col gap-2 mb-6">
+                <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Services les plus demandés</h2>
+                <p className="text-muted-foreground text-sm">
+                    Accédez rapidement à vos démarches consulaires les plus courantes.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {MOCK_SERVICES
+                    .filter(s => [
+                        'consular-card',
+                        'civil-birth',
+                        'passport-ordinary',
+                        'laissez-passer',
+                        'tenant-lieu-passeport',
+                        'consular-protection'
+                    ].includes(s.id))
+                    .map((service) => (
+                        <PublicServiceCard
+                            key={service.id}
+                            service={service}
+                            onRegisterClick={() => {
+                                console.log("Register for service:", service.id);
+                                // TODO: Trigger registration or service flow
+                            }}
+                        />
+                    ))}
             </div>
 
             <QuickChildProfileModal

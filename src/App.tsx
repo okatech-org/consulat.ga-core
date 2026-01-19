@@ -20,6 +20,7 @@ import LegalizationServicePage from "./pages/services/LegalizationServicePage";
 import Actualites from "./pages/Actualites";
 import Login from "./pages/Login";
 import DemoPortal from "./pages/DemoPortal";
+import WorldNetworkPage from "./pages/WorldNetworkPage";
 import EntityPortal from "./pages/EntityPortal";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,9 @@ import RegisterGabonais from "./pages/auth/RegisterGabonais";
 import RegisterForeigner from "./pages/auth/RegisterForeigner";
 import CitizenDashboard from "./pages/dashboard/CitizenDashboard";
 import ForeignerDashboard from "./pages/dashboard/ForeignerDashboard";
+import ResidentDashboard from "./pages/dashboard/ResidentDashboard";
+import PassageDashboard from "./pages/dashboard/PassageDashboard";
+import VisitorDashboard from "./pages/dashboard/VisitorDashboard";
 import ChildRegistrationPage from "./pages/registration/ChildRegistrationPage";
 import SuperAdminDashboard from "./pages/dashboard/SuperAdminDashboard";
 import SuperAdminOrganizations from "./pages/dashboard/super-admin/SuperAdminOrganizations";
@@ -42,6 +46,8 @@ import AgentsPage from "./pages/dashboard/admin/AgentsPage";
 import OrganizationSettingsPage from "./pages/dashboard/admin/OrganizationSettingsPage";
 import AdminRequestsPage from "./pages/dashboard/admin/AdminRequestsPage";
 import BookAppointmentPage from "./pages/appointments/BookAppointmentPage";
+import { OrganizationsAdminPage } from "./pages/admin/OrganizationsAdminPage";
+import { OrganizationSettingsPage as AdminOrgSettingsPage } from "./pages/admin/OrganizationSettingsPage";
 
 import CompaniesPage from "./pages/companies/CompaniesPage";
 import NewCompanyPage from "./pages/companies/NewCompanyPage";
@@ -140,6 +146,12 @@ const App = () => (
                 </Route>
 
                 <Route path="/dashboard/foreigner" element={<ForeignerDashboard />} />
+
+                {/* User Account Spaces (3 types) */}
+                <Route path="/dashboard/resident" element={<DashboardLayout><ResidentDashboard /></DashboardLayout>} />
+                <Route path="/dashboard/passage" element={<DashboardLayout><PassageDashboard /></DashboardLayout>} />
+                <Route path="/dashboard/visitor" element={<DashboardLayout><VisitorDashboard /></DashboardLayout>} />
+
                 <Route path="/dashboard/super-admin" element={<SuperAdminDashboard />} />
                 <Route path="/dashboard/super-admin/organizations" element={<SuperAdminOrganizations />} />
                 <Route path="/dashboard/super-admin/organizations/:entityId" element={<OrganizationDetails />} />
@@ -158,10 +170,13 @@ const App = () => (
                 {/* ADMIN PORTAL (Back-Office) */}
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
+                  <Route path="organizations" element={<OrganizationsAdminPage />} />
+                  <Route path="organizations/:id" element={<AdminOrgSettingsPage />} />
                 </Route>
 
                 {/* DEMO & UTILS */}
                 <Route path="/demo-portal" element={<DemoPortal />} />
+                <Route path="/reseau-mondial" element={<WorldNetworkPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <IAstedInterfaceWrapper />

@@ -31,14 +31,141 @@ const ADMIN_USER: DemoUser = {
 
 // --- DYNAMIC STAFF GENERATION ---
 
-const generateStaffForEntity = (entity: Entity): DemoUser[] => {
+const generateStaffForEntity = (entity: Entity, hasConsulateGeneralInCountry: boolean): DemoUser[] => {
   const staff: DemoUser[] = [];
   const entityType = entity.type;
   const city = entity.metadata?.city || 'Unknown';
   const idPrefix = entity.id.split('-').slice(0, 2).join('-'); // e.g., fr-consulat
 
-  // 1. CONSUL GENERAL (Only for CONSULAT_GENERAL)
-  if (entityType === OrganizationType.CONSULAT_GENERAL) {
+  // 1. HEAD OF POST (Ambassador or Consul General)
+  if (entityType === OrganizationType.AMBASSADE || entityType === OrganizationType.HAUT_COMMISSARIAT || entityType === OrganizationType.MISSION_PERMANENTE) {
+    // AMBASSADEUR
+    staff.push({
+      id: `${idPrefix}-ambassadeur`,
+      role: ConsularRole.AMBASSADEUR,
+      name: `S.E. M. l'Ambassadeur (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 1,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE, OrganizationType.HAUT_COMMISSARIAT, OrganizationType.MISSION_PERMANENTE],
+      permissions: ['Supervision globale', 'Représentation Éttat', 'Politique étrangère'],
+      badge: '🥇',
+      description: 'Chef de Mission Diplomatique',
+      functions: [UserFunction.CRISIS_MANAGE, UserFunction.REPORTING_VIEW],
+      quotas: { maxDailyFiles: 1000, maxStorageGB: 100, canExportData: true }
+    });
+
+    // PREMIER CONSEILLER
+    staff.push({
+      id: `${idPrefix}-premier-conseiller`,
+      role: ConsularRole.PREMIER_CONSEILLER,
+      name: `Premier Conseiller (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 2,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Coordination services', 'Intérim Ambassadeur'],
+      badge: '🥈',
+      description: 'Numéro 2 - Coordination',
+    });
+
+    // PAYEUR
+    staff.push({
+      id: `${idPrefix}-payeur`,
+      role: ConsularRole.PAYEUR,
+      name: `Payeur (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 3,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Gestion financière', 'Comptabilité'],
+      badge: '💰',
+      description: 'Responsable Financier',
+    });
+
+    // CONSEILLERS SPÉCIFIQUES
+    staff.push({
+      id: `${idPrefix}-conseiller-eco`,
+      role: ConsularRole.CONSEILLER_ECONOMIQUE,
+      name: `Conseiller Économique (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 3,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Affaires économiques', 'Commerce'],
+      badge: '📈',
+      description: 'Affaires Économiques & Commerciales',
+    });
+
+    staff.push({
+      id: `${idPrefix}-conseiller-social`,
+      role: ConsularRole.CONSEILLER_SOCIAL,
+      name: `Conseiller Social (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 3,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Affaires sociales', 'Diaspora'],
+      badge: '🤝',
+      description: 'Affaires Sociales',
+    });
+
+    staff.push({
+      id: `${idPrefix}-conseiller-com`,
+      role: ConsularRole.CONSEILLER_COMMUNICATION,
+      name: `Conseiller Communication (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 3,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Presse', 'Communication', 'Relations publiques'],
+      badge: '📢',
+      description: 'Communication & Presse',
+    });
+
+    // CHANCELIER
+    staff.push({
+      id: `${idPrefix}-chancelier`,
+      role: ConsularRole.CHANCELIER,
+      name: `Chancelier (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 4,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Administration', 'Protocole'],
+      badge: '📜',
+      description: 'Chef de Chancellerie',
+    });
+
+    // PREMIER SECRETAIRE
+    staff.push({
+      id: `${idPrefix}-premier-secretaire`,
+      role: ConsularRole.PREMIER_SECRETAIRE,
+      name: `Premier Secrétaire (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 4,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Rédaction', 'Suivi dossiers'],
+      badge: '🖊️',
+      description: 'Premier Secrétaire',
+    });
+
+    // RECEPTIONNISTE
+    staff.push({
+      id: `${idPrefix}-receptionniste`,
+      role: ConsularRole.RECEPTIONNISTE,
+      name: `Réceptionniste (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 5,
+      employmentStatus: EmploymentStatus.CONTRACTUEL,
+      allowedEntityTypes: [OrganizationType.AMBASSADE],
+      permissions: ['Accueil', 'Standard'],
+      badge: '👋',
+      description: 'Accueil & Orientation',
+    });
+
+  } else if (entityType === OrganizationType.CONSULAT_GENERAL) {
     staff.push({
       id: `${idPrefix}-cg`,
       role: ConsularRole.CONSUL_GENERAL,
@@ -55,98 +182,129 @@ const generateStaffForEntity = (entity: Entity): DemoUser[] => {
     });
   }
 
-  // 2. CONSUL (All entities)
-  staff.push({
-    id: `${idPrefix}-consul`,
-    role: ConsularRole.CONSUL,
-    name: `Consul (${city})`,
-    entityId: entity.id,
-    hierarchyLevel: 2,
-    employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-    allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
-    permissions: entityType === OrganizationType.CONSULAT_GENERAL
-      ? ['Direction adjointe', 'Gestion entité']
-      : ['Direction section consulaire', 'Responsable principal'],
-    badge: '🥈',
-    description: entityType === OrganizationType.CONSULAT_GENERAL ? 'Consul - Adjoint au Chef de Poste' : 'Consul - Chef de Section Consulaire',
-  });
+  // === LOGIQUE DE GESTION CONSULAIRE ===
+  // Si c'est une Ambassade ET qu'il y a un Consulat Général dans le pays -> PAS DE STAFF CONSULAIRE
+  const isEmbassyWithConsulateGeneral = (entityType === OrganizationType.AMBASSADE || entityType === OrganizationType.HAUT_COMMISSARIAT) && hasConsulateGeneralInCountry;
 
-  // 3. VICE-CONSUL (Only for CONSULAT and CONSULAT_GENERAL)
-  if (entityType === OrganizationType.CONSULAT || entityType === OrganizationType.CONSULAT_GENERAL) {
-    staff.push({
-      id: `${idPrefix}-vc`,
-      role: ConsularRole.VICE_CONSUL,
-      name: `Vice-Consul (${city})`,
-      entityId: entity.id,
-      hierarchyLevel: 3,
-      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-      allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT],
-      permissions: ['Supervision opérations', 'Validation'],
-      badge: '🥉',
-      description: 'Vice-Consul - Supervision Opérationnelle',
-    });
+  if (isEmbassyWithConsulateGeneral) {
+    // On s'arrête ici pour les Ambassades qui ont un CG dans le pays.
+    return staff;
   }
 
-  // 4. CHARGE D'AFFAIRES CONSULAIRES (All entities)
-  staff.push({
-    id: `${idPrefix}-cac`,
-    role: ConsularRole.CHARGE_AFFAIRES_CONSULAIRES,
-    name: `Chargé d'Affaires (${city})`,
-    entityId: entity.id,
-    hierarchyLevel: 4,
-    employmentStatus: EmploymentStatus.FONCTIONNAIRE,
-    allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
-    permissions: ['Gestion demandes', 'Validation dossiers'],
-    badge: '🎖️',
-    description: 'Chargé d\'Affaires Consulaires',
-  });
+  // 2. CONSUL / VICE-CONSUL / AGENTS (Pour Consulats ou Ambassades sans CG)
 
-  // 5. AGENT CONSULAIRE (All entities - 2 agents)
-  staff.push({
-    id: `${idPrefix}-agent-1`,
-    role: ConsularRole.AGENT_CONSULAIRE,
-    name: `Agent Consulaire 1 (${city})`,
-    entityId: entity.id,
-    hierarchyLevel: 5,
-    employmentStatus: EmploymentStatus.CONTRACTUEL,
-    allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
-    permissions: ['Traitement dossiers', 'Guichet virtuel'],
-    badge: '🟢',
-    description: 'Agent de traitement - Guichet',
-  });
+  // CONSUL (Chef de section consulaire dans Ambassade sans CG, ou Adjoint dans CG)
+  if (entityType === OrganizationType.CONSULAT_GENERAL || entityType === OrganizationType.CONSULAT || !isEmbassyWithConsulateGeneral) {
 
-  staff.push({
-    id: `${idPrefix}-agent-2`,
-    role: ConsularRole.AGENT_CONSULAIRE,
-    name: `Agent Consulaire 2 (${city})`,
-    entityId: entity.id,
-    hierarchyLevel: 5,
-    employmentStatus: EmploymentStatus.CONTRACTUEL,
-    allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
-    permissions: ['Traitement dossiers', 'Biométrie'],
-    badge: '🟢',
-    description: 'Agent de traitement - Biométrie',
-  });
+    // Cas spécifique Ambassade sans CG : On met un Consul OU un Chargé d'Affaires
+    // Ici on met les deux pour le choix en démo, ou le logique requested:
+    // "Un consul Ou un chargé d'affaire consulaire" -> On va mettre un Consul Chef de Section
 
-  // 6. STAGIAIRE (All entities)
-  staff.push({
-    id: `${idPrefix}-stagiaire`,
-    role: ConsularRole.STAGIAIRE,
-    name: `Stagiaire (${city})`,
-    entityId: entity.id,
-    hierarchyLevel: 6,
-    employmentStatus: EmploymentStatus.CONTRACTUEL,
-    allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
-    permissions: ['Support traitement', 'Saisie données'],
-    badge: '🎓',
-    description: 'Stagiaire - Support Opérationnel',
-  });
+    if (entityType === OrganizationType.CONSULAT || entityType === OrganizationType.CONSULAT_GENERAL || entityType === OrganizationType.AMBASSADE) {
+      staff.push({
+        id: `${idPrefix}-consul`,
+        role: ConsularRole.CONSUL,
+        name: `M. le Consul (${city})`,
+        entityId: entity.id,
+        hierarchyLevel: 2,
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        allowedEntityTypes: [OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+        permissions: ['Supervision opérations', 'Validation actes'],
+        badge: '🥈',
+        description: entityType === OrganizationType.CONSULAT_GENERAL ? 'Consul - Adjoint au Chef de Poste' : 'Consul - Chef de Section Consulaire',
+      });
+    }
+
+    // Vice-Consul
+    if (entityType === OrganizationType.CONSULAT || entityType === OrganizationType.CONSULAT_GENERAL) {
+      staff.push({
+        id: `${idPrefix}-vc`,
+        role: ConsularRole.VICE_CONSUL,
+        name: `Vice-Consul (${city})`,
+        entityId: entity.id,
+        hierarchyLevel: 3,
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT],
+        permissions: ['Supervision opérations', 'Validation'],
+        badge: '🥉',
+        description: 'Vice-Consul - Supervision Opérationnelle',
+      });
+    }
+
+    // Charge d'affaires Consulaires (Pour tous ceux qui font du consulaire)
+    staff.push({
+      id: `${idPrefix}-cac`,
+      role: ConsularRole.CHARGE_AFFAIRES_CONSULAIRES,
+      name: `Chargé d'Affaires (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 4,
+      employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+      allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+      permissions: ['Gestion demandes', 'Validation dossiers'],
+      badge: '🎖️',
+      description: 'Chargé d\'Affaires Consulaires',
+    });
+
+    // Agents Consulaires
+    staff.push({
+      id: `${idPrefix}-agent-1`,
+      role: ConsularRole.AGENT_CONSULAIRE,
+      name: `Agent Consulaire 1 (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 5,
+      employmentStatus: EmploymentStatus.CONTRACTUEL,
+      allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+      permissions: ['Traitement dossiers', 'Guichet virtuel'],
+      badge: '🟢',
+      description: 'Agent de traitement - Guichet',
+    });
+
+    staff.push({
+      id: `${idPrefix}-agent-2`,
+      role: ConsularRole.AGENT_CONSULAIRE,
+      name: `Agent Consulaire 2 (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 5,
+      employmentStatus: EmploymentStatus.CONTRACTUEL,
+      allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+      permissions: ['Traitement dossiers', 'Biométrie'],
+      badge: '🟢',
+      description: 'Agent de traitement - Biométrie',
+    });
+
+    // STAGIAIRE
+    staff.push({
+      id: `${idPrefix}-stagiaire`,
+      role: ConsularRole.STAGIAIRE,
+      name: `Stagiaire (${city})`,
+      entityId: entity.id,
+      hierarchyLevel: 6,
+      employmentStatus: EmploymentStatus.CONTRACTUEL,
+      allowedEntityTypes: [OrganizationType.CONSULAT_GENERAL, OrganizationType.CONSULAT, OrganizationType.AMBASSADE],
+      permissions: ['Support traitement', 'Saisie données'],
+      badge: '🎓',
+      description: 'Stagiaire - Support Opérationnel',
+    });
+  }
 
   return staff;
 };
 
-// Generate staff for all entities
-const GENERATED_STAFF = MOCK_ENTITIES.flatMap(entity => generateStaffForEntity(entity));
+// Generate staff for all entities with context awareness
+// Generate staff for all entities with context awareness
+const GENERATED_STAFF = MOCK_ENTITIES.flatMap(entity => {
+  // Check if there is a Consulate General in the same country (and it's not THIS entity)
+  const getCountryCode = (e: any) => e.countryCode || e.metadata?.countryCode;
+  const currentCountryCode = getCountryCode(entity);
+
+  const hasConsulateGeneralInCountry = MOCK_ENTITIES.some(e =>
+    getCountryCode(e) === currentCountryCode &&
+    e.id !== entity.id &&
+    e.type === OrganizationType.CONSULAT_GENERAL
+  );
+
+  return generateStaffForEntity(entity, hasConsulateGeneralInCountry);
+});
 
 // --- DYNAMIC STAFF GENERATION ---
 

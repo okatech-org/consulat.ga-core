@@ -20,6 +20,17 @@ export enum ConsularRole {
     // CONSULAT_GENERAL, CONSULAT, AMBASSADE
     STAGIAIRE = 'STAGIAIRE',
 
+    // AMBASSADE Spécifique
+    AMBASSADEUR = 'AMBASSADEUR',
+    PREMIER_CONSEILLER = 'PREMIER_CONSEILLER',
+    PAYEUR = 'PAYEUR',
+    CONSEILLER_ECONOMIQUE = 'CONSEILLER_ECONOMIQUE',
+    CONSEILLER_SOCIAL = 'CONSEILLER_SOCIAL',
+    CONSEILLER_COMMUNICATION = 'CONSEILLER_COMMUNICATION',
+    CHANCELIER = 'CHANCELIER',
+    PREMIER_SECRETAIRE = 'PREMIER_SECRETAIRE',
+    RECEPTIONNISTE = 'RECEPTIONNISTE',
+
     // Utilisateur standard
     CITIZEN = 'CITIZEN',
 
@@ -108,6 +119,72 @@ export const ROLE_ENTITY_MAPPING: Record<ConsularRole, RoleEntityMapping> = {
         allowedEntityTypes: [EntityType.CONSULAT_GENERAL, EntityType.CONSULAT, EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT, EntityType.MISSION_PERMANENTE],
         employmentStatus: EmploymentStatus.CONTRACTUEL,
         hierarchyLevel: 6,
+        canManageRoles: []
+    },
+
+    // --- RÔLES AMBASSADE ---
+
+    [ConsularRole.AMBASSADEUR]: {
+        role: ConsularRole.AMBASSADEUR,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 1,
+        canManageRoles: [ConsularRole.PREMIER_CONSEILLER, ConsularRole.PAYEUR, ConsularRole.CONSEILLER_ECONOMIQUE, ConsularRole.CONSEILLER_SOCIAL, ConsularRole.CONSEILLER_COMMUNICATION, ConsularRole.CHANCELIER, ConsularRole.PREMIER_SECRETAIRE, ConsularRole.RECEPTIONNISTE]
+    },
+    [ConsularRole.PREMIER_CONSEILLER]: {
+        role: ConsularRole.PREMIER_CONSEILLER,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 2,
+        canManageRoles: [ConsularRole.CHANCELIER, ConsularRole.PREMIER_SECRETAIRE, ConsularRole.RECEPTIONNISTE]
+    },
+    [ConsularRole.PAYEUR]: {
+        role: ConsularRole.PAYEUR,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 3,
+        canManageRoles: []
+    },
+    [ConsularRole.CONSEILLER_ECONOMIQUE]: {
+        role: ConsularRole.CONSEILLER_ECONOMIQUE,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 3,
+        canManageRoles: []
+    },
+    [ConsularRole.CONSEILLER_SOCIAL]: {
+        role: ConsularRole.CONSEILLER_SOCIAL,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 3,
+        canManageRoles: []
+    },
+    [ConsularRole.CONSEILLER_COMMUNICATION]: {
+        role: ConsularRole.CONSEILLER_COMMUNICATION,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 3,
+        canManageRoles: []
+    },
+    [ConsularRole.CHANCELIER]: {
+        role: ConsularRole.CHANCELIER,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 4,
+        canManageRoles: [ConsularRole.RECEPTIONNISTE]
+    },
+    [ConsularRole.PREMIER_SECRETAIRE]: {
+        role: ConsularRole.PREMIER_SECRETAIRE,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.FONCTIONNAIRE,
+        hierarchyLevel: 4,
+        canManageRoles: []
+    },
+    [ConsularRole.RECEPTIONNISTE]: {
+        role: ConsularRole.RECEPTIONNISTE,
+        allowedEntityTypes: [EntityType.AMBASSADE, EntityType.HAUT_COMMISSARIAT],
+        employmentStatus: EmploymentStatus.CONTRACTUEL,
+        hierarchyLevel: 5,
         canManageRoles: []
     },
 
