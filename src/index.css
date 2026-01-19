@@ -15,30 +15,30 @@
     /* #3A75C4 */
 
     /* Base colors - Mode Clair Premium */
-    --background: 210 20% 96%;
-    /* #F1F5F9 - Slate 100 */
-    --foreground: 215 25% 27%;
-    /* #334155 - Slate 700 */
+    --background: 0 0% 92%;
+    /* #EBEBEB - Fond gris neutre */
+    --foreground: 0 0% 10%;
+    /* #1A1A1A - Neutre foncé */
 
-    --card: 210 20% 96%;
-    /* Same as background for Neumorphism */
-    --card-foreground: 215 25% 27%;
+    --card: 0 0% 100%;
+    /* Blanc pur */
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
 
-    /* Apple Blue - Couleur principale */
-    --primary: 211 100% 50%;
-    /* #007AFF */
+    /* Gabon Green - Couleur principale */
+    --primary: 148 100% 31%;
+    /* #009E49 - Vert Gabon */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 211 100% 90%;
+    --primary-light: 148 100% 90%;
 
     /* Jaune/Orange - Couleur secondaire */
     --secondary: 35 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 90%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 0 0% 77%;
+    --muted-foreground: 0 0% 30%;
 
     /* Rose vibrant - Couleur accent */
     --accent: 338 80% 57%;
@@ -54,9 +54,9 @@
     --success: 173 78% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 211 100% 50%;
+    --border: 0 0% 70%;
+    --input: 0 0% 72%;
+    --ring: 148 100% 31%;
 
     --radius: 1rem;
 
@@ -69,27 +69,29 @@
   }
 
   .dark {
-    /* Mode Sombre */
-    --background: 215 25% 10%;
-    --foreground: 210 40% 98%;
+    /* Mode Sombre - Noir Profond */
+    --background: 0 0% 6%;
+    /* #0F0F0F - Noir profond */
+    --foreground: 0 0% 98%;
 
-    --card: 215 25% 12%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 8%;
+    /* #141414 - Gris très foncé */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 215 25% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Apple Blue Dark Mode */
-    --primary: 211 100% 60%;
+    /* Gabon Green Dark Mode */
+    --primary: 148 80% 40%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 211 100% 30%;
+    --primary-light: 148 80% 30%;
 
     /* Jaune/Orange Dark Mode */
-    --secondary: 35 100% 60%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 49 97% 54%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 215 25% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
 
     --accent: 338 80% 62%;
     --accent-foreground: 0 0% 100%;
@@ -103,9 +105,9 @@
     --success: 173 78% 50%;
     --success-foreground: 0 0% 100%;
 
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 173 78% 50%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 148 80% 40%;
   }
 
   /* === THEME NEUMORPHIQUE (Scoped) === */

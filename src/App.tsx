@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import GlobalHub from "./pages/GlobalHub";
 import Home from "./pages/Home";
+import LandingPage from "./pages/public/LandingPage";
 import Information from "./pages/public/Information";
 import Tutorials from "./pages/public/Tutorials";
 import Community from "./pages/public/Community";
@@ -72,6 +73,7 @@ import ConsularRegistrationPage from "./pages/registration/ConsularRegistrationP
 import RequestTimelinePage from "./pages/requests/RequestTimelinePage";
 import RequestTrackingPage from "./pages/requests/RequestTrackingPage";
 import CitizenNotificationsPage from "./pages/dashboard/citizen/CitizenNotificationsPage";
+import CitizenChildrenPage from "./pages/dashboard/citizen/CitizenChildrenPage";
 
 const queryClient = new QueryClient();
 
@@ -87,8 +89,8 @@ const App = () => (
               <Routes>
                 {/* PUBLIC PORTAL (Citizens) */}
                 <Route element={<PublicLayout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/old-home" element={<GlobalHub />} />
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/old-home" element={<Home />} />
 
                   {/* HUB ROUTES */}
                   <Route path="/hub/information" element={<Information />} />
@@ -143,6 +145,7 @@ const App = () => (
                   <Route path="registration" element={<ConsularRegistrationPage />} />
                   <Route path="timeline" element={<RequestTimelinePage />} />
                   <Route path="notifications" element={<CitizenNotificationsPage />} />
+                  <Route path="children" element={<CitizenChildrenPage />} />
                 </Route>
 
                 <Route path="/dashboard/foreigner" element={<ForeignerDashboard />} />

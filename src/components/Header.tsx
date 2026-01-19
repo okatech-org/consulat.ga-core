@@ -17,7 +17,7 @@ export const Header = () => {
 
 
   return (
-    <header className={`sticky z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
+    <header className={`sticky z-50 w-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-sm ${isSimulating ? 'top-[60px]' : 'top-0'}`}>
       <div className="container mx-auto flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-hero">
