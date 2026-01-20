@@ -4,7 +4,6 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle, TestTube2, Shield, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import loginVisual from "@/assets/login-visual.jpg";
 
 export default function Login() {
   const isDev = import.meta.env.DEV;
@@ -13,8 +12,16 @@ export default function Login() {
     <div className="min-h-[calc(100vh-4rem)] flex">
       {/* Left Side - Visual */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center text-white p-12">
-        <img src={loginVisual} alt="Secure login" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-blue-900/80" />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/video_idn_ga.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900/70 to-black/60" />
 
         <div className="relative z-10 max-w-lg space-y-6">
           <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm mb-8">

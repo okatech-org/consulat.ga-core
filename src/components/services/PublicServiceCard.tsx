@@ -39,13 +39,13 @@ export function PublicServiceCard({ service, className, onRegisterClick }: Publi
                 </Badge>
             </div>
 
-            <CardHeader className="relative -mt-12 z-20 pb-2">
-                <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+            <CardHeader className="pb-2">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
                     {service.name}
                 </h3>
                 {service.legalBasis && (
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-background/50 backdrop-blur-sm w-fit px-2 py-1 rounded-full border border-border/50">
-                        <BookOpen className="w-3 h-3 text-primary" />
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground w-fit mt-1">
+                        <BookOpen className="w-3 h-3 text-primary flex-shrink-0" />
                         <span className="truncate max-w-[200px]" title={service.legalBasis.title}>
                             {service.legalBasis.reference}
                         </span>

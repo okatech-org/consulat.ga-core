@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutDashboard, Settings, LogOut, FileText, Building2, Users, ShieldCheck, Globe, Mail, ClipboardList, UserPlus, Bell } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, FileText, Building2, Users, ShieldCheck, Globe, Mail, ClipboardList, UserPlus, Bell, CreditCard } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GlobalSettings } from "@/components/GlobalSettings";
 import { useDemo } from "@/contexts/DemoContext";
@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { label: "Organisations", icon: Building2, path: "/dashboard/super-admin/organizations" },
                 { label: "Utilisateurs", icon: Users, path: "/dashboard/super-admin/users" },
                 { label: "Services", icon: FileText, path: "/dashboard/super-admin/services" },
-                { label: "iBoîte", icon: Mail, path: "/iboite" },
+                { label: "iBoîte", icon: Mail, path: "/dashboard/citizen/boite" },
             ];
         }
 
@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { label: "Services", icon: FileText, path: "/dashboard/services" },
                 { label: "Agents", icon: Users, path: "/dashboard/admin/agents" },
                 { label: "Paramètres", icon: Settings, path: "/dashboard/admin/settings" },
-                { label: "iBoîte", icon: Mail, path: "/iboite" },
+                { label: "iBoîte", icon: Mail, path: "/dashboard/citizen/boite" },
             ];
         }
 
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { label: "Demandes Équipe", icon: FileText, path: "/dashboard/agent/requests" },
                 { label: "Mon Équipe", icon: Users, path: "/dashboard/admin/agents" }, // Restricted view in component
                 { label: "Rendez-vous", icon: Users, path: "/dashboard/agent/appointments" },
-                { label: "iBoîte", icon: Mail, path: "/iboite" },
+                { label: "iBoîte", icon: Mail, path: "/dashboard/citizen/boite" },
             ];
         }
 
@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 { label: "Tableau de Bord", icon: LayoutDashboard, path: "/dashboard/agent" },
                 { label: "Dossiers en cours", icon: FileText, path: "/dashboard/agent/requests" },
                 { label: "Rendez-vous", icon: Users, path: "/dashboard/agent/appointments" },
-                { label: "iBoîte", icon: Mail, path: "/iboite" },
+                { label: "iBoîte", icon: Mail, path: "/dashboard/citizen/boite" },
             ];
         }
 
@@ -69,21 +69,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             return [
                 { label: "Tableau de Bord", icon: LayoutDashboard, path: "/dashboard/foreigner" },
                 { label: "Mes Demandes", icon: FileText, path: "/dashboard/foreigner/requests" },
-                { label: "iBoîte", icon: Mail, path: "/iboite" },
+                { label: "iBoîte", icon: Mail, path: "/dashboard/citizen/boite" },
             ];
         }
 
-        // Default to Citizen - Simplified menu structure
+        // Default to Citizen - Consistent menu structure
         return [
             { label: "Tableau de Bord", icon: LayoutDashboard, path: "/dashboard/citizen" },
-            { label: "Démarches", icon: FileText, path: "/dashboard/citizen/requests" },
+            { label: "Démarches", icon: FileText, path: "/dashboard/citizen/services" },
             { label: "Suivi Timeline", icon: ClipboardList, path: "/dashboard/citizen/timeline" },
             { label: "iDocuments", icon: ShieldCheck, path: "/dashboard/citizen/documents" },
-            { label: "iBoîte", icon: Mail, path: "/iboite" },
-            { label: "iCV", icon: FileText, path: "/dashboard/citizen/cv" },
-            { label: "Enfants", icon: Users, path: "/dashboard/citizen/children" },
+            { label: "iBoîte", icon: Mail, path: "/dashboard/citizen/boite" },
             { label: "Entreprises", icon: Building2, path: "/dashboard/citizen/companies" },
             { label: "Associations", icon: Users, path: "/dashboard/citizen/associations" },
+            { label: "Paramètres", icon: Settings, path: "/dashboard/citizen/settings" },
         ];
     };
 
@@ -120,23 +119,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </button>
                         ))}
 
-                        <div className="my-4 border-t border-gray-200/50"></div>
-
-                        <button
-                            onClick={() => {
-                                if (isSuperAdmin) navigate('/dashboard/super-admin/settings');
-                                else if (isCitizen) navigate('/dashboard/citizen/settings');
-                                else navigate('/settings');
-                            }}
-                            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-all ${(isSuperAdmin && isActive('/dashboard/super-admin/settings')) ||
-                                (isCitizen && isActive('/dashboard/citizen/settings'))
-                                ? 'neu-inset text-primary font-bold'
-                                : 'neu-raised hover:shadow-neo-md'
-                                }`}
-                        >
-                            <Settings className="w-4 h-4" />
-                            Paramètres
-                        </button>
+                        {/* Only show separate settings button for non-citizen contexts without settings in navItems */}
+                        {!isCitizen && (
+                            <>
+                                <div className="my-4 border-t border-gray-200/50"></div>
+                                <button
+                                    onClick={() => {
+                                        if (isSuperAdmin) navigate('/dashboard/super-admin/settings');
+                                        else navigate('/settings');
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-all ${(isSuperAdmin && isActive('/dashboard/super-admin/settings'))
+                                        ? 'neu-inset text-primary font-bold'
+                                        : 'neu-raised hover:shadow-neo-md'
+                                        }`}
+                                >
+                                    <Settings className="w-4 h-4" />
+                                    Paramètres
+                                </button>
+                            </>
+                        )}
                     </nav>
 
                     {/* Footer Sidebar */}

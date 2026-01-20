@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Plus, Save, X } from 'lucide-react';
 import { cvService } from '@/services/cv-service';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 const experienceSchema = z.object({
     title: z.string().min(2, 'Titre requis'),
@@ -67,6 +67,8 @@ interface CVFormProps {
 
 export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
     const [isSaving, setIsSaving] = useState(false);
+    const { toast } = useToast();
+
 
     const form = useForm<CVFormData>({
         resolver: zodResolver(cvSchema),
@@ -146,10 +148,10 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                 }))
             });
 
-            toast.success("CV mis à jour avec succès");
+            toast({ title: "✅ CV mis à jour", description: "Vos modifications ont été sauvegardées." });
             onSave(updatedCV);
         } catch (error) {
-            toast.error("Erreur lors de la sauvegarde");
+            toast({ title: "❌ Erreur", description: "Erreur lors de la sauvegarde", variant: "destructive" });
         } finally {
             setIsSaving(false);
         }
@@ -171,7 +173,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                 </div>
 
                 {/* Personal Details */}
-                <div className="neu-card p-6 rounded-xl space-y-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 rounded-xl space-y-4">
                     <h3 className="text-xl font-bold border-b pb-2">Informations Personnelles</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
@@ -233,7 +235,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                 </div>
 
                 {/* Summary */}
-                <div className="neu-card p-6 rounded-xl space-y-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 rounded-xl space-y-4">
                     <h3 className="text-xl font-bold border-b pb-2">Profil & Liens</h3>
                     <FormField
                         control={form.control}
@@ -279,7 +281,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                 </div>
 
                 {/* Experience */}
-                <div className="neu-card p-6 rounded-xl space-y-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 rounded-xl space-y-4">
                     <div className="flex justify-between items-center border-b pb-2">
                         <h3 className="text-xl font-bold">Expérience Professionnelle</h3>
                         <Button type="button" variant="ghost" size="sm" onClick={() => appendExp({ title: '', company: '', location: '', startDate: '', current: false, description: '' })}>
@@ -288,7 +290,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                     </div>
                     <div className="space-y-6">
                         {expFields.map((field, index) => (
-                            <div key={field.id} className="neu-inset p-4 rounded-lg space-y-4 relative">
+                            <div key={field.id} className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-lg space-y-4 relative">
                                 <Button
                                     type="button"
                                     variant="ghost"
@@ -375,7 +377,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                 </div>
 
                 {/* Education */}
-                <div className="neu-card p-6 rounded-xl space-y-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 rounded-xl space-y-4">
                     <div className="flex justify-between items-center border-b pb-2">
                         <h3 className="text-xl font-bold">Formation</h3>
                         <Button type="button" variant="ghost" size="sm" onClick={() => appendEdu({ degree: '', school: '', location: '', startDate: '', current: false, description: '' })}>
@@ -384,7 +386,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                     </div>
                     <div className="space-y-6">
                         {eduFields.map((field, index) => (
-                            <div key={field.id} className="neu-inset p-4 rounded-lg space-y-4 relative">
+                            <div key={field.id} className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-lg space-y-4 relative">
                                 <Button
                                     type="button"
                                     variant="ghost"
@@ -462,7 +464,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                 {/* Skills & Languages */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Skills */}
-                    <div className="neu-card p-6 rounded-xl space-y-4">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 rounded-xl space-y-4">
                         <div className="flex justify-between items-center border-b pb-2">
                             <h3 className="text-xl font-bold">Compétences</h3>
                             <Button type="button" variant="ghost" size="sm" onClick={() => appendSkill({ name: '', level: 'Intermediate' })}>
@@ -513,7 +515,7 @@ export function CVForm({ initialData, onSave, onCancel }: CVFormProps) {
                     </div>
 
                     {/* Languages */}
-                    <div className="neu-card p-6 rounded-xl space-y-4">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 rounded-xl space-y-4">
                         <div className="flex justify-between items-center border-b pb-2">
                             <h3 className="text-xl font-bold">Langues</h3>
                             <Button type="button" variant="ghost" size="sm" onClick={() => appendLang({ name: '', level: 'B2' })}>
