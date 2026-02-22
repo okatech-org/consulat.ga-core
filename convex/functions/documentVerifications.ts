@@ -183,6 +183,6 @@ function generateVerificationToken(): string {
  * Generate verification URL
  */
 export function getVerificationUrl(token: string): string {
-	const baseUrl = process.env.APP_URL || "https://consulat-gabon.fr";
+	const baseUrl = process.env.APP_URL || "https://consulat.ga";
 	return `${baseUrl}/verify/${token}`;
 }

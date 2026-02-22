@@ -1266,8 +1266,8 @@ export const verifyByIdentifier = query({
       .first();
 
     if (registration) {
-      const profile = await ctx.db.get(registration.profileId);
-      const photoUrl = await getProfilePhoto(registration.profileId);
+      const profile = registration.profileId ? await ctx.db.get(registration.profileId) : null;
+      const photoUrl = registration.profileId ? await getProfilePhoto(registration.profileId) : null;
 
       const isExpired = registration.cardExpiresAt
         ? registration.cardExpiresAt < Date.now()

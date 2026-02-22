@@ -56,7 +56,7 @@ export const listByOrg = authQuery({
     // Enrich with profile and user data for current page only
     const enrichedPage = await Promise.all(
       paginatedResult.page.map(async (reg) => {
-        const profile = await ctx.db.get(reg.profileId);
+        const profile = reg.profileId ? await ctx.db.get(reg.profileId) : null;
         const user = profile ? await ctx.db.get(profile.userId) : null;
         const request = await ctx.db.get(reg.requestId);
         return {
@@ -154,7 +154,7 @@ export const getReadyForCard = authQuery({
     // Enrich with profile data
     return await Promise.all(
       readyForCard.map(async (reg) => {
-        const profile = await ctx.db.get(reg.profileId);
+        const profile = reg.profileId ? await ctx.db.get(reg.profileId) : null;
         return {
           ...reg,
           profile:
@@ -202,7 +202,7 @@ export const getReadyForPrint = authQuery({
     // Enrich with profile data
     return await Promise.all(
       readyForPrint.map(async (reg) => {
-        const profile = await ctx.db.get(reg.profileId);
+        const profile = reg.profileId ? await ctx.db.get(reg.profileId) : null;
         return {
           ...reg,
           profile:
@@ -399,7 +399,7 @@ export const generateCard = authMutation({
     }
 
     // Get profile for card number generation
-    const profile = await ctx.db.get(registration.profileId);
+    const profile = registration.profileId ? await ctx.db.get(registration.profileId) : null;
     if (!profile) {
       throw new Error("Profile not found");
     }
@@ -452,7 +452,7 @@ export const generateCard = authMutation({
     });
 
     // Also update the profile's consularCard
-    await ctx.db.patch(registration.profileId, {
+    if (registration.profileId) await ctx.db.patch(registration.profileId, {
       consularCard: {
         orgId: registration.orgId,
         cardNumber,

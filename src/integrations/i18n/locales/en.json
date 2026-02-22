@@ -498,7 +498,16 @@
 			"signIn": "Sign in",
 			"signUp": "Sign up",
 			"orDivider": "or",
-			"signInWithIDN": "Sign in with IDN"
+			"signInWithIDN": "Sign in with IDN",
+			"otp": {
+				"sendCode": "Receive a code by email",
+				"signInWithPassword": "Sign in with password",
+				"codeSent": "A verification code has been sent to",
+				"codeLabel": "Verification code",
+				"resendCode": "Resend code",
+				"sendFailed": "Failed to send the code. Please try again.",
+				"invalidCode": "Invalid or expired code. Please try again."
+			}
 		},
 		"appointments": {
 			"notFound": "Appointment not found",
@@ -2195,6 +2204,32 @@
 		"account": {
 			"title": "Account",
 			"description": "Manage your session."
+		},
+		"security": {
+			"accountInfo": "Account Information",
+			"accountInfoDesc": "Your login details.",
+			"memberSince": "Member since",
+			"changePassword": "Change Password",
+			"changePasswordDesc": "Update your password to keep your account secure.",
+			"currentPassword": "Current password",
+			"newPassword": "New password",
+			"confirmPassword": "Confirm new password",
+			"revokeOtherSessions": "Sign out other sessions",
+			"revokeOtherSessionsDesc": "Sign out all other devices after the change.",
+			"updatePassword": "Update password",
+			"changeSuccess": "Password changed successfully.",
+			"changeFailed": "Failed to change password.",
+			"passwordMismatch": "Passwords do not match.",
+			"passwordTooShort": "Password must be at least 8 characters.",
+			"currentPasswordPlaceholder": "Leave empty if you don't have one",
+			"currentPasswordHint": "Optional — only if you already have a password.",
+			"noCredentialAccount": "This account has no password. Sign in via OTP code or IDN to access your account.",
+			"orResetViaEmail": "or reset via email",
+			"sendResetCode": "Send a reset code",
+			"otpSentTo": "A code was sent to {{email}}.",
+			"otpCode": "Verification code",
+			"resetPassword": "Reset password",
+			"resetSuccess": "Password reset successfully."
 		},
 		"memberPreferences": {
 			"title": "My member preferences",

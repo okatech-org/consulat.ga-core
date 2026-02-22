@@ -1540,11 +1540,6 @@ async function main() {
 		await generateLegacyProfilesMap(legacyProfiles);
 	}
 
-	// Step 15: Password resets (only in live mode)
-	if (shouldRun("users") && !DRY_RUN && !SKIP_AUTH) {
-		await triggerPasswordResets(legacyUsers);
-	}
-
 	// ─── Final Summary ────────────────────────────────────────────────
 	console.log("\n═══════════════════════════════════════════════════════════");
 	console.log("  MIGRATION SUMMARY");

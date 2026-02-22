@@ -1,7 +1,20 @@
 import { api } from "@convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "convex/react";
-import { Bell, Globe, LogOut, Moon, Palette, Shield } from "lucide-react";
+import {
+	Bell,
+	Check,
+	Globe,
+	KeyRound,
+	Loader2,
+	LogOut,
+	Mail,
+	Moon,
+	Palette,
+	Shield,
+	User,
+} from "lucide-react";
+
 import { motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -24,6 +37,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { type ConsularTheme, useConsularTheme } from "@/hooks/useConsularTheme";
@@ -138,6 +152,28 @@ function SettingsPage() {
 
 	const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
+	// ── Session data ──
+	const { data: session } = authClient.useSession();
+
+	// ── Password change state ──
+	const [currentPassword, setCurrentPassword] = useState("");
+	const [newPassword, setNewPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [revokeOtherSessions, setRevokeOtherSessions] = useState(false);
+	const [passwordLoading, setPasswordLoading] = useState(false);
+	const [passwordError, setPasswordError] = useState<string | null>(null);
+	const [passwordSuccess, setPasswordSuccess] = useState(false);
+
+	// ── OTP reset state ──
+	const [resetStep, setResetStep] = useState<"idle" | "otp_sent" | "done">(
+		"idle",
+	);
+	const [resetOtp, setResetOtp] = useState("");
+	const [resetNewPassword, setResetNewPassword] = useState("");
+	const [resetLoading, setResetLoading] = useState(false);
+	const [resetError, setResetError] = useState<string | null>(null);
+	const [resetSuccess, setResetSuccess] = useState(false);
+
 	// ── Convex queries & mutations ──
 	const preferences = useQuery(api.functions.userPreferences.getMyPreferences);
 	const updatePreferences = useMutation(
@@ -160,6 +196,109 @@ function SettingsPage() {
 		i18n.changeLanguage(lang);
 	};
 
+	const handleChangePassword = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setPasswordError(null);
+		setPasswordSuccess(false);
+
+		if (newPassword !== confirmPassword) {
+			setPasswordError(t("settings.security.passwordMismatch"));
+			return;
+		}
+		if (newPassword.length < 8) {
+			setPasswordError(t("settings.security.passwordTooShort"));
+			return;
+		}
+
+		setPasswordLoading(true);
+		try {
+			const result = await authClient.changePassword({
+				currentPassword,
+				newPassword,
+				revokeOtherSessions,
+			});
+			if (result.error) {
+				const msg = result.error.message || "";
+				if (msg.includes("CREDENTIAL_ACCOUNT_NOT_FOUND")) {
+					setPasswordError(t("settings.security.noCredentialAccount"));
+				} else {
+					setPasswordError(msg || t("settings.security.changeFailed"));
+				}
+			} else {
+				setPasswordSuccess(true);
+				setCurrentPassword("");
+				setNewPassword("");
+				setConfirmPassword("");
+				setTimeout(() => setPasswordSuccess(false), 4000);
+			}
+		} catch {
+			setPasswordError(t("settings.security.changeFailed"));
+		} finally {
+			setPasswordLoading(false);
+		}
+	};
+
+	const handleSendResetOtp = async () => {
+		const email = session?.user?.email;
+		if (!email) return;
+		setResetError(null);
+		setResetLoading(true);
+		try {
+			const result = await authClient.emailOtp.sendVerificationOtp({
+				email,
+				type: "forget-password",
+			});
+			if (result.error) {
+				setResetError(
+					result.error.message || t("settings.security.changeFailed"),
+				);
+			} else {
+				setResetStep("otp_sent");
+			}
+		} catch {
+			setResetError(t("settings.security.changeFailed"));
+		} finally {
+			setResetLoading(false);
+		}
+	};
+
+	const handleResetWithOtp = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const email = session?.user?.email;
+		if (!email) return;
+		if (resetNewPassword.length < 8) {
+			setResetError(t("settings.security.passwordTooShort"));
+			return;
+		}
+		setResetError(null);
+		setResetLoading(true);
+		try {
+			const result = await authClient.emailOtp.resetPassword({
+				email,
+				otp: resetOtp,
+				password: resetNewPassword,
+			});
+			if (result.error) {
+				setResetError(
+					result.error.message || t("settings.security.changeFailed"),
+				);
+			} else {
+				setResetSuccess(true);
+				setResetStep("done");
+				setResetOtp("");
+				setResetNewPassword("");
+				setTimeout(() => {
+					setResetSuccess(false);
+					setResetStep("idle");
+				}, 4000);
+			}
+		} catch {
+			setResetError(t("settings.security.changeFailed"));
+		} finally {
+			setResetLoading(false);
+		}
+	};
+
 	return (
 		<div className="space-y-6 p-1">
 			{/* Page title */}
@@ -176,11 +315,271 @@ function SettingsPage() {
 				</p>
 			</motion.div>
 
-			{/* Notifications Settings */}
+			{/* Account Info */}
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.2 }}
+			>
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<User className="size-5" />
+							{t("settings.security.accountInfo")}
+						</CardTitle>
+						<CardDescription>
+							{t("settings.security.accountInfoDesc")}
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="space-y-1">
+								<p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+									{t("common.name")}
+								</p>
+								<p className="text-sm font-medium">
+									{session?.user?.name || "—"}
+								</p>
+							</div>
+							<div className="space-y-1">
+								<p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+									{t("common.email")}
+								</p>
+								<p className="text-sm font-medium">
+									{session?.user?.email || "—"}
+								</p>
+							</div>
+							<div className="space-y-1">
+								<p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+									{t("settings.security.memberSince")}
+								</p>
+								<p className="text-sm font-medium">
+									{session?.user?.createdAt
+										? new Date(session.user.createdAt).toLocaleDateString(
+												i18n.language,
+												{
+													year: "numeric",
+													month: "long",
+													day: "numeric",
+												},
+											)
+										: "—"}
+								</p>
+							</div>
+						</div>
+					</CardContent>
+				</Card>
+			</motion.div>
+
+			{/* Change Password */}
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.2, delay: 0.05 }}
+			>
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<KeyRound className="size-5" />
+							{t("settings.security.changePassword")}
+						</CardTitle>
+						<CardDescription>
+							{t("settings.security.changePasswordDesc")}
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<form
+							onSubmit={handleChangePassword}
+							className="space-y-4 max-w-md"
+						>
+							{passwordError && (
+								<div className="rounded-lg border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+									{passwordError}
+								</div>
+							)}
+							{passwordSuccess && (
+								<div className="rounded-lg border border-primary/50 bg-primary/10 px-3 py-2 text-sm text-primary flex items-center gap-2">
+									<Check className="size-4" />
+									{t("settings.security.changeSuccess")}
+								</div>
+							)}
+
+							<div className="space-y-2">
+								<Label htmlFor="current-password">
+									{t("settings.security.currentPassword")}
+								</Label>
+								<Input
+									id="current-password"
+									type="password"
+									value={currentPassword}
+									onChange={(e) => setCurrentPassword(e.target.value)}
+									autoComplete="current-password"
+									placeholder={t(
+										"settings.security.currentPasswordPlaceholder",
+									)}
+								/>
+								<p className="text-xs text-muted-foreground">
+									{t("settings.security.currentPasswordHint")}
+								</p>
+							</div>
+
+							<div className="space-y-2">
+								<Label htmlFor="new-password">
+									{t("settings.security.newPassword")}
+								</Label>
+								<Input
+									id="new-password"
+									type="password"
+									value={newPassword}
+									onChange={(e) => setNewPassword(e.target.value)}
+									required
+									autoComplete="new-password"
+									minLength={8}
+								/>
+							</div>
+
+							<div className="space-y-2">
+								<Label htmlFor="confirm-password">
+									{t("settings.security.confirmPassword")}
+								</Label>
+								<Input
+									id="confirm-password"
+									type="password"
+									value={confirmPassword}
+									onChange={(e) => setConfirmPassword(e.target.value)}
+									required
+									autoComplete="new-password"
+								/>
+							</div>
+
+							<div className="flex items-center justify-between">
+								<div className="space-y-0.5">
+									<Label htmlFor="revoke-sessions">
+										{t("settings.security.revokeOtherSessions")}
+									</Label>
+									<p className="text-xs text-muted-foreground">
+										{t("settings.security.revokeOtherSessionsDesc")}
+									</p>
+								</div>
+								<Switch
+									id="revoke-sessions"
+									checked={revokeOtherSessions}
+									onCheckedChange={setRevokeOtherSessions}
+								/>
+							</div>
+
+							<Button
+								type="submit"
+								disabled={passwordLoading || !newPassword || !confirmPassword}
+							>
+								{passwordLoading && (
+									<Loader2 className="mr-2 size-4 animate-spin" />
+								)}
+								{t("settings.security.updatePassword")}
+							</Button>
+						</form>
+
+						{/* Separator + OTP reset alternative */}
+						<div className="relative my-6">
+							<div className="absolute inset-0 flex items-center">
+								<span className="w-full border-t" />
+							</div>
+							<div className="relative flex justify-center text-xs uppercase">
+								<span className="bg-card px-2 text-muted-foreground">
+									{t("settings.security.orResetViaEmail")}
+								</span>
+							</div>
+						</div>
+
+						<div className="max-w-md space-y-3">
+							{resetError && (
+								<div className="rounded-lg border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+									{resetError}
+								</div>
+							)}
+							{resetSuccess && (
+								<div className="rounded-lg border border-primary/50 bg-primary/10 px-3 py-2 text-sm text-primary flex items-center gap-2">
+									<Check className="size-4" />
+									{t("settings.security.resetSuccess")}
+								</div>
+							)}
+
+							{resetStep === "idle" && (
+								<Button
+									variant="outline"
+									onClick={handleSendResetOtp}
+									disabled={resetLoading || !session?.user?.email}
+								>
+									{resetLoading ? (
+										<Loader2 className="mr-2 size-4 animate-spin" />
+									) : (
+										<Mail className="mr-2 size-4" />
+									)}
+									{t("settings.security.sendResetCode")}
+								</Button>
+							)}
+
+							{resetStep === "otp_sent" && (
+								<form onSubmit={handleResetWithOtp} className="space-y-3">
+									<p className="text-sm text-muted-foreground">
+										{t("settings.security.otpSentTo", {
+											email: session?.user?.email,
+										})}
+									</p>
+									<div className="space-y-2">
+										<Label>{t("settings.security.otpCode")}</Label>
+										<Input
+											value={resetOtp}
+											onChange={(e) => setResetOtp(e.target.value)}
+											placeholder="123456"
+											required
+											autoComplete="one-time-code"
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label>{t("settings.security.newPassword")}</Label>
+										<Input
+											type="password"
+											value={resetNewPassword}
+											onChange={(e) => setResetNewPassword(e.target.value)}
+											required
+											minLength={8}
+											autoComplete="new-password"
+										/>
+									</div>
+									<div className="flex gap-2">
+										<Button
+											type="submit"
+											disabled={resetLoading || !resetOtp || !resetNewPassword}
+										>
+											{resetLoading && (
+												<Loader2 className="mr-2 size-4 animate-spin" />
+											)}
+											{t("settings.security.resetPassword")}
+										</Button>
+										<Button
+											type="button"
+											variant="ghost"
+											onClick={() => {
+												setResetStep("idle");
+												setResetError(null);
+											}}
+										>
+											{t("common.cancel")}
+										</Button>
+									</div>
+								</form>
+							)}
+						</div>
+					</CardContent>
+				</Card>
+			</motion.div>
+
+			{/* Notifications Settings */}
+			<motion.div
+				initial={{ opacity: 0, y: 10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.2, delay: 0.1 }}
 			>
 				<Card>
 					<CardHeader>
@@ -243,7 +642,7 @@ function SettingsPage() {
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.2, delay: 0.05 }}
+				transition={{ duration: 0.2, delay: 0.15 }}
 			>
 				<Card>
 					<CardHeader>
@@ -278,7 +677,7 @@ function SettingsPage() {
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.2, delay: 0.1 }}
+				transition={{ duration: 0.2, delay: 0.2 }}
 			>
 				<Card>
 					<CardHeader>
@@ -315,7 +714,7 @@ function SettingsPage() {
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.2, delay: 0.15 }}
+				transition={{ duration: 0.2, delay: 0.25 }}
 			>
 				<Card>
 					<CardHeader>
@@ -360,7 +759,7 @@ function SettingsPage() {
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.2, delay: 0.2 }}
+				transition={{ duration: 0.2, delay: 0.3 }}
 			>
 				<Card>
 					<CardHeader>
@@ -395,7 +794,7 @@ function SettingsPage() {
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.2, delay: 0.25 }}
+				transition={{ duration: 0.2, delay: 0.35 }}
 			>
 				<Card className="border-destructive/20">
 					<CardHeader>

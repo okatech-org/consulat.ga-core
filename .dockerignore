@@ -1,0 +1,14 @@
+node_modules
+.git
+.netlify
+.tanstack
+.vscode
+.claude
+.agent
+.DS_Store
+dist
+.output
+data
+docs
+*.pem
+package-lock.json

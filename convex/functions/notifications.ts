@@ -5,15 +5,17 @@ import { Resend } from "@convex-dev/resend";
 import { internalAction, internalMutation } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { authQuery, authMutation } from "../lib/customFunctions";
-import { notificationTypeValidator, NotificationType } from "../lib/validators";
+import { notificationTypeValidator } from "../lib/validators";
 
 // Initialize Resend with test mode off for production
 export const resend = new Resend(components.resend, {
   testMode: process.env.NODE_ENV !== "production" ? true : false,
 });
 
-// Email sender address (configure in Resend dashboard)
-const FROM_EMAIL = "Consulat du Gabon <notifications@consulat-gabon.fr>";
+// Email sender address — configurable via RESEND_FROM_EMAIL env var
+const FROM_EMAIL =
+  process.env.RESEND_FROM_EMAIL ??
+  "Consulat du Gabon <mail@updates.consulat.ga>";
 
 // ============================================================================
 // EMAIL TEMPLATES
@@ -286,7 +288,7 @@ export const notifyNewMessage = internalMutation({
     // Don't notify if sender is the recipient
     if (args.senderId === request.userId) return;
 
-    const appUrl = process.env.APP_URL || "https://consulat-gabon.fr";
+    const appUrl = process.env.APP_URL || "https://consulat.ga";
 
     await ctx.scheduler.runAfter(
       0,
@@ -337,7 +339,7 @@ export const notifyStatusUpdate = internalMutation({
       cancelled: "Annulé",
     };
 
-    const appUrl = process.env.APP_URL || "https://consulat-gabon.fr";
+    const appUrl = process.env.APP_URL || "https://consulat.ga";
 
     // Use specific template for completed requests
     const template =
@@ -387,7 +389,7 @@ export const notifyPaymentSuccess = internalMutation({
         : service.name
       : "Service";
 
-    const appUrl = process.env.APP_URL || "https://consulat-gabon.fr";
+    const appUrl = process.env.APP_URL || "https://consulat.ga";
 
     await ctx.scheduler.runAfter(
       0,
@@ -424,7 +426,7 @@ export const notifyActionRequired = internalMutation({
     const user = await ctx.db.get(request.userId);
     if (!user?.email) return;
 
-    const appUrl = process.env.APP_URL || "https://consulat-gabon.fr";
+    const appUrl = process.env.APP_URL || "https://consulat.ga";
 
     await ctx.scheduler.runAfter(
       0,

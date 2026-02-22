@@ -23,7 +23,7 @@ export const fileObjectValidator = v.object({
  * Also serves as the document vault (e-Documents)
  */
 export const documentsTable = defineTable({
-  ownerId: v.union(v.id("users"), v.id("orgs"), v.id("profiles")),
+  ownerId: v.union(v.id("users"), v.id("orgs"), v.id("profiles"), v.id("childProfiles")),
 
   files: v.array(fileObjectValidator),
 

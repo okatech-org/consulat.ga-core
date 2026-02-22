@@ -11,7 +11,8 @@ import {
  * Replaces the embedded registrations[] array in profiles
  */
 export const consularRegistrationsTable = defineTable({
-  profileId: v.id("profiles"),
+  profileId: v.optional(v.id("profiles")),
+  childProfileId: v.optional(v.id("childProfiles")),
   orgId: v.id("orgs"),
   requestId: v.id("requests"),
 
@@ -39,6 +40,7 @@ export const consularRegistrationsTable = defineTable({
   // Composite index covers by_org queries (prefix matching)
   .index("by_org_status", ["orgId", "status"])
   .index("by_profile", ["profileId"])
+  .index("by_childProfile", ["childProfileId"])
   .index("by_request", ["requestId"])
   // For EasyCard: find active cards not yet printed
   .index("by_status_printed", ["status", "printedAt"])

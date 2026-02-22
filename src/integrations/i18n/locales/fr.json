@@ -679,6 +679,32 @@
 			"title": "Compte",
 			"description": "Gérez votre session."
 		},
+		"security": {
+			"accountInfo": "Informations du compte",
+			"accountInfoDesc": "Vos informations de connexion.",
+			"memberSince": "Membre depuis",
+			"changePassword": "Modifier le mot de passe",
+			"changePasswordDesc": "Mettez à jour votre mot de passe pour sécuriser votre compte.",
+			"currentPassword": "Mot de passe actuel",
+			"newPassword": "Nouveau mot de passe",
+			"confirmPassword": "Confirmer le nouveau mot de passe",
+			"revokeOtherSessions": "Déconnecter les autres sessions",
+			"revokeOtherSessionsDesc": "Déconnectez tous les autres appareils après le changement.",
+			"updatePassword": "Mettre à jour le mot de passe",
+			"changeSuccess": "Mot de passe modifié avec succès.",
+			"changeFailed": "Échec de la modification du mot de passe.",
+			"passwordMismatch": "Les mots de passe ne correspondent pas.",
+			"passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+			"currentPasswordPlaceholder": "Laissez vide si vous n'en avez pas",
+			"currentPasswordHint": "Optionnel — uniquement si vous avez déjà un mot de passe.",
+			"noCredentialAccount": "Ce compte n'a pas de mot de passe. Connectez-vous par code OTP ou IDN pour accéder à votre compte.",
+			"orResetViaEmail": "ou réinitialiser par email",
+			"sendResetCode": "Envoyer un code de réinitialisation",
+			"otpSentTo": "Un code a été envoyé à {{email}}.",
+			"otpCode": "Code de vérification",
+			"resetPassword": "Réinitialiser le mot de passe",
+			"resetSuccess": "Mot de passe réinitialisé avec succès."
+		},
 		"memberPreferences": {
 			"title": "Mes préférences de membre",
 			"description": "Configurez vos préférences en tant que membre de cette organisation.",
@@ -1044,7 +1070,16 @@
 			"signIn": "Se connecter",
 			"signUp": "S'inscrire",
 			"orDivider": "ou",
-			"signInWithIDN": "Se connecter avec IDN"
+			"signInWithIDN": "Se connecter avec IDN",
+			"otp": {
+				"sendCode": "Recevoir un code par email",
+				"signInWithPassword": "Se connecter avec mot de passe",
+				"codeSent": "Un code de vérification a été envoyé à",
+				"codeLabel": "Code de vérification",
+				"resendCode": "Renvoyer le code",
+				"sendFailed": "Échec de l'envoi du code. Veuillez réessayer.",
+				"invalidCode": "Code invalide ou expiré. Veuillez réessayer."
+			}
 		},
 		"appointments": {
 			"notFound": "Rendez-vous introuvable",
